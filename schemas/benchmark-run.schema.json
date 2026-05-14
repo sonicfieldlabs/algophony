@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/benchmark-run.schema.json",
+  "title": "Algophony Benchmark Run",
+  "description": "Schema for a benchmark run record, aligned with SFL bench conventions.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["audio_id", "prompt_id", "suite_id", "scores"],
+  "properties": {
+    "audio_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$",
+      "description": "Reference to the generated audio being scored."
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}$",
+      "description": "Reference to the source prompt."
+    },
+    "suite_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9._-]+$",
+      "description": "Reference to the benchmark suite."
+    },
+    "report_id": {
+      "type": "string",
+      "pattern": "^AK-[0-9]{4}$",
+      "description": "Reference to the listening report, if available."
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "provider": { "type": "string" },
+        "version": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "description": "Generation model metadata."
+    },
+    "scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["axis", "score"],
+        "additionalProperties": true,
+        "properties": {
+          "axis": { "type": "string", "minLength": 1 },
+          "score": { "type": "number", "minimum": 0, "maximum": 5 },
+          "notes": { "type": "string" }
+        }
+      },
+      "description": "Score array following bench conventions."
+    },
+    "regeneration_potential": {
+      "type": "string",
+      "enum": ["keep", "revise", "reject"]
+    },
+    "run_date": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

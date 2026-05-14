@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/listening-report.schema.json",
+  "title": "Algophony Listening Report",
+  "description": "Schema for an AKOÚŌ × Algophony listening report on a generated soundscape.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "audio_id",
+    "prompt_id",
+    "listening_date",
+    "listener_type",
+    "claim_taxonomy",
+    "basic_description",
+    "sources",
+    "spatial_structure",
+    "temporal_behavior",
+    "ecological_plausibility",
+    "causal_coherence",
+    "cultural_assumptions",
+    "false_sources",
+    "prompt_comparison",
+    "suggested_prompt_revision",
+    "regeneration_recommendation",
+    "scores"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "pattern": "^AK-[0-9]{4}$",
+      "description": "Unique report identifier."
+    },
+    "audio_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$",
+      "description": "Reference to the generated audio file."
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}$",
+      "description": "Reference to the source prompt."
+    },
+    "listening_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date when the listening was performed."
+    },
+    "listener_type": {
+      "type": "string",
+      "enum": ["human", "agent", "hybrid"],
+      "description": "Who performed the listening."
+    },
+    "claim_taxonomy": {
+      "$ref": "#/$defs/claim_taxonomy",
+      "description": "AKOÚŌ claim taxonomy preserving epistemic status of observations."
+    },
+    "basic_description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "General description of the generated soundscape."
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detected", "inferred", "absent_expected"],
+      "properties": {
+        "detected": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sources directly audible in the output."
+        },
+        "inferred": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sources inferred but not definitively identified."
+        },
+        "absent_expected": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sources expected from the prompt but missing."
+        }
+      }
+    },
+    "spatial_structure": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Foreground, midground, background analysis and spatial logic."
+    },
+    "temporal_behavior": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Temporal evolution, event density, and sequence analysis."
+    },
+    "ecological_plausibility": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Assessment of whether sources could plausibly coexist."
+    },
+    "causal_coherence": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Assessment of whether events imply believable causes."
+    },
+    "cultural_assumptions": {
+      "type": "string",
+      "description": "Analysis of cultural, genre, or stock-media assumptions in the output."
+    },
+    "false_sources": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Sources present in the output that were forbidden or implausible."
+    },
+    "prompt_comparison": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Comparison between what the prompt requested and what was generated."
+    },
+    "suggested_prompt_revision": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Proposed revision to the prompt for regenerative prompting."
+    },
+    "regeneration_recommendation": {
+      "type": "string",
+      "enum": ["keep", "revise", "reject"],
+      "description": "Whether this generation should be kept, revised, or rejected."
+    },
+    "scores": {
+      "$ref": "score.schema.json",
+      "description": "Benchmark scores for this generation."
+    }
+  },
+  "$defs": {
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low", "undetermined"]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "confidence"],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Short note describing what supports or limits the claim."
+        }
+      }
+    },
+    "claim_list": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/claim" },
+      "default": []
+    },
+    "claim_taxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heard", "measured", "inferred", "interpreted", "speculative", "undetermined"],
+      "properties": {
+        "heard": { "$ref": "#/$defs/claim_list", "description": "Claims directly present in the audio, prompt, transcript, or provided description." },
+        "measured": { "$ref": "#/$defs/claim_list", "description": "Claims produced by file, signal, waveform, spectrogram, or metadata inspection." },
+        "inferred": { "$ref": "#/$defs/claim_list", "description": "Plausible logical deductions (not theory or culture)." },
+        "interpreted": { "$ref": "#/$defs/claim_list", "description": "Cultural, theoretical, affective, or contextual reading." },
+        "speculative": { "$ref": "#/$defs/claim_list", "description": "Fictional, symbolic, imaginative, or possible-world reading." },
+        "undetermined": { "$ref": "#/$defs/claim_list", "description": "What cannot be responsibly claimed." }
+      }
+    }
+  }
+}

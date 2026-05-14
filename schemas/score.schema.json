@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/score.schema.json",
+  "title": "Algophony Score Record",
+  "description": "Schema for benchmark scores of a generated soundscape.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prompt_adherence",
+    "source_accuracy",
+    "spatial_coherence",
+    "event_density_score",
+    "ecological_plausibility",
+    "causal_coherence",
+    "false_source_index",
+    "generic_naturalism_index",
+    "cultural_cliche_index",
+    "loopability",
+    "regeneration_potential"
+  ],
+  "properties": {
+    "prompt_adherence": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "How well the output matches the prompt. 1=mostly ignores, 5=fully follows."
+    },
+    "source_accuracy": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Accuracy of sound sources relative to prompt expectations."
+    },
+    "spatial_coherence": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Plausibility of spatial positioning and depth layering."
+    },
+    "event_density_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Appropriateness of event density for the described scene."
+    },
+    "ecological_plausibility": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Whether sources could plausibly coexist. 1=incoherent, 5=strong habitat logic."
+    },
+    "causal_coherence": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Whether events imply believable causes."
+    },
+    "false_source_index": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Degree of false or forbidden sources. 0=none, 5=dominant false sources."
+    },
+    "generic_naturalism_index": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Degree of generic birds/water/wind naturalism. 0=none, 5=fully generic."
+    },
+    "cultural_cliche_index": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Degree of stereotyped cultural representation. 0=none, 5=strong cliché."
+    },
+    "loopability": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Quality of seamless looping. 1=harsh boundary, 5=seamless."
+    },
+    "regeneration_potential": {
+      "type": "string",
+      "enum": ["keep", "revise", "reject"],
+      "description": "Recommendation for regeneration cycle."
+    }
+  }
+}

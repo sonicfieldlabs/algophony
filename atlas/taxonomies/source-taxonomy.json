@@ -1,0 +1,88 @@
+{
+  "title": "Algophony Source Taxonomy",
+  "version": "0.1",
+  "description": "Classification of soundscape source categories for algorithmic soundscape evaluation.",
+  "categories": {
+    "geophony": {
+      "label": "Geophony",
+      "description": "Non-biological sounds of the physical environment.",
+      "subcategories": [
+        "wind",
+        "rain",
+        "thunder",
+        "water_flow",
+        "waves",
+        "geological_activity",
+        "material_resonance",
+        "ice",
+        "sand",
+        "soil"
+      ]
+    },
+    "biophony": {
+      "label": "Biophony",
+      "description": "Sounds of living organisms.",
+      "subcategories": [
+        "birdsong",
+        "insect_chorus",
+        "amphibian_calls",
+        "mammalian_vocalization",
+        "aquatic_organisms",
+        "vegetation_movement",
+        "territorial_display",
+        "dawn_chorus",
+        "nocturnal_activity"
+      ]
+    },
+    "anthrophony": {
+      "label": "Anthrophony",
+      "description": "Human-generated sound.",
+      "subcategories": [
+        "speech",
+        "footsteps",
+        "traffic",
+        "construction",
+        "ritual",
+        "music",
+        "labor",
+        "domestic_activity",
+        "crowd",
+        "children",
+        "market",
+        "prayer"
+      ]
+    },
+    "technophony": {
+      "label": "Technophony",
+      "description": "Sounds of machines and technical infrastructure.",
+      "subcategories": [
+        "engine",
+        "hvac",
+        "electrical_hum",
+        "industrial_process",
+        "digital_artifact",
+        "broadcast",
+        "alarm",
+        "generator",
+        "ventilation",
+        "mechanical_rhythm"
+      ]
+    },
+    "algophony": {
+      "label": "Algophony",
+      "description": "Soundscape reality as produced, mediated, or re-heard by computational systems.",
+      "subcategories": [
+        "generated_naturalism",
+        "hallucinated_source",
+        "false_field_recording",
+        "generic_texture",
+        "model_artifact",
+        "prompt_leakage",
+        "recursive_generation",
+        "classifier_feedback",
+        "spatial_simulation",
+        "synthetic_ecology"
+      ]
+    }
+  }
+}

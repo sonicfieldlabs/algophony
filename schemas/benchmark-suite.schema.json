@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/benchmark-suite.schema.json",
+  "title": "Algophony Benchmark Suite",
+  "description": "Schema for an Algophony benchmark suite manifest, aligned with SFL bench conventions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "version", "description", "focus", "prompt_ids", "score_axes"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9._-]+$",
+      "description": "Machine-readable suite identifier."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable suite title."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Suite version string."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Description of what this benchmark suite evaluates."
+    },
+    "focus": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Evaluation focus areas for this suite."
+    },
+    "prompt_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^ALG-[0-9]{4}$"
+      },
+      "description": "List of prompt IDs included in this benchmark suite."
+    },
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Prompt categories covered by this suite."
+    },
+    "score_axes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Score axes evaluated in this suite."
+    },
+    "generation_modes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Generation backends compared in this benchmark."
+    },
+    "license": {
+      "type": "string",
+      "description": "License for the suite definition."
+    },
+    "provenance": {
+      "type": "string",
+      "description": "Origin and authorship of this suite."
+    }
+  }
+}
