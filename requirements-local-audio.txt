@@ -1,0 +1,11 @@
+torch
+torchaudio
+soundfile
+huggingface_hub
+transformers
+accelerate
+safetensors
+einops
+stable-audio-tools
+git+https://github.com/facebookresearch/audiocraft.git
+git+https://github.com/declare-lab/TangoFlux.git

@@ -1,0 +1,67 @@
+{
+  "title": "Algophony Prompt Categories",
+  "version": "0.1",
+  "description": "10 prompt categories for the Algophony Atlas v0.1, each targeting a specific benchmark question.",
+  "categories": [
+    {
+      "id": "forest",
+      "label": "Forest",
+      "benchmark_question": "Does the model generate ecological specificity or generic nature?",
+      "count_target": 10
+    },
+    {
+      "id": "city",
+      "label": "City",
+      "benchmark_question": "Does it understand urban layers beyond traffic?",
+      "count_target": 10
+    },
+    {
+      "id": "coast",
+      "label": "Coast",
+      "benchmark_question": "Can it balance water, wind, distance, birds, and human presence?",
+      "count_target": 10
+    },
+    {
+      "id": "interior",
+      "label": "Interior",
+      "benchmark_question": "Can it generate small-scale domestic acoustics?",
+      "count_target": 10
+    },
+    {
+      "id": "machine",
+      "label": "Machine",
+      "benchmark_question": "Does it distinguish machine source, rhythm, space, and material?",
+      "count_target": 10
+    },
+    {
+      "id": "ritual",
+      "label": "Ritual",
+      "benchmark_question": "Does it avoid generic exoticism or cinematic cliché?",
+      "count_target": 10
+    },
+    {
+      "id": "archive",
+      "label": "Archive",
+      "benchmark_question": "Can it simulate media decay and historical distance?",
+      "count_target": 10
+    },
+    {
+      "id": "club_exterior",
+      "label": "Club Exterior",
+      "benchmark_question": "Can it generate muffled social/music environments without becoming full music?",
+      "count_target": 10
+    },
+    {
+      "id": "ruin",
+      "label": "Ruin",
+      "benchmark_question": "Does it imply abandonment, weathering, absence, and material decay?",
+      "count_target": 10
+    },
+    {
+      "id": "impossible_ecology",
+      "label": "Impossible Ecology",
+      "benchmark_question": "Can it remain coherent while inventing a non-real environment?",
+      "count_target": 10
+    }
+  ]
+}

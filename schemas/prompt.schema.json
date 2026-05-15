@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/prompt.schema.json",
+  "title": "Algophony Prompt",
+  "description": "Schema for a text-to-soundscape prompt in the Algophony Atlas.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prompt_id",
+    "prompt_text",
+    "category",
+    "subcategories",
+    "intended_sources",
+    "location_imaginary",
+    "listening_mode",
+    "duration_target",
+    "loop_required",
+    "difficulty",
+    "evaluation_focus"
+  ],
+  "properties": {
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}$",
+      "description": "Unique prompt identifier."
+    },
+    "prompt_text": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The natural-language soundscape description used as generation input."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "forest",
+        "city",
+        "coast",
+        "interior",
+        "machine",
+        "ritual",
+        "archive",
+        "club_exterior",
+        "ruin",
+        "impossible_ecology"
+      ],
+      "description": "One of the 10 v0.1 prompt categories."
+    },
+    "subcategories": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Soundscape source types or evaluation dimensions relevant to this prompt."
+    },
+    "intended_sources": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "Sound sources expected to be present in the generated output."
+    },
+    "forbidden_sources": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "default": [],
+      "description": "Sound sources that must NOT appear in the generated output."
+    },
+    "location_imaginary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The imagined location or setting described by the prompt."
+    },
+    "listening_mode": {
+      "type": "string",
+      "enum": [
+        "signal-inspection-listening",
+        "acoulogical-object-listening",
+        "embodied-affective-listening",
+        "transductive-media-listening",
+        "forensic-archival-listening",
+        "ecological-posthuman-listening",
+        "critical-political-listening",
+        "musical-aesthetic-listening",
+        "symbolic-fictional-listening"
+      ],
+      "description": "Primary AKOÚŌ listening mode for evaluation."
+    },
+    "duration_target": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 120,
+      "description": "Target duration in seconds."
+    },
+    "loop_required": {
+      "type": "boolean",
+      "description": "Whether the output should be a seamless loop."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["calibration", "easy", "medium", "hard", "research"],
+      "description": "Difficulty level for benchmark evaluation."
+    },
+    "evaluation_focus": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "Evaluation axes this prompt specifically targets."
+    }
+  }
+}

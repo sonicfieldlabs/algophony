@@ -1,0 +1,62 @@
+{
+  "title": "Algophony Evaluation Focus Areas",
+  "version": "0.1",
+  "description": "All evaluation axes used in Algophony Benchmark Lite v0.1, organized by level.",
+  "levels": {
+    "level_1_prompt_adherence": {
+      "label": "Level 1: Prompt Adherence",
+      "axes": [
+        "source_adherence",
+        "negative_adherence",
+        "temporal_adherence",
+        "scale_adherence",
+        "mood_style_adherence"
+      ]
+    },
+    "level_2_acoustic_spatial": {
+      "label": "Level 2: Acoustic and Spatial Coherence",
+      "axes": [
+        "spatial_coherence",
+        "depth_layering",
+        "reverb_logic",
+        "motion_logic",
+        "density_balance",
+        "loopability"
+      ]
+    },
+    "level_3_ecological_causal": {
+      "label": "Level 3: Ecological and Causal Plausibility",
+      "axes": [
+        "ecological_plausibility",
+        "causal_coherence",
+        "biophonic_logic",
+        "geophonic_logic",
+        "anthropophonic_logic",
+        "technophonic_logic"
+      ]
+    },
+    "level_4_critical": {
+      "label": "Level 4: Critical Listening and False Ecology",
+      "axes": [
+        "stereotype_index",
+        "false_source_index",
+        "generic_naturalism_index",
+        "cultural_cliche_index",
+        "documentary_ambiguity",
+        "listening_multiplicity"
+      ]
+    }
+  },
+  "core_metrics": [
+    "prompt_adherence",
+    "source_accuracy",
+    "spatial_coherence",
+    "event_density_score",
+    "ecological_plausibility",
+    "causal_coherence",
+    "false_source_index",
+    "generic_naturalism_index",
+    "cultural_cliche_index",
+    "loopability"
+  ]
+}
