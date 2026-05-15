@@ -67,14 +67,18 @@ def compute_summaries(scores: list[dict], prompts: dict[str, dict]) -> dict:
         prompt_id = record.get("prompt_id", "")
         category = prompts.get(prompt_id, {}).get("category", "unknown")
 
-        # Extract scores from the scores array
-        score_dict = {}
-        for s in record.get("scores", []):
-            score_dict[s["axis"]] = s["score"]
+        # Extract scores — handle flat dict or array format
+        raw_scores = record.get("scores", {})
+        if isinstance(raw_scores, dict):
+            score_dict = raw_scores
+        elif isinstance(raw_scores, list):
+            score_dict = {s["axis"]: s["score"] for s in raw_scores}
+        else:
+            score_dict = {}
 
         for axis in score_axes:
             val = score_dict.get(axis)
-            if val is not None:
+            if val is not None and isinstance(val, (int, float)):
                 model_scores[model_name][axis].append(val)
                 category_scores[category][axis].append(val)
 

@@ -2,21 +2,13 @@
 """
 Extract technical audio features from generated soundscapes.
 
-Minimum analysis:
-  - Duration, sample rate, channel count
-  - RMS / loudness proxy, peak level
-  - Basic spectral centroid, spectral bandwidth
-  - Zero crossing rate
-  - Silence ratio
-  - Basic onset/event density proxy
-  - Loop boundary discontinuity proxy
+Analyzes: duration, sample rate, channels, RMS, peak, spectral centroid,
+spectral bandwidth, zero crossing rate, silence ratio, event density,
+loop boundary discontinuity.
 
 Usage:
-    python scripts/analyze_audio.py \\
-        --metadata generations/metadata/generations-v0.1.jsonl \\
-        --out generations/metadata/audio-analysis-v0.1.jsonl
-
-Status: Stub — requires librosa or equivalent audio analysis library.
+    python scripts/analyze_audio.py
+    python scripts/analyze_audio.py --limit 10
 """
 
 import argparse
@@ -24,97 +16,87 @@ import json
 import sys
 from pathlib import Path
 
+import librosa
+import numpy as np
+import soundfile as sf
+
 
 def analyze_file(audio_path: Path) -> dict | None:
-    """
-    Analyze a single audio file and return feature dict.
-
-    Requires librosa. Returns None if file not found or analysis fails.
-    """
+    """Analyze a single audio file and return feature dict."""
     if not audio_path.exists():
         return None
 
     try:
-        import librosa
-        import numpy as np
-    except ImportError:
-        print("Error: librosa and numpy required. Install with: pip install librosa numpy")
-        sys.exit(1)
+        info = sf.info(str(audio_path))
+        y, sr = librosa.load(str(audio_path), sr=None, mono=True)
+    except Exception as e:
+        print(f"    ⚠ Read error: {e}")
+        return None
 
-    y, sr = librosa.load(str(audio_path), sr=None, mono=False)
-
-    # Handle mono/stereo
-    if y.ndim == 1:
-        channels = 1
-        y_mono = y
-    else:
-        channels = y.shape[0]
-        y_mono = librosa.to_mono(y)
-
-    duration = librosa.get_duration(y=y_mono, sr=sr)
-    rms = float(np.sqrt(np.mean(y_mono ** 2)))
-    peak = float(np.max(np.abs(y_mono)))
-    zcr = float(np.mean(librosa.feature.zero_crossing_rate(y_mono)))
+    duration = librosa.get_duration(y=y, sr=sr)
+    rms_val = float(np.sqrt(np.mean(y ** 2)))
+    peak = float(np.max(np.abs(y)))
+    zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))
 
     # Spectral features
-    centroid = float(np.mean(librosa.feature.spectral_centroid(y=y_mono, sr=sr)))
-    bandwidth = float(np.mean(librosa.feature.spectral_bandwidth(y=y_mono, sr=sr)))
+    centroid = float(np.mean(librosa.feature.spectral_centroid(y=y, sr=sr)))
+    bandwidth = float(np.mean(librosa.feature.spectral_bandwidth(y=y, sr=sr)))
 
     # Silence ratio (frames below -40dB)
-    frame_rms = librosa.feature.rms(y=y_mono)[0]
+    frame_rms = librosa.feature.rms(y=y)[0]
     silence_threshold = 10 ** (-40 / 20)
-    silence_ratio = float(np.sum(frame_rms < silence_threshold) / len(frame_rms))
+    silence_ratio = float(np.sum(frame_rms < silence_threshold) / max(len(frame_rms), 1))
 
-    # Event density proxy (onset count / duration)
-    onsets = librosa.onset.onset_detect(y=y_mono, sr=sr)
-    event_density = len(onsets) / duration if duration > 0 else 0
+    # Event density (onsets / duration)
+    try:
+        onsets = librosa.onset.onset_detect(y=y, sr=sr)
+        event_density = len(onsets) / duration if duration > 0 else 0
+    except Exception:
+        onsets = []
+        event_density = 0
 
-    # Loop boundary discontinuity proxy
-    # Compare first and last 50ms of audio
+    # Loop boundary discontinuity
     boundary_samples = int(0.05 * sr)
-    if len(y_mono) > boundary_samples * 2:
-        start_rms = float(np.sqrt(np.mean(y_mono[:boundary_samples] ** 2)))
-        end_rms = float(np.sqrt(np.mean(y_mono[-boundary_samples:] ** 2)))
-        loop_discontinuity = abs(start_rms - end_rms) / max(rms, 1e-10)
+    if len(y) > boundary_samples * 2:
+        start_rms = float(np.sqrt(np.mean(y[:boundary_samples] ** 2)))
+        end_rms = float(np.sqrt(np.mean(y[-boundary_samples:] ** 2)))
+        loop_disc = abs(start_rms - end_rms) / max(rms_val, 1e-10)
     else:
-        loop_discontinuity = None
+        loop_disc = None
+
+    # Spectral flatness (tonal vs noise)
+    flatness = float(np.mean(librosa.feature.spectral_flatness(y=y)))
 
     return {
         "duration": round(duration, 3),
         "sample_rate": sr,
-        "channels": channels,
-        "rms": round(rms, 6),
+        "channels": info.channels,
+        "rms": round(rms_val, 6),
         "peak_level": round(peak, 6),
         "spectral_centroid_hz": round(centroid, 2),
         "spectral_bandwidth_hz": round(bandwidth, 2),
+        "spectral_flatness": round(flatness, 6),
         "zero_crossing_rate": round(zcr, 6),
         "silence_ratio": round(silence_ratio, 4),
+        "onset_count": len(onsets),
         "event_density_per_sec": round(event_density, 3),
-        "loop_boundary_discontinuity": round(loop_discontinuity, 6) if loop_discontinuity is not None else None,
+        "loop_boundary_discontinuity": round(loop_disc, 6) if loop_disc is not None else None,
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description="Analyze Algophony audio files.")
-    parser.add_argument("--metadata", required=True,
-                        help="Path to generation metadata JSONL.")
-    parser.add_argument("--out", required=True,
-                        help="Output path for analysis JSONL.")
-    parser.add_argument("--limit", type=int, default=None,
-                        help="Maximum number of files to analyze.")
+    parser.add_argument("--metadata", default="generations/metadata/generations-v0.1.jsonl")
+    parser.add_argument("--out", default="generations/metadata/audio-analysis-v0.1.jsonl")
+    parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
 
     project_root = Path(__file__).resolve().parent.parent
-    metadata_path = Path(args.metadata)
-    if not metadata_path.is_absolute():
-        metadata_path = project_root / metadata_path
-
-    out_path = Path(args.out)
-    if not out_path.is_absolute():
-        out_path = project_root / out_path
+    metadata_path = project_root / args.metadata
+    out_path = project_root / args.out
 
     if not metadata_path.exists():
-        print(f"Error: Metadata file not found: {metadata_path}")
+        print(f"Error: {metadata_path} not found")
         sys.exit(1)
 
     records = []
@@ -124,36 +106,38 @@ def main():
             if line:
                 records.append(json.loads(line))
 
-    if not records:
-        print("No generation records found. Nothing to analyze.")
-        sys.exit(0)
-
     if args.limit:
         records = records[:args.limit]
 
-    print(f"Analyzing {len(records)} audio file(s)...\n")
+    if not records:
+        print("No records. Nothing to analyze.")
+        sys.exit(0)
 
+    print(f"Analyzing {len(records)} audio file(s)...\n")
     results = []
     for record in records:
         audio_id = record.get("audio_id", "unknown")
         storage_uri = record.get("storage_uri", "")
-        audio_path = project_root / storage_uri
+        audio_path = Path(storage_uri)
+        if not audio_path.is_absolute():
+            audio_path = project_root / storage_uri
 
         features = analyze_file(audio_path)
         if features:
             features["audio_id"] = audio_id
             features["prompt_id"] = record.get("prompt_id", "")
+            features["model"] = record.get("model", "")
             results.append(features)
             print(f"  ✓ {audio_id}")
         else:
-            print(f"  ✗ {audio_id}: file not found at {audio_path}")
+            print(f"  ✗ {audio_id}: not found at {audio_path}")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
-        for result in results:
-            f.write(json.dumps(result) + "\n")
+        for r in results:
+            f.write(json.dumps(r) + "\n")
 
-    print(f"\nAnalyzed {len(results)} file(s). Output: {out_path}")
+    print(f"\nAnalyzed {len(results)}/{len(records)} files → {out_path}")
 
 
 if __name__ == "__main__":

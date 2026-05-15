@@ -25,6 +25,8 @@ from pathlib import Path
 
 try:
     from jsonschema import Draft202012Validator, ValidationError
+    from referencing import Registry, Resource
+    from referencing.jsonschema import DRAFT202012
 except ImportError:
     print("Error: jsonschema package required. Install with: pip install jsonschema")
     sys.exit(1)
@@ -36,6 +38,17 @@ def load_schema(schema_path: Path) -> dict | None:
         return None
     with open(schema_path) as f:
         return json.load(f)
+
+
+def build_schema_registry(schema_dir: Path) -> Registry:
+    """Build a local schema registry for $ref resolution."""
+    resources = []
+    for schema_path in schema_dir.glob("*.schema.json"):
+        schema = load_schema(schema_path)
+        if schema and "$id" in schema:
+            resource = Resource.from_contents(schema, default_specification=DRAFT202012)
+            resources.append((schema["$id"], resource))
+    return Registry().with_resources(resources)
 
 
 def load_jsonl(jsonl_path: Path) -> list[tuple[int, dict | None, str | None]]:
@@ -60,7 +73,8 @@ def validate_records(records: list[tuple[int, dict | None, str | None]],
                      schema: dict | None,
                      id_field: str,
                      label: str,
-                     verbose: bool = False) -> list[str]:
+                     verbose: bool = False,
+                     registry: Registry | None = None) -> list[str]:
     """Validate parsed JSONL records against a schema."""
     errors = []
     seen_ids = set()
@@ -70,7 +84,10 @@ def validate_records(records: list[tuple[int, dict | None, str | None]],
             print(f"  ℹ {label}: No records found (empty file).")
         return errors
 
-    validator = Draft202012Validator(schema) if schema else None
+    if schema:
+        validator = Draft202012Validator(schema, registry=registry or Registry())
+    else:
+        validator = None
 
     for line_num, record, parse_error in records:
         if parse_error:
@@ -167,6 +184,9 @@ def main():
 
     all_errors = []
 
+    # Build local schema registry for $ref resolution
+    registry = build_schema_registry(schema_dir)
+
     # Load schemas
     prompt_schema = load_schema(schema_dir / "prompt.schema.json")
     generation_schema = load_schema(schema_dir / "generation.schema.json")
@@ -175,7 +195,7 @@ def main():
     # Validate prompts
     prompt_path = project_root / "atlas" / "prompts" / "algophony-atlas-v0.1.jsonl"
     prompt_records = load_jsonl(prompt_path)
-    prompt_errors = validate_records(prompt_records, prompt_schema, "prompt_id", "Prompts", args.verbose)
+    prompt_errors = validate_records(prompt_records, prompt_schema, "prompt_id", "Prompts", args.verbose, registry)
     all_errors.extend(prompt_errors)
 
     # Check category balance
@@ -196,7 +216,7 @@ def main():
     # Validate generation metadata
     gen_path = project_root / "generations" / "metadata" / "generations-v0.1.jsonl"
     gen_records = load_jsonl(gen_path)
-    gen_errors = validate_records(gen_records, generation_schema, "audio_id", "Generations", args.verbose)
+    gen_errors = validate_records(gen_records, generation_schema, "audio_id", "Generations", args.verbose, registry)
     all_errors.extend(gen_errors)
 
     # Validate reports (JSON files)
@@ -211,7 +231,7 @@ def main():
             except json.JSONDecodeError as e:
                 report_records.append((0, None, f"{rfile.name}: {e}"))
 
-    report_errors = validate_records(report_records, report_schema, "report_id", "Reports", args.verbose)
+    report_errors = validate_records(report_records, report_schema, "report_id", "Reports", args.verbose, registry)
     all_errors.extend(report_errors)
 
     # Cross-reference checks
