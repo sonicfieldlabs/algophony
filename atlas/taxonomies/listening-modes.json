@@ -1,0 +1,76 @@
+{
+  "title": "Algophony Listening Modes",
+  "version": "0.1",
+  "description": "Listening modes for Algophony evaluation, mapped from the AKOÚŌ framework.",
+  "source": "AKOÚŌ v0.3",
+  "modes": [
+    {
+      "id": "signal-inspection-listening",
+      "label": "Signal Inspection Listening",
+      "description": "Technical analysis of signal properties: duration, frequency, dynamics, noise floor, artifacts.",
+      "algophony_use": "Measure loopability, detect model artifacts, assess spectral characteristics."
+    },
+    {
+      "id": "acoulogical-object-listening",
+      "label": "Acoulogical Object Listening",
+      "description": "Identifying and describing perceptual sound objects within the soundscape.",
+      "algophony_use": "Identify sources, assess source accuracy, detect false or hallucinated sources."
+    },
+    {
+      "id": "embodied-affective-listening",
+      "label": "Embodied Affective Listening",
+      "description": "Somatic and emotional response to the sonic environment.",
+      "algophony_use": "Assess mood/style adherence, detect generic emotional coding."
+    },
+    {
+      "id": "transductive-media-listening",
+      "label": "Transductive Media Listening",
+      "description": "Attending to the technical mediation shaping what is heard.",
+      "algophony_use": "Detect false field recording aesthetics, assess documentary ambiguity."
+    },
+    {
+      "id": "forensic-archival-listening",
+      "label": "Forensic Archival Listening",
+      "description": "Treating sound as evidence, artifact, or historical document.",
+      "algophony_use": "Evaluate archive prompts, assess media decay simulation, temporal distance."
+    },
+    {
+      "id": "ecological-posthuman-listening",
+      "label": "Ecological Posthuman Listening",
+      "description": "Attending to habitat relations, nonhuman agency, and ecological structure.",
+      "algophony_use": "Assess ecological plausibility, biophonic logic, generic naturalism."
+    },
+    {
+      "id": "critical-political-listening",
+      "label": "Critical Political Listening",
+      "description": "Attending to power, erasure, representation, and political context in sound.",
+      "algophony_use": "Assess cultural cliché, stereotyping, representational violence."
+    },
+    {
+      "id": "musical-aesthetic-listening",
+      "label": "Musical Aesthetic Listening",
+      "description": "Attending to rhythm, pitch, timbre, texture, and aesthetic quality.",
+      "algophony_use": "Assess club exterior prompts, ritual musicality, sound-design quality."
+    },
+    {
+      "id": "symbolic-fictional-listening",
+      "label": "Symbolic Fictional Listening",
+      "description": "Reading sound as myth, fiction, symbol, or possible-world construction.",
+      "algophony_use": "Assess impossible ecology prompts, speculative soundscape coherence."
+    }
+  ],
+  "algophony_composite_modes": [
+    {
+      "id": "situated-urban-listening",
+      "label": "Situated Urban Listening",
+      "description": "Composite mode combining acoulogical, ecological, and critical-political listening for urban soundscapes.",
+      "components": ["acoulogical-object-listening", "ecological-posthuman-listening", "critical-political-listening"]
+    },
+    {
+      "id": "false-ecology-audit",
+      "label": "False Ecology Audit",
+      "description": "Composite mode for detecting generic naturalism and ecological implausibility.",
+      "components": ["ecological-posthuman-listening", "signal-inspection-listening", "transductive-media-listening"]
+    }
+  ]
+}

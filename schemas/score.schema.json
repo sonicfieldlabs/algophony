@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/score.schema.json",
+  "title": "Algophony Final Score Set",
+  "description": "Flat final score set for a soundscape. Provenance is stored separately on reports and score records.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prompt_adherence",
+    "source_accuracy",
+    "spatial_coherence",
+    "event_density_score",
+    "ecological_plausibility",
+    "causal_coherence",
+    "false_source_index",
+    "generic_naturalism_index",
+    "cultural_cliche_index",
+    "loopability",
+    "regeneration_potential"
+  ],
+  "properties": {
+    "prompt_adherence": { "$ref": "#/$defs/positive_score" },
+    "source_accuracy": { "$ref": "#/$defs/positive_score" },
+    "spatial_coherence": { "$ref": "#/$defs/positive_score" },
+    "event_density_score": { "$ref": "#/$defs/positive_score" },
+    "ecological_plausibility": { "$ref": "#/$defs/positive_score" },
+    "causal_coherence": { "$ref": "#/$defs/positive_score" },
+    "false_source_index": { "$ref": "#/$defs/risk_score" },
+    "generic_naturalism_index": { "$ref": "#/$defs/risk_score" },
+    "cultural_cliche_index": { "$ref": "#/$defs/risk_score" },
+    "loopability": { "$ref": "#/$defs/positive_score" },
+    "regeneration_potential": {
+      "type": "string",
+      "enum": ["keep", "revise", "reject"]
+    },
+    "artificiality_discriminability": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Can the listener tell if this is real or generated? 5 = clearly identifiable, 0 = indistinguishable. Null when ground truth provenance is unknown."
+    }
+  },
+  "$defs": {
+    "positive_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+    }
+  }
+}
