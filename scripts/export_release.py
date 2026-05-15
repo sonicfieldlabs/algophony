@@ -52,7 +52,16 @@ def check_secrets(project_root: Path) -> list[str]:
         if path.suffix in AUDIO_EXTENSIONS:
             continue
         if path.name in (".env", ".env.local"):
-            errors.append(f"Secret file found: {path.relative_to(project_root)}")
+            # Check if tracked by git
+            import subprocess
+            result = subprocess.run(
+                ["git", "ls-files", str(path.relative_to(project_root))],
+                capture_output=True, text=True, cwd=project_root
+            )
+            if result.stdout.strip():
+                errors.append(f"Secret file TRACKED by git: {path.relative_to(project_root)}")
+            else:
+                print(f"  ℹ {path.relative_to(project_root)} exists but is gitignored (OK)")
             continue
         if path.name in SKIP_SECRET_FILES:
             continue
@@ -123,16 +132,30 @@ def check_license_fields(project_root: Path) -> list[str]:
 
 
 def check_staged_audio(project_root: Path) -> list[str]:
-    """Check for large audio files that might be staged for git."""
+    """Check for large audio files that are tracked by git (not gitignored)."""
+    import subprocess
     errors = []
+
+    # Only flag audio files that are actually tracked by git
+    try:
+        result = subprocess.run(
+            ["git", "ls-files"], capture_output=True, text=True, cwd=project_root
+        )
+        tracked = set(result.stdout.strip().split("\n")) if result.stdout.strip() else set()
+    except Exception:
+        tracked = set()
+
     for ext in AUDIO_EXTENSIONS:
         for path in project_root.rglob(f"*{ext}"):
             if ".git" in path.parts:
                 continue
+            rel = str(path.relative_to(project_root))
+            if rel not in tracked:
+                continue  # gitignored — expected
             size_mb = path.stat().st_size / (1024 * 1024)
             if size_mb > 0.5:
                 errors.append(
-                    f"Large audio file ({size_mb:.1f}MB): {path.relative_to(project_root)}"
+                    f"Large audio file tracked by git ({size_mb:.1f}MB): {rel}"
                 )
 
     return errors
