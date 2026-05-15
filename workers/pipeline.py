@@ -25,6 +25,9 @@ def get_adapter(provider_id: str, **kwargs):
     elif provider_id in ("synth_baseline", "synthetic", "baseline"):
         from workers.adapters.scaper import SyntheticBaselineAdapter
         return SyntheticBaselineAdapter(**kwargs)
+    elif provider_id in ("spectral_fm", "fm", "fm_baseline"):
+        from workers.adapters.spectral_fm import SpectralFMAdapter
+        return SpectralFMAdapter(**kwargs)
     else:
         raise ValueError(f"Unknown provider: {provider_id}")
 
