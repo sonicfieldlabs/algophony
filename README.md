@@ -1,3 +1,5 @@
+<img width="3548" height="1774" alt="algophony" src="https://github.com/user-attachments/assets/9371bbb5-6e5b-4788-84c1-5b6a23431a26" />
+
 # Algophony
 
 Algophony studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is a Sonic Field Labs research framework for evaluating algorithmic soundscapes as generated, simulated, hybrid, or recursively interpreted sonic environments.
