@@ -439,7 +439,10 @@ def main() -> None:
         analyze_upload(Path(sys.argv[2]), Path(sys.argv[3]))
         return
 
-    raw = sys.stdin.read()
+    if len(sys.argv) == 3 and sys.argv[1] == "--stdin-from":
+        raw = Path(sys.argv[2]).read_text(encoding="utf-8")
+    else:
+        raw = sys.stdin.read()
     try:
         params = json.loads(raw)
     except json.JSONDecodeError as e:

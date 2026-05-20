@@ -25,6 +25,24 @@ By default the app expects to be run from `apps/web` and reads data from the rep
 ALGOPHONY_DATA_ROOT=/path/to/algophony npm run dev
 ```
 
+## Studio (Playground)
+
+The Playground (generation + upload) is gated and disabled by default. To enable
+it locally:
+
+```bash
+ALGOPHONY_ENABLE_STUDIO=true npm run dev
+```
+
+Studio endpoints (`/api/generate`, `/api/upload`) require either:
+
+- the request to originate from `localhost` / `127.0.0.1` (the default), OR
+- a matching `x-studio-token` header when `ALGOPHONY_STUDIO_TOKEN` is set
+  (required if you expose the dashboard behind a proxy).
+
+Concurrent Python subprocesses are capped by `ALGOPHONY_STUDIO_MAX_CONCURRENT`
+(default `2`). Excess requests get `503 Retry-After: 15`.
+
 ## Routes
 
 - `/` overview

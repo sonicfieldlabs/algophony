@@ -1,28 +1,29 @@
-import { CATEGORIES, POSITIVE_AXES, RISK_AXES, SCORE_AXES, axisDirection, getPrompts, getScores } from "../lib/data";
+import { CATEGORIES, POSITIVE_AXES, RISK_AXES, SCORE_AXES, getPrompts, getScores } from "../lib/data";
+import { ScoreBar } from "../components/ScoreBar";
 
-function avg(nums: number[]): number {
-  return nums.length ? Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 100) / 100 : 0;
+function avg(nums: number[]): number | null {
+  if (!nums.length) return null;
+  return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 100) / 100;
 }
 
 function composite(axes: Record<string, number[]>): number {
-  const positive = POSITIVE_AXES.map((axis) => avg(axes[axis] || [])).filter((value) => value > 0);
-  const risks = RISK_AXES.map((axis) => avg(axes[axis] || []));
+  const positive = POSITIVE_AXES.map((axis) => avg(axes[axis] || [])).filter(
+    (value): value is number => value !== null && value > 0,
+  );
+  const risks = RISK_AXES.map((axis) => avg(axes[axis] || [])).filter((value): value is number => value !== null);
   const positiveNorm = positive.length ? positive.reduce((sum, value) => sum + (value - 1) / 4, 0) / positive.length : 0;
   const riskNorm = risks.length ? risks.reduce((sum, value) => sum + value / 5, 0) / risks.length : 0;
   return Math.round((positiveNorm * 0.72 + (1 - riskNorm) * 0.28) * 10000) / 100;
 }
 
-function ScoreBar({ value, axis }: { value: number; axis: string }) {
-  const pct = (value / 5) * 100;
-  const risk = axisDirection(axis) === "risk";
-  const level = risk ? (value <= 1 ? "high" : value <= 2.5 ? "mid" : "low") : (value <= 2 ? "low" : value <= 3.5 ? "mid" : "high");
-  return (
-    <span className="score-bar">
-      <span className="score-value">{value}</span>
-      <span className="score-bar-track"><span className="score-bar-fill" style={{ width: `${pct}%` }} data-level={level}></span></span>
-    </span>
-  );
-}
+const CATEGORY_AXES: readonly string[] = [
+  "prompt_adherence",
+  "spatial_coherence",
+  "event_density_score",
+  "ecological_plausibility",
+  "generic_naturalism_index",
+  "loopability",
+];
 
 export default function ComparisonPage() {
   const scores = getScores();
@@ -53,7 +54,9 @@ export default function ComparisonPage() {
     <>
       <div className="page-header">
         <h1 className="page-title">Model Comparison</h1>
-        <p className="page-subtitle">{models.length} procedural controls · {scores.length} score records · risk indices are lower-is-better</p>
+        <p className="page-subtitle">
+          {models.length} procedural controls · {scores.length} score records · risk indices are lower-is-better
+        </p>
       </div>
       {scores.length === 0 && (
         <div className="notice-card">
@@ -69,15 +72,26 @@ export default function ComparisonPage() {
               <tr>
                 <th>Model</th>
                 <th>Composite 0-100</th>
-                {SCORE_AXES.map((axis) => <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>)}
+                {SCORE_AXES.map((axis) => (
+                  <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {models.map((model) => (
                 <tr key={model}>
-                  <td><strong>{model}</strong><div className="table-note">procedural control</div></td>
-                  <td><span className="composite-score">{composite(modelGlobal[model])}</span></td>
-                  {SCORE_AXES.map((axis) => <td key={axis}><ScoreBar value={avg(modelGlobal[model][axis] || [])} axis={axis} /></td>)}
+                  <td>
+                    <strong>{model}</strong>
+                    <div className="table-note">procedural control</div>
+                  </td>
+                  <td>
+                    <span className="composite-score">{composite(modelGlobal[model])}</span>
+                  </td>
+                  {SCORE_AXES.map((axis) => (
+                    <td key={axis}>
+                      <ScoreBar value={avg(modelGlobal[model][axis] || [])} axis={axis} />
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -95,7 +109,7 @@ export default function ComparisonPage() {
                 <thead>
                   <tr>
                     <th>Model</th>
-                    {["prompt_adherence", "spatial_coherence", "event_density_score", "ecological_plausibility", "generic_naturalism_index", "loopability"].map((axis) => (
+                    {CATEGORY_AXES.map((axis) => (
                       <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>
                     ))}
                   </tr>
@@ -106,8 +120,10 @@ export default function ComparisonPage() {
                     return (
                       <tr key={model}>
                         <td>{model}</td>
-                        {["prompt_adherence", "spatial_coherence", "event_density_score", "ecological_plausibility", "generic_naturalism_index", "loopability"].map((axis) => (
-                          <td key={axis}><ScoreBar value={avg(categoryData[axis] || [])} axis={axis} /></td>
+                        {CATEGORY_AXES.map((axis) => (
+                          <td key={axis}>
+                            <ScoreBar value={avg(categoryData[axis] || [])} axis={axis} />
+                          </td>
                         ))}
                       </tr>
                     );
