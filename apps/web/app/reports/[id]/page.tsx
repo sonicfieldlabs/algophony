@@ -1,22 +1,13 @@
-import { SCORE_AXES, axisDirection, getPrompts, getReport, getReports } from "../../lib/data";
+import { SCORE_AXES, getPrompts, getReport, getReports } from "../../lib/data";
 import { LISTENING_MODE_LABELS, type AkouoListeningMode } from "../../lib/listening-contract";
+import { ScoreBar } from "../../components/ScoreBar";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import { CopyButton } from "../../components/CopyButton";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
 export function generateStaticParams() {
   return getReports().map((report) => ({ id: report.report_id }));
-}
-
-function ScoreBar({ value, axis }: { value: number; axis: string }) {
-  const pct = (value / 5) * 100;
-  const risk = axisDirection(axis) === "risk";
-  const level = risk ? (value <= 1 ? "high" : value <= 2.5 ? "mid" : "low") : (value <= 2 ? "low" : value <= 3.5 ? "mid" : "high");
-  return (
-    <span className="score-bar">
-      <span className="score-value">{value}</span>
-      <span className="score-bar-track"><span className="score-bar-fill" style={{ width: `${pct}%` }} data-level={level}></span></span>
-    </span>
-  );
 }
 
 export default async function ReportDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -31,14 +22,15 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
 
   return (
     <>
+      <Breadcrumb items={[{ label: "Reports", href: "/reports" }, { label: report.report_id }]} />
       <div className="page-header">
-        <h1 className="page-title">{report.report_id}</h1>
+        <h1 className="page-title">
+          {report.report_id} <CopyButton value={report.report_id} />
+        </h1>
         <p className="page-subtitle">
-          <Link href={`/prompts/${report.prompt_id}`}>{report.prompt_id}</Link>
-          {" -> "}
-          <Link href={`/generations/${report.audio_id}`}>{report.audio_id}</Link>
-          {" · "}
-          <span className={`badge badge-status-${report.review_status}`}>{report.review_status.replace(/_/g, " ")}</span>
+          <Link href={`/prompts/${report.prompt_id}`}>{report.prompt_id}</Link> →{" "}
+          <Link href={`/generations/${report.audio_id}`}>{report.audio_id}</Link>{" "}
+          · <span className={`badge badge-status-${report.review_status}`}>{report.review_status.replace(/_/g, " ")}</span>
         </p>
       </div>
 
@@ -71,12 +63,16 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           {Object.entries(report.claim_taxonomy).map(([bucket, claims]) => (
             <div className="card compact-card" key={bucket}>
               <div className="card-title">{bucket}</div>
-              {claims.length ? claims.map((claim, index) => (
-                <p className="claim-text" key={`${bucket}-${index}`}>
-                  <span className="claim-confidence">{claim.confidence}</span> {claim.statement}
-                  <span className="claim-basis">Basis: {claim.basis}</span>
-                </p>
-              )) : <p className="section-note">None recorded.</p>}
+              {claims.length ? (
+                claims.map((claim, index) => (
+                  <p className="claim-text" key={`${bucket}-${index}`}>
+                    <span className="claim-confidence">{claim.confidence}</span> {claim.statement}
+                    <span className="claim-basis">Basis: {claim.basis}</span>
+                  </p>
+                ))
+              ) : (
+                <p className="section-note">None recorded.</p>
+              )}
             </div>
           ))}
         </div>
@@ -117,7 +113,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           {SCORE_AXES.map((axis) => (
             <div className="detail-row" key={axis}>
               <span className="detail-label">{axis.replace(/_/g, " ")}</span>
-              <span><ScoreBar value={scores[axis]} axis={axis} /></span>
+              <span><ScoreBar value={typeof scores[axis] === "number" ? (scores[axis] as number) : null} axis={axis} /></span>
             </div>
           ))}
           <div className="detail-row">
@@ -134,9 +130,11 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
             {(["detected", "inferred", "absent_expected", "forbidden_detected", "hallucinated"] as const).map((kind) => (
               <div key={kind} style={{ marginBottom: 10 }}>
                 <p className="source-heading">{kind.replace(/_/g, " ")}</p>
-                {report.sources[kind].length
-                  ? report.sources[kind].map((source) => <span key={source} className="source-tag">{source}</span>)
-                  : <span className="section-note">None</span>}
+                {report.sources[kind].length ? (
+                  report.sources[kind].map((source) => <span key={source} className="source-tag">{source}</span>)
+                ) : (
+                  <span className="section-note">None</span>
+                )}
               </div>
             ))}
           </div>
@@ -155,11 +153,15 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      <div className="detail-section">
-        <div className="detail-section-title">Score Provenance</div>
-        <div className="card" style={{ overflowX: "auto" }}>
+      <details className="detail-section" style={{ marginBottom: 28 }}>
+        <summary className="detail-section-title" style={{ cursor: "pointer", listStyle: "revert" }}>
+          Score Provenance ({report.score_provenance.length})
+        </summary>
+        <div className="card" style={{ overflowX: "auto", marginTop: 12 }}>
           <table className="data-table">
-            <thead><tr><th>Axis</th><th>Score</th><th>Scorer</th><th>Evidence</th><th>Confidence</th></tr></thead>
+            <thead>
+              <tr><th>Axis</th><th>Score</th><th>Scorer</th><th>Evidence</th><th>Confidence</th></tr>
+            </thead>
             <tbody>
               {report.score_provenance.map((item) => (
                 <tr key={item.axis}>
@@ -173,7 +175,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
             </tbody>
           </table>
         </div>
-      </div>
+      </details>
 
       <div className="detail-section">
         <div className="detail-section-title">Prompt Revision</div>

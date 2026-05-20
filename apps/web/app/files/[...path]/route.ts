@@ -1,4 +1,6 @@
-import fs from "node:fs";
+import { stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { Readable } from "node:stream";
 import path from "node:path";
 import { notFound } from "next/navigation";
 
@@ -12,6 +14,16 @@ const ALLOWED_ROOTS = [
   { prefix: "docs/", root: path.join(REPO_ROOT, "docs") },
 ];
 
+const MIME_BY_EXT: Record<string, string> = {
+  ".json": "application/json; charset=utf-8",
+  ".jsonl": "application/json; charset=utf-8",
+  ".csv": "text/csv; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
+};
+
+export const dynamic = "force-dynamic";
+
 export async function GET(_: Request, { params }: { params: Promise<{ path: string[] }> }) {
   const { path: parts } = await params;
   const relPath = parts.join("/");
@@ -19,15 +31,28 @@ export async function GET(_: Request, { params }: { params: Promise<{ path: stri
   if (!allowed) notFound();
 
   const suffix = relPath.slice(allowed.prefix.length);
+  if (suffix.includes("\0")) notFound();
   const target = path.resolve(/* turbopackIgnore: true */ allowed.root, suffix);
-  if (!target.startsWith(allowed.root) || !fs.existsSync(target)) notFound();
+  if (!target.startsWith(allowed.root + path.sep) && target !== allowed.root) notFound();
 
-  const ext = path.extname(target);
-  const type = ext === ".json" || ext === ".jsonl"
-    ? "application/json; charset=utf-8"
-    : ext === ".csv"
-      ? "text/csv; charset=utf-8"
-      : "text/plain; charset=utf-8";
+  let fileStat;
+  try {
+    fileStat = await stat(target);
+  } catch {
+    notFound();
+  }
+  if (!fileStat.isFile()) notFound();
 
-  return new Response(fs.readFileSync(target), { headers: { "Content-Type": type } });
+  const ext = path.extname(target).toLowerCase();
+  const type = MIME_BY_EXT[ext] || "text/plain; charset=utf-8";
+
+  const stream = createReadStream(target);
+  return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
+    headers: {
+      "Content-Type": type,
+      "Content-Length": String(fileStat.size),
+      "Cache-Control": "no-cache",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
 }

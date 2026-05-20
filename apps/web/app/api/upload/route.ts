@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir, unlink } from "node:fs/promises";
+import { writeFile, mkdir, unlink, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import os from "node:os";
+import crypto from "node:crypto";
+import { promisify } from "node:util";
+import { authorizeStudio } from "../../lib/studio-auth";
+import { tryAcquireStudioSlot, releaseStudioSlot } from "../../lib/concurrency";
+
+const execFileAsync = promisify(execFile);
 
 const REPO_ROOT = path.resolve(process.cwd(), "../..");
 const UPLOADS_AUDIO = path.join(REPO_ROOT, "uploads", "audio");
 const SCRIPTS_DIR = path.join(REPO_ROOT, "scripts");
 
-const STUDIO_ENABLED = process.env.ALGOPHONY_ENABLE_STUDIO === "true";
+const ALLOWED_EXT = new Set(["wav", "mp3", "flac", "aiff", "ogg"]);
+const MAX_FILE_BYTES = 50 * 1024 * 1024;
 
 function cleanString(value: unknown, maxLength: number): string {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
 
 function cleanUploadMetadata(value: unknown): Record<string, string> {
-  const raw = typeof value === "object" && value ? value as Record<string, unknown> : {};
+  const raw = typeof value === "object" && value ? (value as Record<string, unknown>) : {};
   return {
     source_type: cleanString(raw.source_type, 80) || "field_recording",
     recorder: cleanString(raw.recorder, 160),
@@ -28,8 +35,16 @@ function cleanUploadMetadata(value: unknown): Record<string, string> {
 }
 
 export async function POST(req: NextRequest) {
-  if (!STUDIO_ENABLED) {
-    return new Response(null, { status: 404 });
+  const auth = authorizeStudio(req);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.reason }, { status: auth.status });
+  }
+
+  if (!tryAcquireStudioSlot()) {
+    return NextResponse.json(
+      { error: "Studio is busy. Please retry in a moment." },
+      { status: 503, headers: { "Retry-After": "15" } },
+    );
   }
 
   let tmpIn: string | null = null;
@@ -45,13 +60,11 @@ export async function POST(req: NextRequest) {
     }
 
     const ext = file.name.split(".").pop()?.toLowerCase() || "wav";
-    const allowed = ["wav", "mp3", "flac", "aiff", "ogg"];
-    if (!allowed.includes(ext)) {
+    if (!ALLOWED_EXT.has(ext)) {
       return NextResponse.json({ error: `Unsupported format: .${ext}` }, { status: 400 });
     }
 
-    // 50MB limit
-    if (file.size > 50 * 1024 * 1024) {
+    if (file.size > MAX_FILE_BYTES) {
       return NextResponse.json({ error: "File too large (max 50MB)" }, { status: 400 });
     }
 
@@ -63,11 +76,10 @@ export async function POST(req: NextRequest) {
     }
     const uploadMeta = cleanUploadMetadata(parsedMeta);
 
-    // Generate upload ID
     const ts = Math.floor(Date.now() / 1000);
-    const audioId = `UPL-${ts}-UPLOAD-A`;
+    const suffix = crypto.randomBytes(3).toString("hex").toUpperCase();
+    const audioId = `UPL-${ts}-UPLOAD-${suffix}`;
 
-    // Save file
     if (!existsSync(UPLOADS_AUDIO)) {
       await mkdir(UPLOADS_AUDIO, { recursive: true });
     }
@@ -75,12 +87,11 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     await writeFile(audioPath, buffer);
 
-    // Relative storage URI (never expose absolute paths)
     const storageUri = `uploads/audio/${audioId}.${ext}`;
 
-    // Run analysis via Python
-    tmpIn = path.join(os.tmpdir(), `alg_upload_${ts}.json`);
-    tmpOut = path.join(os.tmpdir(), `alg_upload_result_${ts}.json`);
+    const tmpToken = crypto.randomBytes(8).toString("hex");
+    tmpIn = path.join(os.tmpdir(), `alg_upload_${tmpToken}.json`);
+    tmpOut = path.join(os.tmpdir(), `alg_upload_result_${tmpToken}.json`);
 
     const inputPayload = {
       mode: "analyze_only",
@@ -98,16 +109,20 @@ export async function POST(req: NextRequest) {
 
     await writeFile(tmpIn, JSON.stringify(inputPayload));
 
+    let analysisAvailable = true;
     try {
-      execSync(
-        `python3 "${path.join(SCRIPTS_DIR, "studio_generate.py")}" --analyze-upload "${tmpIn}" "${tmpOut}"`,
-        { cwd: REPO_ROOT, timeout: 30000, stdio: "pipe" }
+      await execFileAsync(
+        "python3",
+        [path.join(SCRIPTS_DIR, "studio_generate.py"), "--analyze-upload", tmpIn, tmpOut],
+        { cwd: REPO_ROOT, timeout: 30_000 },
       );
-    } catch {
-      // If the analyze-upload flag isn't supported yet, do basic analysis inline
-      const crypto = await import("node:crypto");
-      const hash = crypto.createHash("sha256").update(buffer).digest("hex");
+    } catch (execErr) {
+      console.error("[upload] analysis subprocess failed:", execErr);
+      analysisAvailable = false;
+    }
 
+    if (!analysisAvailable) {
+      const hash = crypto.createHash("sha256").update(buffer).digest("hex");
       return NextResponse.json({
         audio_id: audioId,
         storage_uri: storageUri,
@@ -118,14 +133,21 @@ export async function POST(req: NextRequest) {
         upload_metadata: inputPayload.upload_metadata,
         analysis: null,
         report: null,
-        note: "Basic upload completed (advanced analysis unavailable).",
+        note: "Upload saved. Signal analysis unavailable — see server logs.",
       });
     }
 
-    // Read result
-    const { readFile } = await import("node:fs/promises");
     const resultRaw = await readFile(tmpOut, "utf-8");
-    const result = JSON.parse(resultRaw);
+    let result: unknown;
+    try {
+      result = JSON.parse(resultRaw);
+    } catch (parseErr) {
+      console.error("[upload] analysis returned invalid JSON:", parseErr);
+      return NextResponse.json(
+        { error: "Upload analysis returned invalid output. See server logs." },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       audio_id: audioId,
@@ -133,21 +155,20 @@ export async function POST(req: NextRequest) {
       file_format: ext,
       source_type: uploadMeta.source_type,
       upload_metadata: inputPayload.upload_metadata,
-      ...result,
+      ...(typeof result === "object" && result ? result : {}),
     });
   } catch (err) {
-    console.error("Upload error:", err);
+    console.error("[upload] error:", err);
     return NextResponse.json(
       { error: "Upload processing failed. Check server logs for details." },
-      { status: 500 }
+      { status: 500 },
     );
   } finally {
-    await Promise.all([tmpIn, tmpOut].filter(Boolean).map(async (target) => {
-      try {
-        await unlink(target as string);
-      } catch {
-        // ignore cleanup failures
-      }
-    }));
+    releaseStudioSlot();
+    await Promise.all(
+      [tmpIn, tmpOut]
+        .filter((target): target is string => Boolean(target))
+        .map((target) => unlink(target).catch(() => undefined)),
+    );
   }
 }

@@ -1,7 +1,6 @@
 import {
   CATEGORIES,
   SCORE_AXES,
-  axisDirection,
   getGenerations,
   getPrompts,
   getReports,
@@ -9,25 +8,11 @@ import {
   getSuite,
   modelTypeLabel,
 } from "./lib/data";
+import { ScoreBar } from "./components/ScoreBar";
 
-function ScoreBar({ value, axis }: { value: number; axis: string }) {
-  const pct = (value / 5) * 100;
-  const risk = axisDirection(axis) === "risk";
-  const level = risk
-    ? value <= 1 ? "high" : value <= 2.5 ? "mid" : "low"
-    : value <= 2 ? "low" : value <= 3.5 ? "mid" : "high";
-  return (
-    <span className="score-bar">
-      <span className="score-value">{value}</span>
-      <span className="score-bar-track">
-        <span className="score-bar-fill" style={{ width: `${pct}%` }} data-level={level}></span>
-      </span>
-    </span>
-  );
-}
-
-function avg(values: number[]): number {
-  return values.length ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) / 100 : 0;
+function avg(values: number[]): number | null {
+  if (!values.length) return null;
+  return Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) / 100;
 }
 
 export default function Overview() {
@@ -36,7 +21,9 @@ export default function Overview() {
   const reports = getReports();
   const scores = getScores();
   const suite = getSuite();
-  const reviewed = reports.filter((report) => report.review_status === "hybrid_reviewed" || report.review_status === "human_reviewed");
+  const reviewed = reports.filter(
+    (report) => report.review_status === "hybrid_reviewed" || report.review_status === "human_reviewed",
+  );
 
   const modelAvgs: Record<string, Record<string, number[]>> = {};
   for (const score of scores) {
@@ -59,28 +46,46 @@ export default function Overview() {
       <div className="page-header">
         <h1 className="page-title">Algophony Benchmark Dashboard</h1>
         <p className="page-subtitle">
-          {suite?.title || "Algophony"} · <span className="status-pill">{suite?.benchmark_status?.replace(/_/g, " ")}</span>
+          {suite?.title || "Algophony"} ·{" "}
+          <span className="status-pill">{suite?.benchmark_status?.replace(/_/g, " ")}</span>
         </p>
       </div>
 
       {!suite && prompts.length === 0 && (
         <div className="notice-card">
-          No local corpus is mounted. The public code release ships empty by design; set `ALGOPHONY_DATA_ROOT` to inspect local research data.
+          No local corpus is mounted. The public code release ships empty by design; set `ALGOPHONY_DATA_ROOT` to inspect
+          local research data.
         </div>
       )}
 
       {suite?.benchmark_status === "procedural_pilot" && (
         <div className="notice-card">
-          This release is a procedural pilot. It validates the Atlas, reports, score provenance, and dashboard before ML text-to-audio generations are published.
+          This release is a procedural pilot. It validates the Atlas, reports, score provenance, and dashboard before ML
+          text-to-audio generations are published.
         </div>
       )}
 
       <div className="stats-row">
-        <div className="stat-card"><div className="stat-value">{prompts.length}</div><div className="stat-label">Prompts</div></div>
-        <div className="stat-card"><div className="stat-value">{generations.length}</div><div className="stat-label">Generations</div></div>
-        <div className="stat-card"><div className="stat-value">{reports.length}</div><div className="stat-label">Reports</div></div>
-        <div className="stat-card"><div className="stat-value">{reviewed.length}</div><div className="stat-label">Reviewed seed reports</div></div>
-        <div className="stat-card"><div className="stat-value">{suite?.ml_generation_count || 0}</div><div className="stat-label">ML generations</div></div>
+        <div className="stat-card">
+          <div className="stat-value">{prompts.length}</div>
+          <div className="stat-label">Prompts</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{generations.length}</div>
+          <div className="stat-label">Generations</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{reports.length}</div>
+          <div className="stat-label">Reports</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{reviewed.length}</div>
+          <div className="stat-label">Reviewed seed reports</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{suite?.ml_generation_count || 0}</div>
+          <div className="stat-label">ML generations</div>
+        </div>
       </div>
 
       <div className="detail-section">
@@ -90,7 +95,9 @@ export default function Overview() {
             <thead>
               <tr>
                 <th>Model</th>
-                {SCORE_AXES.map((axis) => <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim()}</th>)}
+                {SCORE_AXES.map((axis) => (
+                  <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim()}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -100,7 +107,11 @@ export default function Overview() {
                     <strong>{model}</strong>
                     <div className="table-note">{modelTypeLabel(model)}</div>
                   </td>
-                  {SCORE_AXES.map((axis) => <td key={axis}><ScoreBar value={avg(axes[axis] || [])} axis={axis} /></td>)}
+                  {SCORE_AXES.map((axis) => (
+                    <td key={axis}>
+                      <ScoreBar value={avg(axes[axis] || [])} axis={axis} />
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -115,7 +126,10 @@ export default function Overview() {
           {CATEGORIES.map((category) => (
             <div className="card compact-card" key={category}>
               <div className="card-title">{category.replace(/_/g, " ")}</div>
-              <div className="card-meta">{categoryCounts[category] || 0} prompts · {(categoryCounts[category] || 0) * Object.keys(modelAvgs).length} generations</div>
+              <div className="card-meta">
+                {categoryCounts[category] || 0} prompts ·{" "}
+                {(categoryCounts[category] || 0) * Object.keys(modelAvgs).length} generations
+              </div>
             </div>
           ))}
         </div>

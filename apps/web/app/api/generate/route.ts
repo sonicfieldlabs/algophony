@@ -1,12 +1,16 @@
-import { execSync } from "node:child_process";
-import { writeFileSync, unlinkSync } from "node:fs";
+import { execFile } from "node:child_process";
+import { writeFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomBytes } from "node:crypto";
+import { promisify } from "node:util";
+import { authorizeStudio } from "../../lib/studio-auth";
+import { tryAcquireStudioSlot, releaseStudioSlot } from "../../lib/concurrency";
+import { CATEGORIES } from "../../lib/data";
+
+const execFileAsync = promisify(execFile);
 
 const REPO_ROOT = join(process.cwd(), "../..");
-
-const STUDIO_ENABLED = process.env.ALGOPHONY_ENABLE_STUDIO === "true";
 
 const PROVIDER_LIMITS: Record<string, number> = {
   synth_baseline: 120,
@@ -27,6 +31,8 @@ const PROVIDER_LIMITS: Record<string, number> = {
   tangoflux_hf_endpoint: 30,
 };
 
+const VALID_CATEGORIES = new Set<string>(CATEGORIES);
+
 function cleanString(value: unknown, maxLength: number): string {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
@@ -40,11 +46,19 @@ function cleanStringArray(value: unknown, maxItems: number, maxLength: number): 
 }
 
 export async function POST(request: Request) {
-  if (!STUDIO_ENABLED) {
-    return new Response(null, { status: 404 });
+  const auth = authorizeStudio(request);
+  if (!auth.ok) {
+    return Response.json({ ok: false, error: auth.reason }, { status: auth.status });
   }
 
-  const tmpFile = join(tmpdir(), `algophony-pg-${randomBytes(6).toString("hex")}.json`);
+  if (!tryAcquireStudioSlot()) {
+    return Response.json(
+      { ok: false, error: "Studio is busy. Please retry in a moment." },
+      { status: 503, headers: { "Retry-After": "15" } },
+    );
+  }
+
+  const tmpFile = join(tmpdir(), `algophony-pg-${randomBytes(8).toString("hex")}.json`);
 
   try {
     const body = await request.json();
@@ -58,28 +72,31 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "Prompt must be at least 10 characters." }, { status: 400 });
     }
 
-    const requestedDuration = Number(body.duration || 30);
+    const requestedDuration = Number(body.duration ?? 30);
     if (!Number.isFinite(requestedDuration) || requestedDuration <= 0) {
       return Response.json({ ok: false, error: "Duration must be a positive number." }, { status: 400 });
     }
     const duration = Math.min(Math.max(Math.round(requestedDuration), 1), PROVIDER_LIMITS[providerId]);
 
+    const rawCategory = cleanString(body.category, 80) || "forest";
+    const category = VALID_CATEGORIES.has(rawCategory) ? rawCategory : "forest";
+
     const input = JSON.stringify({
       prompt_text: promptText,
-      category: cleanString(body.category, 80) || "forest",
+      category,
       provider_id: providerId,
       duration,
-      loop: body.loop || false,
+      loop: Boolean(body.loop),
       seed: Number.isInteger(body.seed) ? body.seed : null,
       intended_sources: cleanStringArray(body.intended_sources, 12, 120),
       forbidden_sources: cleanStringArray(body.forbidden_sources, 12, 120),
     });
 
-    // Write JSON to a temp file to avoid shell escaping issues
-    writeFileSync(tmpFile, input, "utf-8");
+    await writeFile(tmpFile, input, "utf-8");
 
-    const result = execSync(
-      `python3 scripts/studio_generate.py < "${tmpFile}"`,
+    const { stdout } = await execFileAsync(
+      "python3",
+      ["scripts/studio_generate.py", "--stdin-from", tmpFile],
       {
         cwd: REPO_ROOT,
         encoding: "utf-8",
@@ -89,14 +106,25 @@ export async function POST(request: Request) {
       },
     );
 
-    const parsed = JSON.parse(result);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(stdout);
+    } catch (parseErr) {
+      console.error("[generate] non-JSON output from studio_generate.py:", parseErr);
+      return Response.json(
+        { ok: false, error: "Generation produced invalid output. Check server logs." },
+        { status: 500 },
+      );
+    }
     return Response.json(parsed);
   } catch (error: unknown) {
+    console.error("[generate] failed:", error);
     return Response.json(
       { ok: false, error: "Generation failed. Check server logs for details." },
       { status: 500 },
     );
   } finally {
-    try { unlinkSync(tmpFile); } catch { /* ignore */ }
+    releaseStudioSlot();
+    unlink(tmpFile).catch(() => undefined);
   }
 }

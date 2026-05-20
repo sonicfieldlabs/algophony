@@ -149,7 +149,14 @@ const CLAIM_COLORS: Record<string, string> = {
 
 /* ---------- component ---------- */
 
-export default function PlaygroundPage() {
+export default function PlaygroundPage({ studioToken = "" }: { studioToken?: string }) {
+  const authHeaders = useCallback(
+    (extra?: Record<string, string>): Record<string, string> => {
+      return { ...(studioToken ? { "x-studio-token": studioToken } : {}), ...(extra || {}) };
+    },
+    [studioToken],
+  );
+
   /* state — mode */
   const [mode, setMode] = useState<PlaygroundMode>("generate");
 
@@ -196,20 +203,25 @@ export default function PlaygroundPage() {
 
   /* load providers + atlas on mount */
   useEffect(() => {
-    fetch("/api/providers")
+    const controller = new AbortController();
+    fetch("/api/providers", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setProviders(data);
         setLoadingProviders(false);
       })
-      .catch(() => setLoadingProviders(false));
+      .catch((err) => {
+        if (err?.name !== "AbortError") setLoadingProviders(false);
+      });
 
-    fetch("/api/prompts")
+    fetch("/api/prompts", { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setAtlasPrompts(data);
       })
       .catch(() => {});
+
+    return () => controller.abort();
   }, []);
 
   /* import from atlas */
@@ -253,7 +265,7 @@ export default function PlaygroundPage() {
 
       const resp = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(body),
       });
 
@@ -292,7 +304,7 @@ export default function PlaygroundPage() {
         notes: uploadNotes,
       }));
 
-      const resp = await fetch("/api/upload", { method: "POST", body: formData });
+      const resp = await fetch("/api/upload", { method: "POST", body: formData, headers: authHeaders() });
       const data = await resp.json();
 
       if (data.error) {
@@ -306,7 +318,7 @@ export default function PlaygroundPage() {
     } finally {
       setUploading(false);
     }
-  }, [uploadFile, uploadSourceType, uploadLocation, uploadRecorder, uploadEquipment, uploadNotes]);
+  }, [authHeaders, uploadFile, uploadSourceType, uploadLocation, uploadRecorder, uploadEquipment, uploadNotes]);
 
   /* file drop handlers */
   const onDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -466,7 +478,7 @@ export default function PlaygroundPage() {
           <div className="pg-panel-header">Listen to upload</div>
           <div className="pg-audio-card">
             <div className="pg-audio-id">{uploadResult.audio_id}</div>
-            <audio controls preload="auto" src={`/audio/${uploadResult.audio_id}`} style={{ width: "100%" }} />
+            <audio controls preload="metadata" src={`/audio/${uploadResult.audio_id}`} style={{ width: "100%" }} />
             <div className="pg-audio-meta">
               {uploadResult.source_type.replace(/_/g, " ")} · {uploadResult.file_format} · {uploadResult.upload_metadata?.original_filename}
             </div>
@@ -787,7 +799,7 @@ export default function PlaygroundPage() {
             <audio
               ref={audioRef}
               controls
-              preload="auto"
+              preload="metadata"
               src={`/audio/${result.audio_id}`}
               style={{ width: "100%" }}
             />

@@ -213,7 +213,7 @@ def check_strict_quality(project_root: Path, suite: dict, generations: list[dict
             errors.append(f"Generation {generation['audio_id']}: unresolved model_version")
         uri = generation.get("storage_uri", "")
         private_roots = ("/" + "Users" + "/", "/" + "home" + "/")
-        if uri.startswith(private_roots) or ":\\\\" in uri:
+        if uri.startswith(private_roots) or ":\\\\" in uri or uri.startswith("$"):
             errors.append(f"Generation {generation['audio_id']}: storage_uri is machine-specific")
         if not generation.get("akouo_report_id"):
             errors.append(f"Generation {generation['audio_id']}: missing akouo_report_id")
