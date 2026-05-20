@@ -113,6 +113,7 @@ a:hover { color: var(--accent-strong); }
 .badge-difficulty-medium { background: rgba(245,158,11,0.1); color: var(--amber); }
 .badge-difficulty-hard { background: rgba(239,68,68,0.1); color: var(--red); }
 .badge-difficulty-research { background: rgba(6,182,212,0.1); color: var(--cyan); }
+.badge-difficulty-calibration { background: rgba(162,173,163,0.12); color: var(--text-secondary); border: 1px solid rgba(162,173,163,0.25); }
 .badge-loop { background: rgba(91,184,194,0.14); color: var(--cyan); }
 .badge-reject { background: rgba(239,68,68,0.1); color: var(--red); }
 .badge-keep { background: rgba(34,197,94,0.1); color: var(--green); }
@@ -161,6 +162,8 @@ a:hover { color: var(--accent-strong); }
 .score-bar-fill[data-level="low"] { background: var(--red); }
 .score-bar-fill[data-level="mid"] { background: var(--amber); }
 .score-bar-fill[data-level="high"] { background: var(--green); }
+.score-bar-fill[data-level="empty"] { background: transparent; }
+.score-bar-empty { color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; min-width: 28px; display: inline-block; text-align: center; }
 .score-value { font-family: var(--font-mono); font-size: 12px; min-width: 28px; }
 .composite-score { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--accent-strong); }
 
@@ -293,10 +296,84 @@ a:hover { color: var(--accent-strong); }
 }
 audio { width: 100%; }
 
+/* Mobile drawer toggle */
+.mobile-nav-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 30;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+}
+.mobile-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 15;
+}
+
+/* Loading shimmer */
+.loading-shimmer {
+  background: linear-gradient(90deg, var(--bg-card) 0%, var(--bg-card-hover) 50%, var(--bg-card) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+  color: transparent;
+  display: inline-block;
+  min-height: 1em;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-muted); margin-bottom: 8px;
+  font-family: var(--font-mono);
+}
+.breadcrumb a { color: var(--text-secondary); }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb-sep { color: var(--text-muted); opacity: 0.6; }
+
+/* Empty chart */
+.chart-empty {
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  height: 100%; min-height: 200px; color: var(--text-muted); font-size: 13px; gap: 6px;
+  font-family: var(--font-mono);
+}
+.chart-empty-glyph { font-size: 28px; opacity: 0.4; }
+
+/* Copy button */
+.copy-btn {
+  background: transparent; border: 1px solid transparent;
+  color: var(--text-muted); cursor: pointer; padding: 1px 6px;
+  border-radius: 4px; font-size: 11px; font-family: var(--font-mono);
+  transition: color var(--transition), border-color var(--transition);
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--border); }
+
 /* Responsive */
 @media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main-content { margin-left: 0; padding: 20px; }
+  .mobile-nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+  .mobile-nav-backdrop { display: block; }
+  .sidebar {
+    display: block;
+    transform: translateX(-105%);
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 20;
+  }
+  .sidebar-open { transform: translateX(0); }
+  .main-content { margin-left: 0; padding: 56px 20px 20px; }
   .card-grid { grid-template-columns: 1fr; }
   .compare-grid { grid-template-columns: 1fr; }
   .stats-row { flex-direction: column; }
@@ -307,6 +384,7 @@ audio { width: 100%; }
   .pg-provider-grid { grid-template-columns: 1fr; }
   .pg-analysis-grid { grid-template-columns: repeat(3, 1fr); }
   .pg-scores-grid { gap: 6px; }
+  .obs-chart-grid { grid-template-columns: 1fr; }
 }
 
 /* ============ Playground ============ */

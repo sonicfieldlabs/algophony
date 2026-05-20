@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getReports } from "../../lib/data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const summary = request.nextUrl.searchParams.get("summary") === "1";
   const reports = getReports();
