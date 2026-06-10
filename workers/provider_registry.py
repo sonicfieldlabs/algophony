@@ -15,9 +15,15 @@ import platform
 from pathlib import Path
 from typing import Any
 
+from workers.env import load_project_env
+
+
+load_project_env()
+
 
 DEFAULT_PROVIDER_CHAIN = (
     "el_sfx,"
+    "stable_audio_3_stability_api,"
     "stable_audio_25_stability_api,"
     "stable_audio_25_fal,"
     "stable_audio_25_replicate,"
@@ -170,9 +176,23 @@ PROVIDER_REGISTRY: dict[str, ProviderSpec] = {
         class_name="StableAudio25StabilityAdapter",
         version="stable-audio-2.5",
         license_status="Stability API generated output - review Stability API terms before publication",
-        install_hint="Set ALGOPHONY_STABILITY_API_KEY and ALGOPHONY_STABLE_AUDIO_25_ENDPOINT.",
-        env_requirements=["ALGOPHONY_STABILITY_API_KEY", "ALGOPHONY_STABLE_AUDIO_25_ENDPOINT"],
+        install_hint="Set ALGOPHONY_STABILITY_API_KEY. Optionally override ALGOPHONY_STABLE_AUDIO_25_ENDPOINT.",
+        env_requirements=["ALGOPHONY_STABILITY_API_KEY"],
         max_duration_seconds=190,
+        supports_seed=True,
+    ),
+    "stable_audio_3_stability_api": ProviderSpec(
+        provider_id="stable_audio_3_stability_api",
+        name="Stable Audio 3.0 Stability API",
+        type="ml_model",
+        runtime="api",
+        module="workers.adapters.stable_audio_25_stability",
+        class_name="StableAudio3StabilityAdapter",
+        version="stable-audio-3.0",
+        license_status="Stability API generated output - review Stability API terms before publication",
+        install_hint="Set ALGOPHONY_STABILITY_API_KEY. Optionally override ALGOPHONY_STABLE_AUDIO_3_ENDPOINT.",
+        env_requirements=["ALGOPHONY_STABILITY_API_KEY"],
+        max_duration_seconds=360,
         supports_seed=True,
     ),
     "stable_audio_25_fal": ProviderSpec(
@@ -296,6 +316,9 @@ ALIASES = {
     "sta_audio_open_1_0": "stable_audio_open_local",
     "stable_audio_open_1_0": "stable_audio_open_local",
     "stable_audio_25": "stable_audio_25_stability_api",
+    "stable_audio_3": "stable_audio_3_stability_api",
+    "stable_audio_30": "stable_audio_3_stability_api",
+    "stable_audio_3_api": "stable_audio_3_stability_api",
     "stable_25_fal": "stable_audio_25_fal",
     "stable_25_replicate": "stable_audio_25_replicate",
     "tango_flux": "tangoflux_local",

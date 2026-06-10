@@ -11,6 +11,8 @@ Usage:
     python scripts/analyze_audio.py --limit 10
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys

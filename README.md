@@ -1,14 +1,15 @@
-<img width="3548" height="1774" alt="algophony" src="https://github.com/user-attachments/assets/9371bbb5-6e5b-4788-84c1-5b6a23431a26" />
-
 # Algophony
 
 Algophony studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is a Sonic Field Labs research framework for evaluating algorithmic soundscapes as generated, simulated, hybrid, or recursively interpreted sonic environments.
 
 The central claim is simple: generative audio systems do not only produce sounds. They produce assumptions about worlds: what a forest is, what a city is, what a ritual is, what counts as background, what gets erased, and what becomes audible.
 
+The founding statement of the project is the [Algophony framework](docs/benchmark-methodology.md) (June 2026). It names the algophonic condition — algorithmic systems producing, transforming, mimicking, distributing, and interpreting voices, signals, and sonic worlds — and the framework translates its claims into evaluation levels, score axes, and metadata disciplines (see `docs/benchmark-methodology.md`).
+
 ## Current State
 
-This repository is now a v0.1.1 procedural pilot, not a full ML model benchmark.
+This repository is now a v0.2 local-mode platform release carrying the v0.1.1
+procedural pilot corpus. It is not a full ML model benchmark.
 
 What exists:
 
@@ -18,7 +19,8 @@ What exists:
 - 200 JSON reports plus matching Markdown reports.
 - 100 hybrid-reviewed seed reports and 100 agent-draft reports.
 - Discriminative benchmark scores with score provenance and normalized comparison exports.
-- A Next.js dashboard for prompt, generation, report, score, benchmark, reference, collaboration, and export inspection.
+- A Next.js dashboard for prompt, generation, report, score, benchmark, provider, observatory, studio, and export inspection.
+- A sanitized public-export workflow that publishes code without local corpus data, generated audio, uploads, secrets, private paths, or private local git history.
 
 What does not exist yet:
 
@@ -26,6 +28,8 @@ What does not exist yet:
 - No independent human listening panel has reviewed the full corpus.
 - No field-recording reference comparison is included.
 - Procedural controls are not presented as equivalent to text-to-audio model systems.
+
+See `docs/release-notes-v0.2.md` for the public-code changes since v0.1.1.
 
 ## Conceptual Distinction
 
@@ -38,6 +42,18 @@ What does not exist yet:
 | Algophony | Computational generation, classification, mediation, reconstruction | Soundscape reality as produced, mediated, or re-heard by computational systems |
 
 Technophony is the sound of machines in the world. Algophony is the soundscape as produced, mediated, or re-heard by computational systems.
+
+## AKOÚŌ v0.4 Listening Contract
+
+Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system, in its v0.4 form:
+
+- 15 portable skills: `akouo-router`, 13 listening modes, and `reference-layer`.
+- 16 commands, from `/listen` to `/route`.
+- Six-category claim taxonomy: `heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined`.
+- Evidence ladder: every pass declares its evidence level (`prompt_only`, `metadata_only`, `measured_signal`, `mixed`, and others), which determines claim permissions — claims can never be stronger than evidence.
+- Routing plans: reports may carry an `akouo_routing_plan` (weighted mode chain, claim permissions, forbidden assumptions, stop conditions) and an `akouo_reference_map` (concepts, methods, traditions, research routes).
+
+The consumption loop is route → check stop conditions → listen → map → merge → hand off. The contract shape is copied into `schemas/listening-report.schema.json` and `apps/web/app/lib/listening-contract.ts`; the canonical source is the adjacent AKOÚŌ repository. Integration details: `ROADMAP.md`.
 
 ## Repository Structure
 
@@ -150,6 +166,8 @@ python3 -m pip install -r requirements-local-macos-mlx.txt
 - Do not invent source provenance.
 - Do not identify species, cultures, or real locations from generated audio without evidence.
 - Preserve the AKOÚŌ claim taxonomy: `heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined`.
+- Respect routing-plan claim permissions: a report whose evidence level forbids `heard` or `measured` claims must keep those buckets empty.
+- Record `compute_provenance` and `voice_material` metadata on new generations when known; never invent them for old records.
 - Every generation must have a metadata record.
 - Every scored report must link to `prompt_id`, `audio_id`, and `report_id`.
 - Public metadata must use relative storage paths, not local machine paths.
@@ -171,7 +189,7 @@ current local git history directly to the public remote.
 
 ## Related Projects
 
-- AKOÚŌ — agentic listening framework and claim taxonomy.
+- AKOÚŌ — agentic listening system: 15 portable skills, six-category claim taxonomy, evidence ladder, routing plans, and reference layer (v0.4).
 - Agentic Listening Benchmark — benchmark structure and scoring conventions.
 - Sonic Field Labs — research unit for sound, listening, and sonic culture in computational systems.
 

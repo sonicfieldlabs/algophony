@@ -4,13 +4,45 @@
 
 The algorithmic layer of the soundscape: sonic environments generated, simulated, transformed, classified, reconstructed, or hallucinated by computational systems. Algophony extends the established soundscape source taxonomy (geophony, biophony, anthrophony, technophony) by identifying computation as a distinct mediating force that does not merely reproduce but constructs sonic worlds.
 
+## Algophonic Condition
+
+The situation named by the Algophony framework: algorithmic systems produce, transform, mimic, distribute, and interpret voices, signals, soundscapes, and sonic worlds. The algophonic condition is not machine sound alone, nor human speech rendered artificial, but the expanded field where human, machine, animal, planetary, synthetic, and infrastructural listening meet — not fused, not harmonized, coexisting in friction.
+
+## Artificial Audio Intelligence (AAI)
+
+The combined capacity of machine systems to generate speech, music, and soundscapes and to hear, transcribe, classify, and decode sound at scale. AAI gives the machine both a mouth and an ear; the framework's premise is that both are political.
+
 ## Algorithmic Soundscape
 
 A sonic environment whose sources, spatial logic, temporal behavior, ecological plausibility, or cultural framing are mediated by computational processes. This includes text-to-soundscape generations, procedural audio compositions, classifier-mediated reconstructions, and any soundscape that has been substantially shaped by an algorithm rather than by direct physical recording.
 
+## Acousmatic Contract
+
+The recognition that sound was never innocent of fabrication: a coconut becomes a galloping horse, a studio becomes a forest, a synthetic voice becomes intimacy or testimony. Under the acousmatic contract, every sound in the computer carries a version of reality that may be real, false, partial, simulated, weaponized, healing, or unknown — which is why provenance and disclosure are listening questions, not only legal ones.
+
+## Middle Matter
+
+The framework's description of sound as simultaneously material and immaterial: signal and sensation, pressure and imagination, trace and event. Generative audio is powerful because, as middle matter, it does not represent reality; it produces the conditions for reality to be believed, felt, remembered, obeyed, doubted, or shared.
+
 ## Agentic Listening
 
 A structured mode of listening performed by an AI agent operating under the AKOÚŌ framework. Agentic listening separates observations by epistemic status (heard, measured, inferred, interpreted, speculative, undetermined) and produces reports that distinguish what is present in the audio from what is projected, assumed, or unknown. See the [AKOÚŌ project](https://github.com/sonicfieldlabs/akouo) for the full framework.
+
+## Evidence Ladder
+
+The AKOÚŌ v0.4 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
+
+## Claim Permissions
+
+The set of claim categories a listening pass is allowed to emit, derived from its evidence level. A pass that has only seen a prompt may not produce `heard` or `measured` claims about audio content; every pass must include meaningful `undetermined` claims when evidence is missing.
+
+## Routing Plan
+
+The AKOÚŌ v0.4 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, and stop conditions. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
+
+## Reference Layer
+
+The AKOÚŌ skill that turns a listening result into a conceptual map: concepts triggered, sonic methodologies, authors or traditions, possible research routes, research questions, cautions, and adjacent modes. In Algophony, reference maps connect benchmark reports to research literature without letting citation replace listening.
 
 ## False Ecology
 
@@ -55,3 +87,31 @@ A benchmark metric measuring whether sources explicitly forbidden in a prompt ar
 ## Cultural Cliché Index
 
 A diagnostic score (0–5) measuring the degree to which a generated soundscape reproduces stereotyped, touristic, cinematic, or culturally flattening sonic representations. A score of 0 indicates no obvious cliché. A score of 5 indicates strong stereotyped or culturally reductive construction.
+
+## Homogenization Index
+
+A proposed diagnostic score (0–5) measuring the degree to which a generated output averages distinct ecologies, accents, voices, or places into a default rendering. Homogenization differs from cliché: a cliché is a wrong specific, homogenization is the erasure of the specific. The framework's formulation: homogenization is an old project with a new codec.
+
+## Disclosure Integrity
+
+A proposed diagnostic score (1–5) measuring how completely a generation discloses its synthetic origin: generator, operator, model version, and intended use. It operationalizes the right to know whether what we hear was generated, by whom, and for what.
+
+## Voice Consent Risk
+
+A proposed diagnostic score (0–5) measuring the risk attached to voice-like material whose provenance or consent status cannot be verified. The voice is biometric: it carries the body that made it. Algophony records consent for human voices and provenance for synthetic ones, and treats unverifiable voice material as a risk, not a neutral asset.
+
+## Compute Provenance
+
+Generation metadata recording the material footprint of a run: whether it executed locally or through a cloud API or hosted endpoint, on what hardware, in what region, with any available energy notes. It operationalizes the framework's planetary claim that every generated sound has a body somewhere: electricity, water, lithium, heat, labor.
+
+## Capture
+
+The condition of audio systems whose weights, terms, training data, or outputs are controlled by states, corporations, platforms, or markets and cannot be independently inspected, pinned, or reproduced. The opposite pole of capture is local, open operation. Algophony reports capture conditions alongside benchmark scores because a number earned inside a closed API and a number earned by an inspectable local model do not mean the same thing.
+
+## Rights of the Audible
+
+The five claims of the Algophony framework: the right to one's own voice against cloning and commerce; the right to silence, to exist unrecorded; the right to opacity, to make noise that resists classification; the right of an accent, dialect, or language not to be averaged into a default voice; and the right to know whether what we hear was generated, by whom, and for what.
+
+## Planetary Ear
+
+Listening extended through sensors, archives, models, and data centers to places no unaided ear can reach: oceans, rainforests, border zones, server farms, the electromagnetic field. The planetary ear makes the sonosphere more graspable and more mediated at once, and ties every act of machine listening and generation to planetary infrastructure.

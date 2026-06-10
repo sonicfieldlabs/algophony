@@ -1,4 +1,4 @@
-import { getPrompts, getGenerations, getReports, modelTypeLabel } from "../../lib/data";
+import { getPrompts, getGenerations, getReports, sourceTypeLabel } from "../../lib/data";
 import { Breadcrumb } from "../../components/Breadcrumb";
 import { CopyButton } from "../../components/CopyButton";
 import { notFound } from "next/navigation";
@@ -98,7 +98,7 @@ export default async function PromptDetail({ params }: { params: Promise<{ id: s
                     </td>
                     <td>{g.model}</td>
                     <td>
-                      <span className="badge badge-control">{modelTypeLabel(g.model)}</span>
+                      <span className="badge badge-control">{sourceTypeLabel(g.source_type)}</span>
                     </td>
                     <td>{g.duration}s</td>
                     <td style={{ color: "var(--text-muted)", fontSize: 12 }}>{g.generation_date}</td>

@@ -84,6 +84,9 @@ export interface ScoreSet {
   loopability: number;
   regeneration_potential: RegenerationRecommendation;
   artificiality_discriminability?: number | null;
+  disclosure_integrity?: number | null;
+  homogenization_index?: number | null;
+  voice_consent_risk?: number | null;
 }
 
 export interface Claim {
@@ -141,6 +144,37 @@ export interface Report {
     alternative_reading: string;
     recommended_next_mode: string;
   }[];
+  akouo_routing_plan?: {
+    object_listened_to: string;
+    input_type: string;
+    route_confidence: string;
+    evidence_level: string;
+    mode_chain: { mode: string; role: string; reason: string }[];
+    claim_permissions: {
+      heard_allowed: boolean;
+      measured_allowed: boolean;
+      inferred_allowed: boolean;
+      interpreted_allowed: boolean;
+      speculative_allowed: boolean;
+      must_include_undetermined: boolean;
+    };
+    agent_handoff: {
+      summary: string;
+      required_inputs: string[];
+      forbidden_assumptions: string[];
+      recommended_command: string;
+    };
+    stop_conditions: string[];
+  } | null;
+  akouo_reference_map?: {
+    concepts_triggered: string[];
+    sonic_methodologies: string[];
+    authors_or_traditions: string[];
+    possible_research_routes: string[];
+    research_questions: string[];
+    cautions: string[];
+    adjacent_modes: string[];
+  } | null;
   basic_description: string;
   sources: {
     detected: string[];

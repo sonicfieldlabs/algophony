@@ -113,8 +113,8 @@ interface UploadResult {
 type PlaygroundMode = "generate" | "listen";
 
 const SOURCE_TYPES = [
-  { value: "field_recording", label: "Field Recording" },
   { value: "found_sound", label: "Found Sound / Archive" },
+  { value: "field_recording", label: "Field Recording" },
   { value: "generated_ml", label: "Generated (ML)" },
   { value: "generated_procedural", label: "Generated (Procedural)" },
   { value: "hybrid", label: "Hybrid" },
@@ -185,7 +185,7 @@ export default function PlaygroundPage({ studioToken = "" }: { studioToken?: str
 
   /* state — upload (listen mode) */
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [uploadSourceType, setUploadSourceType] = useState("field_recording");
+  const [uploadSourceType, setUploadSourceType] = useState("found_sound");
   const [uploadLocation, setUploadLocation] = useState("");
   const [uploadRecorder, setUploadRecorder] = useState("");
   const [uploadEquipment, setUploadEquipment] = useState("");
@@ -512,7 +512,7 @@ export default function PlaygroundPage({ studioToken = "" }: { studioToken?: str
           {/* Human discriminability question */}
           <div className="pg-panel-header" style={{ marginTop: 24 }}>Turing Question</div>
           <div className="pg-turing-card">
-            <p className="pg-turing-question">Does this soundscape sound generated or real?</p>
+            <p className="pg-turing-question">Does this soundscape sound generated or field-recorded?</p>
             <div className="pg-turing-options">
               {["generated", "field_recording", "uncertain"].map((opt) => (
                 <button
@@ -521,7 +521,7 @@ export default function PlaygroundPage({ studioToken = "" }: { studioToken?: str
                   className={`pg-turing-btn ${humanGuess === opt ? "pg-turing-btn-active" : ""}`}
                   onClick={() => setHumanGuess(opt)}
                 >
-                  {opt === "generated" ? "🤖 Generated" : opt === "field_recording" ? "🎙 Real" : "❓ Uncertain"}
+                  {opt === "generated" ? "Generated" : opt === "field_recording" ? "Field-recorded" : "Uncertain"}
                 </button>
               ))}
             </div>

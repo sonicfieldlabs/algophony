@@ -4,6 +4,11 @@
  * Self-contained AKOÚŌ-derived vocabulary for soundscape evaluation.
  * This file intentionally copies the public contract shape needed by
  * Algophony instead of importing from an adjacent local repository.
+ *
+ * Aligned with AKOÚŌ v0.4: 13 listening modes plus router and reference
+ * layer (15 portable skills), 16 commands, evidence ladder, claim
+ * permissions, routing plans, and reference maps. Canonical source:
+ * the AKOÚŌ repository schemas (`../akouo/schemas/`).
  */
 
 export const AKOUO_NAME = "AKOÚŌ" as const;
@@ -65,9 +70,20 @@ export const AKOUO_LISTENING_MODES = [
   "critical-political-listening",
   "musical-aesthetic-listening",
   "symbolic-fictional-listening",
+  "audiovisual-scenic-listening",
+  "voice-speech-listening",
+  "accessibility-normative-listening",
+  "material-event-listening",
 ] as const;
 
 export type AkouoListeningMode = (typeof AKOUO_LISTENING_MODES)[number];
+
+/** All 15 portable AKOÚŌ v0.4 skills: meta-skills plus listening modes. */
+export const AKOUO_SKILLS = [
+  "akouo-router",
+  "reference-layer",
+  ...AKOUO_LISTENING_MODES,
+] as const;
 
 export const AKOUO_INPUT_TYPES = [
   "audio_file",
@@ -99,9 +115,104 @@ export const AKOUO_COMMAND_NAMES = [
   "/forensic",
   "/transduce",
   "/one-sound-many-ears",
+  "/voice",
+  "/audiovision",
+  "/access",
+  "/field",
+  "/method",
+  "/route",
 ] as const;
 
 export type AkouoCommandName = (typeof AKOUO_COMMAND_NAMES)[number];
+
+/**
+ * Evidence ladder. The available evidence determines which claim
+ * categories a listening pass is permitted to emit.
+ */
+export const AKOUO_EVIDENCE_LEVELS = [
+  "none",
+  "prompt_only",
+  "metadata_only",
+  "decoded_audio_metadata",
+  "measured_signal",
+  "transcript_or_caption",
+  "contextual_note",
+  "mixed",
+] as const;
+
+export type AkouoEvidenceLevel = (typeof AKOUO_EVIDENCE_LEVELS)[number];
+
+export const EVIDENCE_LEVEL_LABELS: Record<AkouoEvidenceLevel, string> = {
+  none: "No evidence",
+  prompt_only: "Prompt only",
+  metadata_only: "Metadata only",
+  decoded_audio_metadata: "Decoded audio metadata",
+  measured_signal: "Measured signal",
+  transcript_or_caption: "Transcript or caption",
+  contextual_note: "Contextual note",
+  mixed: "Mixed evidence",
+};
+
+export const AKOUO_MODE_ROLES = [
+  "primary",
+  "secondary",
+  "corrective",
+  "optional",
+  "deferred",
+] as const;
+
+export type AkouoModeRole = (typeof AKOUO_MODE_ROLES)[number];
+
+export interface AkouoClaimPermissions {
+  heard_allowed: boolean;
+  measured_allowed: boolean;
+  inferred_allowed: boolean;
+  interpreted_allowed: boolean;
+  speculative_allowed: boolean;
+  must_include_undetermined: boolean;
+}
+
+export interface AkouoModeChainStep {
+  mode: AkouoListeningMode;
+  role: AkouoModeRole;
+  reason: string;
+}
+
+export interface AkouoAgentHandoff {
+  summary: string;
+  required_inputs: string[];
+  forbidden_assumptions: string[];
+  recommended_command: AkouoCommandName;
+}
+
+/**
+ * AKOÚŌ v0.4 expanded routing plan for agent handoff: weighted mode
+ * selection, evidence limits, claim permissions, and stop conditions.
+ */
+export interface AkouoRoutingPlan {
+  object_listened_to: string;
+  input_type: AkouoInputType;
+  route_confidence: ClaimConfidence;
+  evidence_level: AkouoEvidenceLevel;
+  mode_chain: AkouoModeChainStep[];
+  claim_permissions: AkouoClaimPermissions;
+  agent_handoff: AkouoAgentHandoff;
+  stop_conditions: string[];
+}
+
+/**
+ * AKOÚŌ reference-layer output: concepts, methods, traditions, research
+ * routes, questions, cautions, and adjacent modes.
+ */
+export interface AkouoReferenceMap {
+  concepts_triggered: string[];
+  sonic_methodologies: string[];
+  authors_or_traditions: string[];
+  possible_research_routes: string[];
+  research_questions: string[];
+  cautions: string[];
+  adjacent_modes: AkouoListeningMode[];
+}
 
 export interface AkouoMediations {
   technical: string[];
@@ -161,4 +272,8 @@ export const LISTENING_MODE_LABELS: Record<AkouoListeningMode, string> = {
   "critical-political-listening": "Critical Political",
   "musical-aesthetic-listening": "Musical Aesthetic",
   "symbolic-fictional-listening": "Symbolic Fictional",
+  "audiovisual-scenic-listening": "Audiovisual Scenic",
+  "voice-speech-listening": "Voice Speech",
+  "accessibility-normative-listening": "Accessibility Normative",
+  "material-event-listening": "Material Event",
 };

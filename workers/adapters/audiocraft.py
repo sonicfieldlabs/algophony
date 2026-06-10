@@ -4,6 +4,8 @@ AudioCraft / MusicGen adapter.
 Status: Stub — requires audiocraft package.
 """
 
+from __future__ import annotations
+
 from .base import GenerationAdapter, GenerationError
 
 

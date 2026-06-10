@@ -7,6 +7,8 @@ quality gates: no local absolute paths, no unresolved model versions, no pending
 models in the suite manifest, score variance, and report claim quality.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys

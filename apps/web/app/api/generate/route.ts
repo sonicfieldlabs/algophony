@@ -17,6 +17,7 @@ const PROVIDER_LIMITS: Record<string, number> = {
   spectral_fm: 120,
   spatialscaper: 120,
   el_sfx: 30,
+  stable_audio_3_stability_api: 360,
   stable_audio_25_stability_api: 190,
   stable_audio_25_fal: 190,
   stable_audio_25_replicate: 190,
@@ -29,6 +30,14 @@ const PROVIDER_LIMITS: Record<string, number> = {
   moss_sfx_hf_endpoint: 30,
   stable_audio_open_hf_endpoint: 47,
   tangoflux_hf_endpoint: 30,
+};
+
+const PROVIDER_BASE_TIMEOUT_MS: Record<string, number> = {
+  el_sfx: 180_000,
+  stable_audio_3_stability_api: 20 * 60_000,
+  stable_audio_25_stability_api: 12 * 60_000,
+  stable_audio_25_fal: 15 * 60_000,
+  stable_audio_25_replicate: 15 * 60_000,
 };
 
 const VALID_CATEGORIES = new Set<string>(CATEGORIES);
@@ -100,7 +109,7 @@ export async function POST(request: Request) {
       {
         cwd: REPO_ROOT,
         encoding: "utf-8",
-        timeout: 120_000,
+        timeout: Math.max(PROVIDER_BASE_TIMEOUT_MS[providerId] ?? 120_000, duration * 4_000 + 60_000),
         maxBuffer: 10 * 1024 * 1024,
         env: { ...process.env, PYTHONUNBUFFERED: "1" },
       },
