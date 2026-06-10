@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://algophony.sonicfieldlabs.org/schemas/score.schema.json",
-  "title": "Algophony Score Record",
-  "description": "Schema for benchmark scores of a generated soundscape.",
+  "title": "Algophony Final Score Set",
+  "description": "Flat final score set for a soundscape. Provenance is stored separately on reports and score records.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,70 +19,63 @@
     "regeneration_potential"
   ],
   "properties": {
-    "prompt_adherence": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "How well the output matches the prompt. 1=mostly ignores, 5=fully follows."
-    },
-    "source_accuracy": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Accuracy of sound sources relative to prompt expectations."
-    },
-    "spatial_coherence": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Plausibility of spatial positioning and depth layering."
-    },
-    "event_density_score": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Appropriateness of event density for the described scene."
-    },
-    "ecological_plausibility": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Whether sources could plausibly coexist. 1=incoherent, 5=strong habitat logic."
-    },
-    "causal_coherence": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Whether events imply believable causes."
-    },
-    "false_source_index": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 5,
-      "description": "Degree of false or forbidden sources. 0=none, 5=dominant false sources."
-    },
-    "generic_naturalism_index": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 5,
-      "description": "Degree of generic birds/water/wind naturalism. 0=none, 5=fully generic."
-    },
-    "cultural_cliche_index": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 5,
-      "description": "Degree of stereotyped cultural representation. 0=none, 5=strong cliché."
-    },
-    "loopability": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 5,
-      "description": "Quality of seamless looping. 1=harsh boundary, 5=seamless."
-    },
+    "prompt_adherence": { "$ref": "#/$defs/positive_score" },
+    "source_accuracy": { "$ref": "#/$defs/positive_score" },
+    "spatial_coherence": { "$ref": "#/$defs/positive_score" },
+    "event_density_score": { "$ref": "#/$defs/positive_score" },
+    "ecological_plausibility": { "$ref": "#/$defs/positive_score" },
+    "causal_coherence": { "$ref": "#/$defs/positive_score" },
+    "false_source_index": { "$ref": "#/$defs/risk_score" },
+    "generic_naturalism_index": { "$ref": "#/$defs/risk_score" },
+    "cultural_cliche_index": { "$ref": "#/$defs/risk_score" },
+    "loopability": { "$ref": "#/$defs/positive_score" },
     "regeneration_potential": {
       "type": "string",
-      "enum": ["keep", "revise", "reject"],
-      "description": "Recommendation for regeneration cycle."
+      "enum": ["keep", "revise", "reject"]
+    },
+    "artificiality_discriminability": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Can the listener tell if this is real or generated? 5 = clearly identifiable, 0 = indistinguishable. Null when ground truth provenance is unknown."
+    },
+    "disclosure_integrity": {
+      "oneOf": [
+        { "$ref": "#/$defs/positive_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 framework axis. How completely the generation discloses its synthetic origin: generator, operator, version, and intended use. 5 = fully disclosed and legible, 1 = opaque. Null when not yet scored."
+    },
+    "homogenization_index": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 framework axis. Degree to which the output averages distinct ecologies, accents, voices, or places into a default rendering. 0 = situated and specific, 5 = fully averaged. Lower is better. Null when not yet scored."
+    },
+    "voice_consent_risk": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 framework axis. Risk attached to voice-like material whose provenance or consent status cannot be verified. 0 = no voice-like material or fully cleared, 5 = prominent voice-like material with unverifiable provenance. Lower is better. Null when no voice material or not yet scored."
+    }
+  },
+  "$defs": {
+    "positive_score": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "risk_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
     }
   }
 }

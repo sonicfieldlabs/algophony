@@ -69,7 +69,17 @@
     },
     "listening_mode": {
       "type": "string",
-      "minLength": 1,
+      "enum": [
+        "signal-inspection-listening",
+        "acoulogical-object-listening",
+        "embodied-affective-listening",
+        "transductive-media-listening",
+        "forensic-archival-listening",
+        "ecological-posthuman-listening",
+        "critical-political-listening",
+        "musical-aesthetic-listening",
+        "symbolic-fictional-listening"
+      ],
       "description": "Primary AKOÚŌ listening mode for evaluation."
     },
     "duration_target": {

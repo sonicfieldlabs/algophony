@@ -1,64 +1,58 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://algophony.sonicfieldlabs.org/schemas/benchmark-run.schema.json",
-  "title": "Algophony Benchmark Run",
-  "description": "Schema for a benchmark run record, aligned with SFL bench conventions.",
+  "title": "Algophony Benchmark Score Record",
+  "description": "Schema for one scored generation in an Algophony benchmark suite.",
   "type": "object",
-  "additionalProperties": true,
-  "required": ["audio_id", "prompt_id", "suite_id", "scores"],
+  "additionalProperties": false,
+  "required": [
+    "suite_id",
+    "prompt_id",
+    "audio_id",
+    "report_id",
+    "model",
+    "score_sets",
+    "score_provenance",
+    "final_scores",
+    "date"
+  ],
   "properties": {
-    "audio_id": {
-      "type": "string",
-      "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$",
-      "description": "Reference to the generated audio being scored."
-    },
-    "prompt_id": {
-      "type": "string",
-      "pattern": "^ALG-[0-9]{4}$",
-      "description": "Reference to the source prompt."
-    },
-    "suite_id": {
-      "type": "string",
-      "pattern": "^[a-z0-9._-]+$",
-      "description": "Reference to the benchmark suite."
-    },
-    "report_id": {
-      "type": "string",
-      "pattern": "^AK-[0-9]{4}$",
-      "description": "Reference to the listening report, if available."
-    },
+    "suite_id": { "type": "string", "pattern": "^[a-z0-9._-]+$" },
+    "prompt_id": { "type": "string", "pattern": "^ALG-[0-9]{4}$" },
+    "audio_id": { "type": "string", "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$" },
+    "report_id": { "type": "string", "pattern": "^AK-[0-9]{4}$" },
     "model": {
       "type": "object",
-      "additionalProperties": true,
+      "additionalProperties": false,
+      "required": ["provider", "version", "type"],
       "properties": {
-        "id": { "type": "string" },
-        "provider": { "type": "string" },
-        "version": { "type": "string" },
-        "notes": { "type": "string" }
-      },
-      "description": "Generation model metadata."
+        "provider": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["procedural_control", "ml_model", "hybrid", "spatial_procedural"] }
+      }
     },
-    "scores": {
+    "score_sets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal_scores", "agent_scores", "human_scores", "final_scores"],
+      "properties": {
+        "signal_scores": { "$ref": "score.schema.json" },
+        "agent_scores": { "$ref": "score.schema.json" },
+        "human_scores": {
+          "oneOf": [
+            { "$ref": "score.schema.json" },
+            { "type": "null" }
+          ]
+        },
+        "final_scores": { "$ref": "score.schema.json" }
+      }
+    },
+    "score_provenance": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["axis", "score"],
-        "additionalProperties": true,
-        "properties": {
-          "axis": { "type": "string", "minLength": 1 },
-          "score": { "type": "number", "minimum": 0, "maximum": 5 },
-          "notes": { "type": "string" }
-        }
-      },
-      "description": "Score array following bench conventions."
+      "minItems": 1,
+      "items": { "$ref": "listening-report.schema.json#/$defs/score_provenance" }
     },
-    "regeneration_potential": {
-      "type": "string",
-      "enum": ["keep", "revise", "reject"]
-    },
-    "run_date": {
-      "type": "string",
-      "format": "date"
-    }
+    "final_scores": { "$ref": "score.schema.json" },
+    "date": { "type": "string", "format": "date" }
   }
 }

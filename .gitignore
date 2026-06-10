@@ -1,5 +1,7 @@
 .env
 .env.local
+.env.*
+!.env.example
 .DS_Store
 node_modules/
 .next/
@@ -13,6 +15,10 @@ __pycache__/
 *.pyc
 generations/audio/*
 !generations/audio/.gitkeep
+uploads/audio/*
+!uploads/audio/.gitkeep
+uploads/metadata/*
+!uploads/metadata/.gitkeep
 *.wav
 *.mp3
 *.flac

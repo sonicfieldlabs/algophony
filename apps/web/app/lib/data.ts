@@ -1,128 +1,221 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { cache } from "react";
+import {
+  type BenchmarkSuite,
+  type Generation,
+  type Prompt,
+  type ProviderStatus,
+  type Report,
+  type ScoreRecord,
+  type ScoreSet,
+  type SourceType,
+  type ListeningProcess,
+} from "./types";
 
-const ROOT = path.resolve(process.cwd(), "../..");
+export type {
+  BenchmarkSuite,
+  Generation,
+  Prompt,
+  ProviderStatus,
+  Report,
+  ScoreRecord,
+  ScoreSet,
+  SourceType,
+  ListeningProcess,
+};
 
-function loadJsonl<T>(relPath: string): T[] {
-  const fullPath = path.join(ROOT, relPath);
-  if (!fs.existsSync(fullPath)) return [];
+const REPO_ROOT = process.env.ALGOPHONY_DATA_ROOT
+  ? path.resolve(/* turbopackIgnore: true */ process.env.ALGOPHONY_DATA_ROOT)
+  : path.resolve(/* turbopackIgnore: true */ process.cwd(), "../..");
+
+const DATA_PATHS = {
+  prompts: path.join(REPO_ROOT, "atlas", "prompts", "algophony-atlas-v0.1.jsonl"),
+  generations: path.join(REPO_ROOT, "generations", "metadata", "generations-v0.1.jsonl"),
+  reports: path.join(REPO_ROOT, "reports", "json"),
+  scores: path.join(REPO_ROOT, "benchmark", "scores", "scores-v0.1.jsonl"),
+  suite: path.join(REPO_ROOT, "benchmark", "suites", "algophony-benchmark-lite-v0.1.json"),
+  comparison: path.join(REPO_ROOT, "benchmark", "exports", "model-comparison-v0.1.json"),
+  providerStatus: path.join(REPO_ROOT, "benchmark", "exports", "provider-status.json"),
+};
+
+function safeJsonParse<T>(line: string, context: string): T | null {
+  try {
+    return JSON.parse(line) as T;
+  } catch (err) {
+    console.error(`[data] skipping malformed JSON in ${context}:`, err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
+function mtimeKey(target: string): string {
+  try {
+    const st = fs.statSync(target);
+    return `${target}:${st.mtimeMs}:${st.size}`;
+  } catch {
+    return `${target}:missing`;
+  }
+}
+
+function loadJsonlFile<T>(target: string): T[] {
+  if (!fs.existsSync(target)) return [];
   return fs
-    .readFileSync(fullPath, "utf-8")
+    .readFileSync(target, "utf-8")
     .split("\n")
-    .filter((l) => l.trim())
-    .map((l) => JSON.parse(l) as T);
+    .filter((line) => line.trim())
+    .map((line) => safeJsonParse<T>(line, target))
+    .filter((value): value is T => value !== null);
 }
 
-function loadJson<T>(relPath: string): T | null {
-  const fullPath = path.join(ROOT, relPath);
-  if (!fs.existsSync(fullPath)) return null;
-  return JSON.parse(fs.readFileSync(fullPath, "utf-8")) as T;
+function loadJsonFile<T>(target: string): T | null {
+  if (!fs.existsSync(target)) return null;
+  return safeJsonParse<T>(fs.readFileSync(target, "utf-8"), target);
 }
 
-function loadJsonDir<T>(relPath: string): T[] {
-  const fullPath = path.join(ROOT, relPath);
-  if (!fs.existsSync(fullPath)) return [];
+function dirMtimeKey(target: string): string {
+  try {
+    const st = fs.statSync(target);
+    return `${target}:${st.mtimeMs}`;
+  } catch {
+    return `${target}:missing`;
+  }
+}
+
+function loadJsonDir<T>(target: string): T[] {
+  if (!fs.existsSync(target)) return [];
   return fs
-    .readdirSync(fullPath)
-    .filter((f) => f.endsWith(".json"))
+    .readdirSync(target)
+    .filter((file) => file.endsWith(".json"))
     .sort()
-    .map((f) => JSON.parse(fs.readFileSync(path.join(fullPath, f), "utf-8")) as T);
+    .map((file) => {
+      const fullPath = path.join(target, file);
+      return safeJsonParse<T>(fs.readFileSync(fullPath, "utf-8"), fullPath);
+    })
+    .filter((value): value is T => value !== null);
 }
 
-export interface Prompt {
-  prompt_id: string;
-  prompt_text: string;
-  category: string;
-  subcategories: string[];
-  intended_sources: string[];
-  forbidden_sources: string[];
-  location_imaginary: string;
-  listening_mode: string;
-  duration_target: number;
-  loop_required: boolean;
-  difficulty: string;
-  evaluation_focus: string[];
+/**
+ * Module-scoped mtime-keyed memo. Survives across requests in the same Node process.
+ * `cache()` from React dedupes within a single request.
+ */
+function memoize<T>(load: (key: string) => T): (key: string) => T {
+  const store = new Map<string, T>();
+  return (key: string) => {
+    const existing = store.get(key);
+    if (existing !== undefined) return existing;
+    const value = load(key);
+    store.set(key, value);
+    return value;
+  };
 }
 
-export interface Generation {
-  audio_id: string;
-  prompt_id: string;
-  model: string;
-  model_version?: string;
-  date: string;
-  duration: number;
-  storage_uri: string;
-  parameters: Record<string, unknown>;
-  sha256?: string;
+const promptsMemo = memoize<Prompt[]>(() => loadJsonlFile<Prompt>(DATA_PATHS.prompts));
+const generationsMemo = memoize<Generation[]>(() => loadJsonlFile<Generation>(DATA_PATHS.generations));
+const reportsMemo = memoize<Report[]>(() => loadJsonDir<Report>(DATA_PATHS.reports));
+const scoresMemo = memoize<ScoreRecord[]>(() => loadJsonlFile<ScoreRecord>(DATA_PATHS.scores));
+const suiteMemo = memoize<BenchmarkSuite | null>(() => loadJsonFile<BenchmarkSuite>(DATA_PATHS.suite));
+const comparisonMemo = memoize<Record<string, unknown> | null>(() =>
+  loadJsonFile<Record<string, unknown>>(DATA_PATHS.comparison),
+);
+const providerStatusMemo = memoize<ProviderStatus[]>(
+  () => loadJsonFile<ProviderStatus[]>(DATA_PATHS.providerStatus) || [],
+);
+
+export const getPrompts = cache((): Prompt[] => promptsMemo(mtimeKey(DATA_PATHS.prompts)));
+export const getGenerations = cache((): Generation[] => generationsMemo(mtimeKey(DATA_PATHS.generations)));
+export const getReports = cache((): Report[] => reportsMemo(dirMtimeKey(DATA_PATHS.reports)));
+export const getScores = cache((): ScoreRecord[] => scoresMemo(mtimeKey(DATA_PATHS.scores)));
+export const getSuite = cache((): BenchmarkSuite | null => suiteMemo(mtimeKey(DATA_PATHS.suite)));
+export const getComparison = cache((): Record<string, unknown> | null =>
+  comparisonMemo(mtimeKey(DATA_PATHS.comparison)),
+);
+export const getProviderStatuses = cache((): ProviderStatus[] =>
+  providerStatusMemo(mtimeKey(DATA_PATHS.providerStatus)),
+);
+
+export function fileExists(relPath: string): boolean {
+  const target = path.resolve(REPO_ROOT, relPath);
+  const relative = path.relative(REPO_ROOT, target);
+  return (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) && fs.existsSync(target);
 }
 
-export interface Report {
-  report_id: string;
-  audio_id: string;
-  prompt_id: string;
-  listening_date: string;
-  listener_type: string;
-  basic_description: string;
-  scores: Record<string, number | string>;
-  regeneration_recommendation: string;
-  ecological_plausibility: string;
-  causal_coherence: string;
-  prompt_comparison: string;
-  sources: { detected: string[]; inferred: string[]; absent_expected: string[] };
+export function getPrompt(id: string): Prompt | undefined {
+  return getPrompts().find((prompt) => prompt.prompt_id === id);
 }
 
-export interface ScoreRecord {
-  prompt_id: string;
-  audio_id: string;
-  report_id: string;
-  model: { provider: string; version?: string };
-  scores: Record<string, number | string>;
-  date: string;
+export function getGeneration(id: string): Generation | undefined {
+  return getGenerations().find((generation) => generation.audio_id === id);
 }
 
-export interface BenchmarkSuite {
-  suite_id: string;
-  title: string;
-  description: string;
-  version: string;
-  models_compared: { provider_id: string; name: string; type: string; description: string; status?: string }[];
-  scoring_axes: { axis: string; range: number[]; description: string }[];
-  total_generations: number;
-  total_reports: number;
+export function getReport(id: string): Report | undefined {
+  return getReports().find((report) => report.report_id === id);
 }
 
-export function getPrompts(): Prompt[] {
-  return loadJsonl<Prompt>("atlas/prompts/algophony-atlas-v0.1.jsonl");
+export function getReportsForAudio(audioId: string): Report[] {
+  return getReports().filter((report) => report.audio_id === audioId);
 }
 
-export function getGenerations(): Generation[] {
-  return loadJsonl<Generation>("generations/metadata/generations-v0.1.jsonl");
+export function getGenerationsForPrompt(promptId: string): Generation[] {
+  return getGenerations().filter((generation) => generation.prompt_id === promptId);
 }
 
-export function getReports(): Report[] {
-  return loadJsonDir<Report>("reports/json");
-}
+export { POSITIVE_AXES, RISK_AXES, SCORE_AXES, axisDirection } from "./score-bar";
 
-export function getScores(): ScoreRecord[] {
-  return loadJsonl<ScoreRecord>("benchmark/scores/scores-v0.1.jsonl");
-}
+export const SOURCE_TYPES: SourceType[] = [
+  "generated_procedural",
+  "generated_ml",
+  "field_recording",
+  "found_sound",
+  "hybrid",
+];
 
-export function getSuite(): BenchmarkSuite | null {
-  return loadJson<BenchmarkSuite>("benchmark/suites/algophony-benchmark-lite-v0.1.json");
-}
-
-export function getComparison(): Record<string, unknown> | null {
-  return loadJson<Record<string, unknown>>("benchmark/exports/model-comparison-v0.1.json");
-}
-
-export const SCORE_AXES = [
-  "prompt_adherence", "source_accuracy", "spatial_coherence",
-  "event_density_score", "ecological_plausibility", "causal_coherence",
-  "false_source_index", "generic_naturalism_index", "cultural_cliche_index",
-  "loopability",
-] as const;
+export const LISTENING_PROCESSES: ListeningProcess[] = [
+  "agent_automated",
+  "agent_interactive",
+  "human_blind",
+  "human_informed",
+  "hybrid",
+];
 
 export const CATEGORIES = [
-  "forest", "city", "coast", "interior", "machine",
-  "ritual", "archive", "club_exterior", "ruin", "impossible_ecology",
+  "forest",
+  "city",
+  "coast",
+  "interior",
+  "machine",
+  "ritual",
+  "archive",
+  "club_exterior",
+  "ruin",
+  "impossible_ecology",
 ] as const;
+
+export function isKnownCategory(value: string): boolean {
+  return (CATEGORIES as readonly string[]).includes(value);
+}
+
+export function modelTypeLabel(model: string): string {
+  return model.includes("Baseline") ? "procedural control" : "ML model";
+}
+
+export function sourceTypeLabel(st: SourceType): string {
+  const labels: Record<SourceType, string> = {
+    generated_procedural: "Generated (Procedural)",
+    generated_ml: "Generated (ML)",
+    field_recording: "Field Recording",
+    found_sound: "Found Sound",
+    hybrid: "Hybrid",
+  };
+  return labels[st] || st;
+}
+
+export function listeningProcessLabel(lp: ListeningProcess): string {
+  const labels: Record<ListeningProcess, string> = {
+    agent_automated: "Agent (Automated)",
+    agent_interactive: "Agent (Interactive)",
+    human_blind: "Human (Blind)",
+    human_informed: "Human (Informed)",
+    hybrid: "Hybrid",
+  };
+  return labels[lp] || lp;
+}

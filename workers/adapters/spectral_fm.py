@@ -25,6 +25,9 @@ from .base import GenerationAdapter
 class SpectralFMAdapter(GenerationAdapter):
     provider_id = "spectral_fm"
     provider_name = "Spectral FM Baseline"
+    provider_type = "procedural_control"
+    model_version = "spectral-fm-v0.1.1"
+    license_status = "MIT procedural generation / no external samples"
 
     def __init__(self, storage_dir: str = "generations/audio", sample_rate: int = 44100):
         self.storage_dir = Path(storage_dir)
@@ -152,7 +155,7 @@ class SpectralFMAdapter(GenerationAdapter):
             prompt_record=prompt_record,
             variant=variant,
             duration=duration,
-            storage_uri=str(file_path),
+            storage_uri=f"generations/audio/{audio_id}.wav",
             parameters={"sample_rate": sr, "seed": seed, "synthesis": "fm_granular", "category_profile": category},
             seed=seed,
             sha256=sha256,

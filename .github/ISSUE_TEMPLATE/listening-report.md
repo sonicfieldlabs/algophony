@@ -12,6 +12,8 @@ assignees: ""
 - **Audio ID:** <!-- e.g. ALG-0001-EL-SFX-A -->
 - **Listening date:** <!-- YYYY-MM-DD -->
 - **Listener type:** <!-- human / agent / hybrid -->
+- **Review status:** <!-- unreviewed / agent_draft / human_reviewed / hybrid_reviewed -->
+- **Evidence inputs:** <!-- audio file, waveform, spectrogram, prompt, classifier output, etc. -->
 
 ## Basic Description
 
@@ -26,6 +28,14 @@ assignees: ""
 ### Inferred (plausible but uncertain)
 
 - 
+
+### Forbidden but detected
+
+-
+
+### Hallucinated / false sources
+
+-
 
 ### Absent but expected (from prompt)
 
@@ -61,18 +71,18 @@ assignees: ""
 
 ## Scores (1–5 unless noted)
 
-| Axis | Score | Notes |
-|------|-------|-------|
-| prompt_adherence | | |
-| source_accuracy | | |
-| spatial_coherence | | |
-| event_density_score | | |
-| ecological_plausibility | | |
-| causal_coherence | | |
-| false_source_index (0–5) | | |
-| generic_naturalism_index (0–5) | | |
-| cultural_cliche_index (0–5) | | |
-| loopability | | |
+| Axis | Score | Scorer | Evidence | Confidence | Notes |
+|------|-------|--------|----------|------------|-------|
+| prompt_adherence | | | | | |
+| source_accuracy | | | | | |
+| spatial_coherence | | | | | |
+| event_density_score | | | | | |
+| ecological_plausibility | | | | | |
+| causal_coherence | | | | | |
+| false_source_index (0–5, lower is better) | | | | | |
+| generic_naturalism_index (0–5, lower is better) | | | | | |
+| cultural_cliche_index (0–5, lower is better) | | | | | |
+| loopability | | | | | |
 
 ## Regeneration Recommendation
 
@@ -85,3 +95,7 @@ assignees: ""
 ## Additional Notes
 
 <!-- Any observations about cultural assumptions, false sources, or ecological implausibility -->
+
+## Revision History
+
+- Initial report review

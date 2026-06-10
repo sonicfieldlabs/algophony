@@ -1,265 +1,386 @@
 #!/usr/bin/env python3
 """
-Validate the Algophony dataset: prompts, generation metadata, listening reports,
-scores, and benchmark suite records.
+Validate the Algophony dataset and release metadata.
 
-Checks:
-  - JSON syntax
-  - JSONL line validity
-  - Schema validity
-  - Unique IDs
-  - Cross-reference integrity
-  - Category balance
-  - Score ranges
-  - Missing metadata
-
-Usage:
-    python scripts/validate_dataset.py
-    python scripts/validate_dataset.py --verbose
+Default mode checks schema shape and cross-references. Strict mode adds release
+quality gates: no local absolute paths, no unresolved model versions, no pending
+models in the suite manifest, score variance, and report claim quality.
 """
+
+from __future__ import annotations
 
 import argparse
 import json
 import sys
+from collections import Counter, defaultdict
 from pathlib import Path
+from typing import Any
 
 try:
-    from jsonschema import Draft202012Validator, ValidationError
+    from jsonschema import Draft202012Validator
     from referencing import Registry, Resource
     from referencing.jsonschema import DRAFT202012
 except ImportError:
-    print("Error: jsonschema package required. Install with: pip install jsonschema")
+    print("Error: jsonschema package required. Install with: pip install jsonschema referencing")
     sys.exit(1)
 
 
-def load_schema(schema_path: Path) -> dict | None:
-    """Load and return a JSON Schema, or None if not found."""
-    if not schema_path.exists():
+CORE_SCORE_AXES = [
+    "prompt_adherence",
+    "source_accuracy",
+    "spatial_coherence",
+    "event_density_score",
+    "ecological_plausibility",
+    "causal_coherence",
+    "false_source_index",
+    "generic_naturalism_index",
+    "cultural_cliche_index",
+    "loopability",
+]
+
+EXPECTED_CATEGORIES = [
+    "forest",
+    "city",
+    "coast",
+    "interior",
+    "machine",
+    "ritual",
+    "archive",
+    "club_exterior",
+    "ruin",
+    "impossible_ecology",
+]
+
+
+def load_json(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
         return None
-    with open(schema_path) as f:
+    with open(path) as f:
         return json.load(f)
 
 
-def build_schema_registry(schema_dir: Path) -> Registry:
-    """Build a local schema registry for $ref resolution."""
-    resources = []
-    for schema_path in schema_dir.glob("*.schema.json"):
-        schema = load_schema(schema_path)
-        if schema and "$id" in schema:
-            resource = Resource.from_contents(schema, default_specification=DRAFT202012)
-            resources.append((schema["$id"], resource))
-    return Registry().with_resources(resources)
-
-
-def load_jsonl(jsonl_path: Path) -> list[tuple[int, dict | None, str | None]]:
-    """Load JSONL file, returning (line_number, parsed_record, error) tuples."""
+def load_jsonl(path: Path) -> list[tuple[int, dict[str, Any] | None, str | None]]:
     records = []
-    if not jsonl_path.exists():
+    if not path.exists():
         return records
-    with open(jsonl_path) as f:
-        for i, line in enumerate(f, 1):
+    with open(path) as f:
+        for line_num, line in enumerate(f, 1):
             line = line.strip()
             if not line:
                 continue
             try:
-                record = json.loads(line)
-                records.append((i, record, None))
+                records.append((line_num, json.loads(line), None))
             except json.JSONDecodeError as e:
-                records.append((i, None, str(e)))
+                records.append((line_num, None, str(e)))
     return records
 
 
-def validate_records(records: list[tuple[int, dict | None, str | None]],
-                     schema: dict | None,
-                     id_field: str,
-                     label: str,
-                     verbose: bool = False,
-                     registry: Registry | None = None) -> list[str]:
-    """Validate parsed JSONL records against a schema."""
+def jsonl_values(records: list[tuple[int, dict | None, str | None]]) -> list[dict]:
+    return [record for _, record, error in records if record is not None and error is None]
+
+
+def build_schema_registry(schema_dir: Path) -> Registry:
+    resources = []
+    for schema_path in schema_dir.glob("*.schema.json"):
+        schema = load_json(schema_path)
+        if schema and "$id" in schema:
+            resources.append((schema["$id"], Resource.from_contents(schema, default_specification=DRAFT202012)))
+    return Registry().with_resources(resources)
+
+
+def validate_records(
+    records: list[tuple[int, dict | None, str | None]],
+    schema: dict | None,
+    id_field: str,
+    label: str,
+    registry: Registry,
+) -> list[str]:
     errors = []
-    seen_ids = set()
-
-    if not records:
-        if verbose:
-            print(f"  ℹ {label}: No records found (empty file).")
-        return errors
-
-    if schema:
-        validator = Draft202012Validator(schema, registry=registry or Registry())
-    else:
-        validator = None
+    seen = set()
+    validator = Draft202012Validator(schema, registry=registry) if schema else None
 
     for line_num, record, parse_error in records:
         if parse_error:
             errors.append(f"{label} line {line_num}: JSON parse error: {parse_error}")
             continue
+        if not record:
+            errors.append(f"{label} line {line_num}: empty record")
+            continue
 
-        # Check unique ID
         record_id = record.get(id_field)
-        if record_id:
-            if record_id in seen_ids:
-                errors.append(f"{label} line {line_num}: Duplicate ID '{record_id}'")
-            seen_ids.add(record_id)
-        else:
-            errors.append(f"{label} line {line_num}: Missing required field '{id_field}'")
+        if not record_id:
+            errors.append(f"{label} line {line_num}: missing {id_field}")
+        elif record_id in seen:
+            errors.append(f"{label} line {line_num}: duplicate {id_field} {record_id}")
+        seen.add(record_id)
 
-        # Schema validation
         if validator:
-            for ve in validator.iter_errors(record):
-                errors.append(f"{label} line {line_num} ({record_id}): {ve.message}")
+            for error in validator.iter_errors(record):
+                path = ".".join(str(p) for p in error.path) or "<root>"
+                errors.append(f"{label} line {line_num} ({record_id}): {path}: {error.message}")
 
-    if not errors:
-        print(f"  ✓ {label}: {len(records)} record(s) valid.")
-    else:
-        print(f"  ✗ {label}: {len(errors)} error(s) in {len(records)} record(s).")
-
+    print(f"  {'OK' if not errors else 'FAIL'} {label}: {len(records)} record(s), {len(errors)} issue(s)")
     return errors
 
 
-def check_category_balance(records: list[tuple[int, dict | None, str | None]],
-                           expected_categories: list[str],
-                           expected_per_category: int = 10) -> list[str]:
-    """Check that prompt categories are balanced."""
+def validate_json_file(path: Path, schema: dict, label: str, registry: Registry) -> list[str]:
+    record = load_json(path)
+    if record is None:
+        return [f"{label}: missing file {path}"]
     errors = []
-    counts: dict[str, int] = {}
-    for _, record, err in records:
-        if err or not record:
-            continue
-        cat = record.get("category", "UNKNOWN")
-        counts[cat] = counts.get(cat, 0) + 1
-
-    for cat in expected_categories:
-        count = counts.get(cat, 0)
-        if count != expected_per_category:
-            errors.append(
-                f"Category '{cat}': expected {expected_per_category}, got {count}"
-            )
-
-    unexpected = set(counts.keys()) - set(expected_categories)
-    for cat in unexpected:
-        errors.append(f"Unexpected category '{cat}' with {counts[cat]} record(s).")
-
+    validator = Draft202012Validator(schema, registry=registry)
+    for error in validator.iter_errors(record):
+        loc = ".".join(str(p) for p in error.path) or "<root>"
+        errors.append(f"{label}: {loc}: {error.message}")
+    print(f"  {'OK' if not errors else 'FAIL'} {label}: {len(errors)} issue(s)")
     return errors
 
 
-def check_cross_references(prompt_ids: set[str],
-                           generation_records: list[tuple[int, dict | None, str | None]],
-                           report_records: list[tuple[int, dict | None, str | None]]) -> list[str]:
-    """Check that generation and report records reference valid prompt IDs."""
+def check_category_balance(prompts: list[dict]) -> list[str]:
+    counts = Counter(p.get("category") for p in prompts)
     errors = []
-    generation_ids = set()
+    for category in EXPECTED_CATEGORIES:
+        if counts.get(category, 0) != 10:
+            errors.append(f"Category {category}: expected 10, got {counts.get(category, 0)}")
+    for category in set(counts) - set(EXPECTED_CATEGORIES):
+        errors.append(f"Unexpected category {category}")
+    return errors
 
-    for line_num, record, err in generation_records:
-        if err or not record:
-            continue
-        pid = record.get("prompt_id")
-        if pid and pid not in prompt_ids:
-            errors.append(f"Generation line {line_num}: prompt_id '{pid}' not in prompt corpus.")
-        aid = record.get("audio_id")
-        if aid:
-            generation_ids.add(aid)
 
-    for line_num, record, err in report_records:
-        if err or not record:
-            continue
-        pid = record.get("prompt_id")
-        if pid and pid not in prompt_ids:
-            errors.append(f"Report line {line_num}: prompt_id '{pid}' not in prompt corpus.")
-        aid = record.get("audio_id")
-        if aid and generation_ids and aid not in generation_ids:
-            errors.append(f"Report line {line_num}: audio_id '{aid}' not in generation metadata.")
+def check_cross_refs(prompts: list[dict], generations: list[dict], reports: list[dict], scores: list[dict]) -> list[str]:
+    errors = []
+    prompt_ids = {p["prompt_id"] for p in prompts}
+    generation_ids = {g["audio_id"] for g in generations}
+    report_ids = {r["report_id"] for r in reports}
+
+    for generation in generations:
+        if generation["prompt_id"] not in prompt_ids:
+            errors.append(f"Generation {generation['audio_id']}: missing prompt {generation['prompt_id']}")
+        report_id = generation.get("akouo_report_id")
+        if report_id and report_id not in report_ids:
+            errors.append(f"Generation {generation['audio_id']}: missing linked report {report_id}")
+
+    for report in reports:
+        if report["prompt_id"] not in prompt_ids:
+            errors.append(f"Report {report['report_id']}: missing prompt {report['prompt_id']}")
+        if report["audio_id"] not in generation_ids:
+            errors.append(f"Report {report['report_id']}: missing generation {report['audio_id']}")
+        matching_generation = next((g for g in generations if g["audio_id"] == report["audio_id"]), None)
+        if matching_generation and matching_generation.get("akouo_report_id") != report["report_id"]:
+            errors.append(f"Report {report['report_id']}: generation links to {matching_generation.get('akouo_report_id')}")
+
+    for score in scores:
+        if score["prompt_id"] not in prompt_ids:
+            errors.append(f"Score {score['audio_id']}: missing prompt {score['prompt_id']}")
+        if score["audio_id"] not in generation_ids:
+            errors.append(f"Score {score['audio_id']}: missing generation")
+        if score["report_id"] not in report_ids:
+            errors.append(f"Score {score['audio_id']}: missing report {score['report_id']}")
 
     return errors
 
 
-def main():
+def check_markdown_parity(report_dir: Path, reports: list[dict]) -> list[str]:
+    errors = []
+    markdown_ids = {p.stem for p in (report_dir / "markdown").glob("AK-*.md")}
+    json_ids = {r["report_id"] for r in reports}
+    for missing in sorted(json_ids - markdown_ids):
+        errors.append(f"Missing Markdown report for {missing}")
+    for extra in sorted(markdown_ids - json_ids):
+        errors.append(f"Markdown report has no JSON peer: {extra}")
+    return errors
+
+
+def check_analysis(analysis_records: list[dict], generations: list[dict]) -> list[str]:
+    errors = []
+    generation_ids = {g["audio_id"] for g in generations}
+    analysis_ids = {a.get("audio_id") for a in analysis_records}
+    for missing in sorted(generation_ids - analysis_ids):
+        errors.append(f"Missing audio analysis for {missing}")
+    for extra in sorted(analysis_ids - generation_ids):
+        errors.append(f"Audio analysis has no generation metadata: {extra}")
+    required = {"duration", "sample_rate", "channels", "rms", "peak_level", "spectral_centroid_hz", "event_density_per_sec"}
+    for record in analysis_records:
+        missing_fields = required - set(record)
+        if missing_fields:
+            errors.append(f"Analysis {record.get('audio_id')}: missing {sorted(missing_fields)}")
+    return errors
+
+
+def check_strict_quality(project_root: Path, suite: dict, generations: list[dict], reports: list[dict], scores: list[dict]) -> list[str]:
+    errors = []
+
+    for generation in generations:
+        if generation.get("model_version") in ("needs verification", "", None):
+            errors.append(f"Generation {generation['audio_id']}: unresolved model_version")
+        uri = generation.get("storage_uri", "")
+        private_roots = ("/" + "Users" + "/", "/" + "home" + "/")
+        if uri.startswith(private_roots) or ":\\\\" in uri or uri.startswith("$"):
+            errors.append(f"Generation {generation['audio_id']}: storage_uri is machine-specific")
+        if not generation.get("akouo_report_id"):
+            errors.append(f"Generation {generation['audio_id']}: missing akouo_report_id")
+
+    for model in suite.get("models_compared", []):
+        if model.get("status") in ("configured_missing_key", "not_installed", "not_implemented", "failed"):
+            errors.append(f"Suite model {model.get('provider_id')}: status {model.get('status')} is not releasable")
+
+    if suite.get("benchmark_status") == "ml_benchmark" and suite.get("ml_generation_count", 0) == 0:
+        errors.append("Suite claims ml_benchmark but has zero ML generations")
+    if suite.get("benchmark_status") == "procedural_pilot" and suite.get("ml_generation_count", 0) > 0:
+        errors.append("Suite is procedural_pilot but includes ML generations")
+
+    reviewed_count = 0
+    interpreted_count = 0
+    recommendation_counts = Counter()
+    for report in reports:
+        recommendation_counts[report.get("regeneration_recommendation")] += 1
+        if report.get("report_type") == "listening_report":
+            claims = report.get("claim_taxonomy", {})
+            if not claims.get("heard") and not claims.get("interpreted") and not claims.get("undetermined"):
+                errors.append(f"Report {report['report_id']}: empty heard/interpreted/undetermined buckets")
+        if report.get("review_status") in ("human_reviewed", "hybrid_reviewed"):
+            reviewed_count += 1
+            if not report.get("claim_taxonomy", {}).get("heard"):
+                errors.append(f"Reviewed report {report['report_id']}: empty heard bucket")
+            if report.get("claim_taxonomy", {}).get("interpreted"):
+                interpreted_count += 1
+
+    if reviewed_count < 50:
+        errors.append(f"Reviewed reports: expected at least 50, got {reviewed_count}")
+    if interpreted_count < 30:
+        errors.append(f"Reviewed interpreted reports: expected at least 30, got {interpreted_count}")
+    if len({k for k, v in recommendation_counts.items() if v}) < 3:
+        errors.append(f"Regeneration recommendations need keep/revise/reject distribution, got {dict(recommendation_counts)}")
+
+    values_by_axis = defaultdict(set)
+    for score in scores:
+        for axis in CORE_SCORE_AXES:
+            value = score.get("final_scores", {}).get(axis)
+            if isinstance(value, (int, float)):
+                values_by_axis[axis].add(value)
+        if not score.get("score_provenance"):
+            errors.append(f"Score {score.get('audio_id')}: missing score_provenance")
+    for axis in CORE_SCORE_AXES:
+        if len(values_by_axis[axis]) <= 1:
+            errors.append(f"Score axis {axis}: constant across benchmark")
+
+    scan_paths = [
+        project_root / "README.md",
+        project_root / "docs",
+        project_root / "benchmark" / "suites",
+        project_root / "benchmark" / "scores",
+        project_root / "generations" / "metadata",
+    ]
+    for scan_path in scan_paths:
+        files = scan_path.rglob("*") if scan_path.is_dir() else [scan_path]
+        for path in files:
+            if path.is_dir():
+                continue
+            if path.name == "DEVELOPMENT_PLAN.md":
+                continue
+            text = path.read_text(errors="ignore")
+            if "needs verification" in text:
+                errors.append(f"Unresolved placeholder in {path.relative_to(project_root)}")
+
+    return errors
+
+
+def print_report(prompts: list[dict], generations: list[dict], reports: list[dict], scores: list[dict], suite: dict) -> None:
+    print("\nAudit report")
+    print(f"  prompts: {len(prompts)}")
+    print(f"  generations: {len(generations)}")
+    print(f"  reports: {len(reports)}")
+    print(f"  scores: {len(scores)}")
+    print(f"  suite status: {suite.get('benchmark_status')}")
+    print(f"  models: {Counter(g['model'] for g in generations)}")
+    print(f"  review status: {Counter(r['review_status'] for r in reports)}")
+    print(f"  recommendations: {Counter(r['regeneration_recommendation'] for r in reports)}")
+    private_roots = ("/" + "Users" + "/", "/" + "home" + "/")
+    print(f"  absolute storage URIs: {sum(str(g.get('storage_uri','')).startswith(private_roots) for g in generations)}")
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Validate Algophony dataset.")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed output.")
+    parser.add_argument("--strict", action="store_true", help="Enable release-quality checks.")
+    parser.add_argument("--report", action="store_true", help="Print audit counts.")
     args = parser.parse_args()
 
     project_root = Path(__file__).resolve().parent.parent
     schema_dir = project_root / "schemas"
-
-    print("Algophony Dataset Validation\n")
-
-    all_errors = []
-
-    # Build local schema registry for $ref resolution
     registry = build_schema_registry(schema_dir)
 
-    # Load schemas
-    prompt_schema = load_schema(schema_dir / "prompt.schema.json")
-    generation_schema = load_schema(schema_dir / "generation.schema.json")
-    report_schema = load_schema(schema_dir / "listening-report.schema.json")
+    schemas = {
+        "prompt": load_json(schema_dir / "prompt.schema.json"),
+        "generation": load_json(schema_dir / "generation.schema.json"),
+        "report": load_json(schema_dir / "listening-report.schema.json"),
+        "score_record": load_json(schema_dir / "benchmark-run.schema.json"),
+        "suite": load_json(schema_dir / "benchmark-suite.schema.json"),
+    }
 
-    # Validate prompts
-    prompt_path = project_root / "atlas" / "prompts" / "algophony-atlas-v0.1.jsonl"
-    prompt_records = load_jsonl(prompt_path)
-    prompt_errors = validate_records(prompt_records, prompt_schema, "prompt_id", "Prompts", args.verbose, registry)
-    all_errors.extend(prompt_errors)
+    print("Algophony Dataset Validation\n")
+    all_errors: list[str] = []
 
-    # Check category balance
-    if prompt_records:
-        expected_categories = [
-            "forest", "city", "coast", "interior", "machine",
-            "ritual", "archive", "club_exterior", "ruin", "impossible_ecology"
-        ]
-        balance_errors = check_category_balance(prompt_records, expected_categories)
-        all_errors.extend(balance_errors)
-        if balance_errors:
-            print(f"  ✗ Category balance: {len(balance_errors)} issue(s).")
-            for e in balance_errors:
-                print(f"    - {e}")
-        elif prompt_records:
-            print("  ✓ Category balance: OK.")
+    prompt_records = load_jsonl(project_root / "atlas/prompts/algophony-atlas-v0.1.jsonl")
+    generation_records = load_jsonl(project_root / "generations/metadata/generations-v0.1.jsonl")
+    analysis_records = load_jsonl(project_root / "generations/metadata/audio-analysis-v0.1.jsonl")
+    score_records = load_jsonl(project_root / "benchmark/scores/scores-v0.1.jsonl")
 
-    # Validate generation metadata
-    gen_path = project_root / "generations" / "metadata" / "generations-v0.1.jsonl"
-    gen_records = load_jsonl(gen_path)
-    gen_errors = validate_records(gen_records, generation_schema, "audio_id", "Generations", args.verbose, registry)
-    all_errors.extend(gen_errors)
-
-    # Validate reports (JSON files)
-    report_dir = project_root / "reports" / "json"
     report_records = []
-    if report_dir.exists():
-        for rfile in sorted(report_dir.glob("*.json")):
-            try:
-                with open(rfile) as f:
-                    record = json.load(f)
-                report_records.append((0, record, None))
-            except json.JSONDecodeError as e:
-                report_records.append((0, None, f"{rfile.name}: {e}"))
+    for path in sorted((project_root / "reports/json").glob("AK-*.json")):
+        try:
+            report_records.append((0, json.loads(path.read_text()), None))
+        except json.JSONDecodeError as e:
+            report_records.append((0, None, f"{path.name}: {e}"))
 
-    report_errors = validate_records(report_records, report_schema, "report_id", "Reports", args.verbose, registry)
-    all_errors.extend(report_errors)
+    all_errors.extend(validate_records(prompt_records, schemas["prompt"], "prompt_id", "Prompts", registry))
+    all_errors.extend(validate_records(generation_records, schemas["generation"], "audio_id", "Generations", registry))
+    all_errors.extend(validate_records(report_records, schemas["report"], "report_id", "Reports", registry))
+    all_errors.extend(validate_records(score_records, schemas["score_record"], "audio_id", "Scores", registry))
 
-    # Cross-reference checks
-    prompt_ids = set()
-    for _, record, err in prompt_records:
-        if not err and record:
-            pid = record.get("prompt_id")
-            if pid:
-                prompt_ids.add(pid)
+    suite_path = project_root / "benchmark/suites/algophony-benchmark-lite-v0.1.json"
+    all_errors.extend(validate_json_file(suite_path, schemas["suite"], "Benchmark suite", registry))
+    suite = load_json(suite_path) or {}
 
-    if prompt_ids:
-        xref_errors = check_cross_references(prompt_ids, gen_records, report_records)
-        all_errors.extend(xref_errors)
-        if xref_errors:
-            print(f"  ✗ Cross-references: {len(xref_errors)} issue(s).")
-            for e in xref_errors:
-                print(f"    - {e}")
-        else:
-            print("  ✓ Cross-references: OK.")
+    prompts = jsonl_values(prompt_records)
+    generations = jsonl_values(generation_records)
+    analysis = jsonl_values(analysis_records)
+    reports = jsonl_values(report_records)
+    scores = jsonl_values(score_records)
 
-    # Summary
+    balance_errors = check_category_balance(prompts)
+    all_errors.extend(balance_errors)
+    print(f"  {'OK' if not balance_errors else 'FAIL'} Category balance: {len(balance_errors)} issue(s)")
+
+    xref_errors = check_cross_refs(prompts, generations, reports, scores)
+    all_errors.extend(xref_errors)
+    print(f"  {'OK' if not xref_errors else 'FAIL'} Cross references: {len(xref_errors)} issue(s)")
+
+    markdown_errors = check_markdown_parity(project_root / "reports", reports)
+    all_errors.extend(markdown_errors)
+    print(f"  {'OK' if not markdown_errors else 'FAIL'} Markdown parity: {len(markdown_errors)} issue(s)")
+
+    analysis_errors = check_analysis(analysis, generations)
+    all_errors.extend(analysis_errors)
+    print(f"  {'OK' if not analysis_errors else 'FAIL'} Audio analysis: {len(analysis_errors)} issue(s)")
+
+    if args.strict:
+        strict_errors = check_strict_quality(project_root, suite, generations, reports, scores)
+        all_errors.extend(strict_errors)
+        print(f"  {'OK' if not strict_errors else 'FAIL'} Strict release quality: {len(strict_errors)} issue(s)")
+
+    if args.report:
+        print_report(prompts, generations, reports, scores, suite)
+
     print()
     if all_errors:
-        print(f"FAILED: {len(all_errors)} total error(s).")
+        print(f"FAILED: {len(all_errors)} total issue(s).")
+        for error in all_errors[:80]:
+            print(f"  - {error}")
+        if len(all_errors) > 80:
+            print(f"  ... {len(all_errors) - 80} more")
         sys.exit(1)
-    else:
-        print("PASSED: Dataset validation complete.")
-        sys.exit(0)
+
+    print("PASSED: Dataset validation complete.")
 
 
 if __name__ == "__main__":

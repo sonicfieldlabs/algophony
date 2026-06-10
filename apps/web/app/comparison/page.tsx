@@ -1,78 +1,70 @@
-import { getScores, getPrompts, SCORE_AXES, CATEGORIES } from "../lib/data";
+import { CATEGORIES, POSITIVE_AXES, RISK_AXES, SCORE_AXES, getPrompts, getScores } from "../lib/data";
+import { ScoreBar } from "../components/ScoreBar";
 
-function ScoreBar({ value, max = 5 }: { value: number; max?: number }) {
-  const pct = (value / max) * 100;
-  const cls = value <= 2 ? "low" : value <= 3.5 ? "mid" : "high";
-  return (
-    <span className="score-bar">
-      <span className="score-value">{value}</span>
-      <span className="score-bar-track">
-        <span className="score-bar-fill" style={{ width: `${pct}%` }} data-level={cls}></span>
-      </span>
-    </span>
+function avg(nums: number[]): number | null {
+  if (!nums.length) return null;
+  return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 100) / 100;
+}
+
+function composite(axes: Record<string, number[]>): number {
+  const positive = POSITIVE_AXES.map((axis) => avg(axes[axis] || [])).filter(
+    (value): value is number => value !== null && value > 0,
   );
+  const risks = RISK_AXES.map((axis) => avg(axes[axis] || [])).filter((value): value is number => value !== null);
+  const positiveNorm = positive.length ? positive.reduce((sum, value) => sum + (value - 1) / 4, 0) / positive.length : 0;
+  const riskNorm = risks.length ? risks.reduce((sum, value) => sum + value / 5, 0) / risks.length : 0;
+  return Math.round((positiveNorm * 0.72 + (1 - riskNorm) * 0.28) * 10000) / 100;
 }
 
-function avg(nums: number[]): number {
-  return nums.length ? Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 100) / 100 : 0;
-}
+const CATEGORY_AXES: readonly string[] = [
+  "prompt_adherence",
+  "spatial_coherence",
+  "event_density_score",
+  "ecological_plausibility",
+  "generic_naturalism_index",
+  "loopability",
+];
 
 export default function ComparisonPage() {
   const scores = getScores();
-  const prompts = getPrompts();
-  const promptMap = Object.fromEntries(prompts.map((p) => [p.prompt_id, p]));
+  const promptMap = Object.fromEntries(getPrompts().map((prompt) => [prompt.prompt_id, prompt]));
+  const models = [...new Set(scores.map((score) => score.model.provider))];
+  const modelTypes = Object.fromEntries(scores.map((score) => [score.model.provider, score.model.type]));
 
-  // Identify models
-  const models = [...new Set(scores.map((s) => (typeof s.model === "object" ? s.model.provider : String(s.model))))];
-
-  // Per-model global averages
   const modelGlobal: Record<string, Record<string, number[]>> = {};
-  for (const s of scores) {
-    const m = typeof s.model === "object" ? s.model.provider : String(s.model);
-    if (!modelGlobal[m]) modelGlobal[m] = {};
-    for (const axis of SCORE_AXES) {
-      const val = s.scores[axis];
-      if (typeof val === "number") {
-        if (!modelGlobal[m][axis]) modelGlobal[m][axis] = [];
-        modelGlobal[m][axis].push(val);
-      }
-    }
-  }
-
-  // Per-model per-category
   const modelCategory: Record<string, Record<string, Record<string, number[]>>> = {};
-  for (const s of scores) {
-    const m = typeof s.model === "object" ? s.model.provider : String(s.model);
-    const cat = promptMap[s.prompt_id]?.category || "unknown";
-    if (!modelCategory[m]) modelCategory[m] = {};
-    if (!modelCategory[m][cat]) modelCategory[m][cat] = {};
+
+  for (const score of scores) {
+    const model = score.model.provider;
+    const category = promptMap[score.prompt_id]?.category || "unknown";
+    modelGlobal[model] ||= {};
+    modelCategory[model] ||= {};
+    modelCategory[model][category] ||= {};
     for (const axis of SCORE_AXES) {
-      const val = s.scores[axis];
-      if (typeof val === "number") {
-        if (!modelCategory[m][cat][axis]) modelCategory[m][cat][axis] = [];
-        modelCategory[m][cat][axis].push(val);
+      const value = score.final_scores[axis];
+      if (typeof value === "number") {
+        modelGlobal[model][axis] ||= [];
+        modelCategory[model][category][axis] ||= [];
+        modelGlobal[model][axis].push(value);
+        modelCategory[model][category][axis].push(value);
       }
     }
   }
-
-  // Compute composite score
-  const composite = (axes: Record<string, number[]>): number => {
-    const positiveAxes = ["prompt_adherence", "source_accuracy", "spatial_coherence", "event_density_score", "ecological_plausibility", "causal_coherence", "loopability"];
-    const negativeAxes = ["false_source_index", "generic_naturalism_index", "cultural_cliche_index"];
-    let score = 0;
-    for (const a of positiveAxes) score += avg(axes[a] || []);
-    for (const a of negativeAxes) score -= avg(axes[a] || []);
-    return Math.round(score * 100) / 100;
-  };
 
   return (
     <>
       <div className="page-header">
         <h1 className="page-title">Model Comparison</h1>
-        <p className="page-subtitle">{models.length} models · {scores.length} score records · {CATEGORIES.length} categories</p>
+        <p className="page-subtitle">
+          {models.length} compared outputs · {scores.length} score records · risk indices are lower-is-better
+        </p>
       </div>
+      {scores.length === 0 && (
+        <div className="notice-card">
+          No score records are mounted. Public code exports include comparison code without local benchmark results.
+        </div>
+      )}
 
-      {/* Global comparison */}
       <div className="detail-section">
         <div className="detail-section-title">Overall Scores</div>
         <div className="card" style={{ overflowX: "auto" }}>
@@ -80,21 +72,26 @@ export default function ComparisonPage() {
             <thead>
               <tr>
                 <th>Model</th>
-                <th>Composite</th>
-                {SCORE_AXES.map((a) => <th key={a}>{a.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>)}
+                <th>Composite 0-100</th>
+                {SCORE_AXES.map((axis) => (
+                  <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {models.map((m) => (
-                <tr key={m}>
-                  <td style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{m}</td>
+              {models.map((model) => (
+                <tr key={model}>
                   <td>
-                    <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 16, color: "var(--accent)" }}>
-                      {composite(modelGlobal[m])}
-                    </span>
+                    <strong>{model}</strong>
+                    <div className="table-note">{(modelTypes[model] || "unknown").replace(/_/g, " ")}</div>
                   </td>
-                  {SCORE_AXES.map((a) => (
-                    <td key={a}><ScoreBar value={avg(modelGlobal[m][a] || [])} /></td>
+                  <td>
+                    <span className="composite-score">{composite(modelGlobal[model])}</span>
+                  </td>
+                  {SCORE_AXES.map((axis) => (
+                    <td key={axis}>
+                      <ScoreBar value={avg(modelGlobal[model][axis] || [])} axis={axis} />
+                    </td>
                   ))}
                 </tr>
               ))}
@@ -103,32 +100,31 @@ export default function ComparisonPage() {
         </div>
       </div>
 
-      {/* Per-category comparison */}
       <div className="detail-section">
         <div className="detail-section-title">Per-Category Breakdown</div>
-        {CATEGORIES.map((cat) => (
-          <div key={cat} style={{ marginBottom: 16 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, textTransform: "capitalize", color: "var(--text-secondary)" }}>
-              {cat.replace(/_/g, " ")}
-            </h3>
+        {CATEGORIES.map((category) => (
+          <div key={category} style={{ marginBottom: 16 }}>
+            <h3 className="subheading">{category.replace(/_/g, " ")}</h3>
             <div className="card" style={{ overflowX: "auto" }}>
               <table className="data-table">
                 <thead>
                   <tr>
                     <th>Model</th>
-                    {["prompt_adherence", "spatial_coherence", "event_density_score", "ecological_plausibility", "loopability"].map((a) => (
-                      <th key={a}>{a.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>
+                    {CATEGORY_AXES.map((axis) => (
+                      <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim().slice(0, 14)}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {models.map((m) => {
-                    const catData = modelCategory[m]?.[cat] || {};
+                  {models.map((model) => {
+                    const categoryData = modelCategory[model]?.[category] || {};
                     return (
-                      <tr key={m}>
-                        <td style={{ fontWeight: 500, fontSize: 13 }}>{m}</td>
-                        {["prompt_adherence", "spatial_coherence", "event_density_score", "ecological_plausibility", "loopability"].map((a) => (
-                          <td key={a}><ScoreBar value={avg(catData[a] || [])} /></td>
+                      <tr key={model}>
+                        <td>{model}</td>
+                        {CATEGORY_AXES.map((axis) => (
+                          <td key={axis}>
+                            <ScoreBar value={avg(categoryData[axis] || [])} axis={axis} />
+                          </td>
                         ))}
                       </tr>
                     );
@@ -138,21 +134,6 @@ export default function ComparisonPage() {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Methodology note */}
-      <div className="detail-section">
-        <div className="detail-section-title">Methodology</div>
-        <div className="card">
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.8 }}>
-            Scores computed from automated signal-level analysis using librosa feature extraction.
-            Both procedural baselines establish the floor for comparison with ML-based generation models.
-            Composite score = Σ(positive axes) − Σ(negative indices). Range: theoretical −15 to +35.
-            Positive axes (1–5): prompt adherence, source accuracy, spatial coherence, event density,
-            ecological plausibility, causal coherence, loopability.
-            Negative axes (0–5): false source index, generic naturalism index, cultural cliché index.
-          </p>
-        </div>
       </div>
     </>
   );

@@ -1,0 +1,7 @@
+jsonschema>=4.22
+referencing>=0.35
+python-dotenv>=1.0
+requests>=2.31
+numpy>=1.26
+soundfile>=0.12
+librosa>=0.10

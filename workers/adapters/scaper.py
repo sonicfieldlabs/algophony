@@ -21,6 +21,9 @@ from .base import GenerationAdapter, GenerationError
 class SyntheticBaselineAdapter(GenerationAdapter):
     provider_id = "synth_baseline"
     provider_name = "Synthetic Baseline"
+    provider_type = "procedural_control"
+    model_version = "procedural-synth-v0.1.1"
+    license_status = "MIT procedural generation / no external samples"
 
     def __init__(self, storage_dir: str = "generations/audio", sample_rate: int = 44100):
         self.storage_dir = Path(storage_dir)
@@ -124,7 +127,7 @@ class SyntheticBaselineAdapter(GenerationAdapter):
             prompt_record=prompt_record,
             variant=variant,
             duration=duration,
-            storage_uri=str(file_path),
+            storage_uri=f"generations/audio/{audio_id}.wav",
             parameters={"sample_rate": sr, "seed": seed, "category_profile": category},
             seed=seed,
             sha256=sha256,

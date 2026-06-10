@@ -1,103 +1,116 @@
-# Dataset Card: Algophony v0.1
+# Dataset Card: Algophony Atlas and Benchmark Lite v0.1.1
 
-**Status:** Release candidate — v0.1.0
+**Status:** Procedural pilot, release candidate.
 
 ## Dataset Summary
 
-Algophony v0.1 is a research dataset for evaluating text-to-soundscape generation systems. It contains 100 structured prompts across 10 categories, generation metadata for 200 generated audio files from 2 procedural baseline models, 200 agent-reviewed listening reports with AKOÚŌ claim taxonomy, and benchmark scores comparing generation backends on 10 evaluation axes.
+Algophony v0.1.1 is a research pilot for evaluating algorithmic soundscapes beyond generic audio quality. It contains a controlled prompt corpus, procedural control generations, AKOÚŌ-style listening reports, and score records with provenance.
+
+This release should be read as a validated methodology and dashboard corpus, not as a mature text-to-audio model comparison. No ML model outputs are included in the current benchmark scores.
 
 ## Languages
 
 Prompts are in English.
 
-## Dataset Structure
+## Structure
 
-### Prompts
-- **File:** `atlas/prompts/algophony-atlas-v0.1.jsonl`
-- **Format:** JSONL, one prompt per line.
-- **Schema:** `schemas/prompt.schema.json`
-- **Count:** 100 prompts, 10 per category.
+| Asset | Path | Count |
+| --- | --- | ---: |
+| Prompts | `atlas/prompts/algophony-atlas-v0.1.jsonl` | 100 |
+| Generation metadata | `generations/metadata/generations-v0.1.jsonl` | 200 |
+| Audio analysis | `generations/metadata/audio-analysis-v0.1.jsonl` | 200 |
+| JSON reports | `reports/json/AK-*.json` | 200 |
+| Markdown reports | `reports/markdown/AK-*.md` | 200 |
+| Score records | `benchmark/scores/scores-v0.1.jsonl` | 200 |
+| Benchmark suite | `benchmark/suites/algophony-benchmark-lite-v0.1.json` | 1 |
+| Exports | `benchmark/exports/` | CSV, Markdown, JSON |
 
-### Generation Metadata
-- **File:** `generations/metadata/generations-v0.1.jsonl`
-- **Format:** JSONL, one generation record per line.
-- **Schema:** `schemas/generation.schema.json`
-- **Count:** 200 records (100 per model).
+## Prompt Corpus
 
-### Audio Analysis
-- **File:** `generations/metadata/audio-analysis-v0.1.jsonl`
-- **Format:** JSONL, 13 features per audio file.
-- **Count:** 200 records.
+The Atlas contains 10 prompts in each category:
 
-### Listening Reports
-- **Files:** `reports/json/AK-*.json` and `reports/markdown/AK-*.md`
-- **Schema:** `schemas/listening-report.schema.json`
-- **Count:** 200 reports (AK-0001 through AK-0200).
+- forest
+- city
+- coast
+- interior
+- machine
+- ritual
+- archive
+- club_exterior
+- ruin
+- impossible_ecology
 
-### Benchmark Scores
-- **File:** `benchmark/scores/scores-v0.1.jsonl`
-- **Schema:** `schemas/score.schema.json`
-- **Count:** 200 score records.
-- **Suite:** `benchmark/suites/algophony-benchmark-lite-v0.1.json`
-- **Exports:** CSV, Markdown, JSON in `benchmark/exports/`
+Each prompt includes intended sources, forbidden sources, listening mode, loop requirement, target duration, difficulty, and evaluation focus.
 
-## Dataset Creation
+## Generation Coverage
 
-### Curation Rationale
+| Provider | Type | Synthesis method | Count | Release role |
+| --- | --- | --- | ---: | --- |
+| Synthetic Baseline | Procedural control | Additive tones, filtered noise, envelopes | 100 | Control |
+| Spectral FM Baseline | Procedural control | FM and spectral/noise shaping | 100 | Control |
 
-The dataset was created to evaluate algorithmic soundscapes beyond standard audio quality metrics, specifically testing ecological plausibility, cultural specificity, spatial coherence, and prompt adherence.
+The current suite has `ml_generation_count: 0`. The worker layer now supports provider contracts for ElevenLabs, AudioGen, MOSS-SoundEffect, Stable Audio Open 1.0, Stable Audio 2.5 API routes, TangoFlux, and user-hosted Hugging Face endpoints, but outputs from those providers are not part of this release data until promoted, reported, scored, and validated.
 
-### Source Data
+New ML/API generations are written first to `generations/metadata/incoming-generations-v0.1.jsonl`. Incoming files are not benchmark-valid until they have reserved report IDs, listening reports, benchmark scores, and strict validation.
 
-Prompts are original compositions written for this benchmark. Generated audio is produced by procedural synthesis systems (no samples from copyrighted sources).
+## Reports and Review Status
 
-### Generation Models
+Reports use the AKOÚŌ claim taxonomy:
 
-| Model | Type | Synthesis | License | Status |
-| --- | --- | --- | --- | --- |
-| Synthetic Baseline | Procedural | Additive + noise | MIT | ✓ Active |
-| Spectral FM Baseline | Procedural | FM + granular | MIT | ✓ Active |
-| ElevenLabs Sound Effects | ML Model | Neural | Commercial API | Pending |
+- `heard`
+- `measured`
+- `inferred`
+- `interpreted`
+- `speculative`
+- `undetermined`
 
-### Annotations
+Current report status:
 
-Listening reports produced by automated agent analysis using the AKOÚŌ agentic listening framework. Each report uses the claim taxonomy: `heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined`.
+- 100 `hybrid_reviewed` seed reports.
+- 100 `agent_draft` reports.
 
-### Audio Features Extracted
+The reviewed seed set is designed to populate critical listening buckets and exercise validation gates. It is not a substitute for a formal independent human annotation study.
 
-Duration, sample rate, RMS, peak level, spectral centroid, spectral bandwidth, spectral flatness, zero crossing rate, silence ratio, onset count, event density, loop boundary discontinuity.
+## Scores
 
-## Considerations
+Scores are split into:
 
-### Social Impact
+- `signal_scores`
+- `agent_scores`
+- `human_scores`
+- `final_scores`
 
-Generated soundscapes may reproduce cultural stereotypes, ecological oversimplifications, or Western-centric assumptions about non-Western environments. The benchmark is designed to make these biases visible, not to amplify them.
+Every score record includes provenance per axis: scorer, evidence, confidence, and notes. Positive axes use 1-5 scales where higher is better. Risk axes use 0-5 scales where lower is better.
 
-### Biases
+## Creation Rationale
 
-- Prompt categories reflect a specific research perspective. Other valid categories exist.
-- English-language prompts may bias generation toward Anglophone cultural associations.
-- Current models are procedural baselines — scores will change significantly with ML models.
+The corpus was created to test whether generated soundscapes can be evaluated as world-construction: source presence, spatial logic, ecological plausibility, causal coherence, false ecology, and cultural assumptions.
 
-### Limitations
+## Source and Provenance
 
-- The v0.1 dataset is a pilot. 100 prompts and 200 reports establish methodology, not comprehensive coverage.
-- Audio files are generated, not recorded. They should not be treated as documentary evidence.
-- Agent-generated reports measure signal-level features only. Human listening reports are needed for source identification, ecological assessment, and cultural analysis.
-- Procedural baselines intentionally score low on source accuracy and ecological plausibility.
+- Prompts are original benchmark prompts.
+- Current audio files are generated by procedural code in this repository.
+- No external sample libraries or private recordings are used in the current audio corpus.
+- Public metadata uses relative storage URIs.
+- ElevenLabs is the default generation provider when configured.
+- AudioGen and MOSS-SoundEffect are local-first integrations by default.
+- MOSS MLX is intended for Apple Silicon local inference.
+- Stable Audio Open 1.0 requires model access/terms acceptance before local use.
+- Stable Audio 2.5 can be configured through Stability API, fal, or Replicate.
 
-### Missing Data
+## Limitations
 
-- No human listening reports yet (all agent-generated).
-- No ML-model generations (ElevenLabs API access pending).
-- No field-recording reference comparisons.
+- No ML generated audio is included yet.
+- No field-recording references are included.
+- No independent human panel has annotated the full corpus.
+- Procedural controls intentionally lack semantic understanding of the prompts.
+- Generated audio must not be treated as documentary evidence of any species, culture, location, ritual, or ecology.
 
-### Licensing
+## Licensing
 
-- Prompts, metadata, schemas, reports: MIT License.
-- Generated audio: MIT (procedural synthesis with no external samples).
-- Listening reports: MIT License.
+- Prompts, metadata, schemas, scripts, reports, and dashboard code: MIT License.
+- Current generated audio: MIT-compatible procedural output with no external samples.
 
 ## Citation
 
-To be provided upon public release.
+Formal citation information will be added with a public archive release.

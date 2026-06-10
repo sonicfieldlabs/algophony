@@ -1,16 +1,18 @@
-import { getPrompts, getGenerations, getReports, getScores, getSuite, SCORE_AXES, CATEGORIES } from "./lib/data";
+import {
+  CATEGORIES,
+  SCORE_AXES,
+  getGenerations,
+  getPrompts,
+  getReports,
+  getScores,
+  getSuite,
+  modelTypeLabel,
+} from "./lib/data";
+import { ScoreBar } from "./components/ScoreBar";
 
-function ScoreBar({ value, max = 5 }: { value: number; max?: number }) {
-  const pct = (value / max) * 100;
-  const cls = value <= 2 ? "low" : value <= 3.5 ? "mid" : "high";
-  return (
-    <span className="score-bar">
-      <span className="score-value">{value}</span>
-      <span className="score-bar-track">
-        <span className="score-bar-fill" style={{ width: `${pct}%` }} data-level={cls}></span>
-      </span>
-    </span>
-  );
+function avg(values: number[]): number | null {
+  if (!values.length) return null;
+  return Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) / 100;
 }
 
 export default function Overview() {
@@ -19,43 +21,49 @@ export default function Overview() {
   const reports = getReports();
   const scores = getScores();
   const suite = getSuite();
+  const reviewed = reports.filter(
+    (report) => report.review_status === "hybrid_reviewed" || report.review_status === "human_reviewed",
+  );
 
-  const models = suite?.models_compared.filter((m) => m.status !== "pending") || [];
-
-  // Compute per-model averages
-  const modelAvgs: Record<string, Record<string, number>> = {};
-  for (const s of scores) {
-    const provider = typeof s.model === "object" ? s.model.provider : String(s.model);
-    if (!modelAvgs[provider]) modelAvgs[provider] = {};
+  const modelAvgs: Record<string, Record<string, number[]>> = {};
+  for (const score of scores) {
+    const provider = score.model.provider;
+    modelAvgs[provider] ||= {};
     for (const axis of SCORE_AXES) {
-      const val = s.scores[axis];
-      if (typeof val === "number") {
-        if (!modelAvgs[provider][axis]) modelAvgs[provider][axis] = 0;
-        modelAvgs[provider][axis] += val;
+      const value = score.final_scores[axis];
+      if (typeof value === "number") {
+        modelAvgs[provider][axis] ||= [];
+        modelAvgs[provider][axis].push(value);
       }
     }
   }
-  const modelCounts: Record<string, number> = {};
-  for (const s of scores) {
-    const provider = typeof s.model === "object" ? s.model.provider : String(s.model);
-    modelCounts[provider] = (modelCounts[provider] || 0) + 1;
-  }
-  for (const m of Object.keys(modelAvgs)) {
-    for (const axis of Object.keys(modelAvgs[m])) {
-      modelAvgs[m][axis] = Math.round((modelAvgs[m][axis] / modelCounts[m]) * 100) / 100;
-    }
-  }
 
-  // Category distribution
-  const catCounts: Record<string, number> = {};
-  for (const p of prompts) catCounts[p.category] = (catCounts[p.category] || 0) + 1;
+  const categoryCounts: Record<string, number> = {};
+  for (const prompt of prompts) categoryCounts[prompt.category] = (categoryCounts[prompt.category] || 0) + 1;
 
   return (
     <>
       <div className="page-header">
         <h1 className="page-title">Algophony Benchmark Dashboard</h1>
-        <p className="page-subtitle">Text-to-soundscape generation benchmark — {suite?.version || "v0.1"}</p>
+        <p className="page-subtitle">
+          {suite?.title || "Algophony"} ·{" "}
+          <span className="status-pill">{suite?.benchmark_status?.replace(/_/g, " ")}</span>
+        </p>
       </div>
+
+      {!suite && prompts.length === 0 && (
+        <div className="notice-card">
+          No local corpus is mounted. The public code release ships empty by design; set `ALGOPHONY_DATA_ROOT` to inspect
+          local research data.
+        </div>
+      )}
+
+      {suite?.benchmark_status === "procedural_pilot" && (
+        <div className="notice-card">
+          This release is a procedural pilot. It validates the Atlas, reports, score provenance, and dashboard before ML
+          text-to-audio generations are published.
+        </div>
+      )}
 
       <div className="stats-row">
         <div className="stat-card">
@@ -71,12 +79,12 @@ export default function Overview() {
           <div className="stat-label">Reports</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{Object.keys(modelAvgs).length}</div>
-          <div className="stat-label">Models</div>
+          <div className="stat-value">{reviewed.length}</div>
+          <div className="stat-label">Reviewed seed reports</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{CATEGORIES.length}</div>
-          <div className="stat-label">Categories</div>
+          <div className="stat-value">{suite?.ml_generation_count || 0}</div>
+          <div className="stat-label">ML generations</div>
         </div>
       </div>
 
@@ -87,16 +95,21 @@ export default function Overview() {
             <thead>
               <tr>
                 <th>Model</th>
-                {SCORE_AXES.map((a) => <th key={a}>{a.replace(/_/g, " ").replace("score", "").trim()}</th>)}
+                {SCORE_AXES.map((axis) => (
+                  <th key={axis}>{axis.replace(/_/g, " ").replace("score", "").trim()}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {Object.entries(modelAvgs).map(([model, axes]) => (
                 <tr key={model}>
-                  <td style={{ fontWeight: 600 }}>{model}</td>
-                  {SCORE_AXES.map((a) => (
-                    <td key={a}>
-                      <ScoreBar value={axes[a] || 0} max={a.includes("index") ? 5 : 5} />
+                  <td>
+                    <strong>{model}</strong>
+                    <div className="table-note">{modelTypeLabel(model)}</div>
+                  </td>
+                  {SCORE_AXES.map((axis) => (
+                    <td key={axis}>
+                      <ScoreBar value={avg(axes[axis] || [])} axis={axis} />
                     </td>
                   ))}
                 </tr>
@@ -104,17 +117,19 @@ export default function Overview() {
             </tbody>
           </table>
         </div>
+        <p className="section-note">Positive axes: higher is better. Risk indices: lower is better.</p>
       </div>
 
       <div className="detail-section">
-        <div className="detail-section-title">Category Distribution</div>
+        <div className="detail-section-title">Atlas Distribution</div>
         <div className="card-grid">
-          {CATEGORIES.map((cat) => (
-            <div className="card" key={cat}>
-              <div className="card-title" style={{ textTransform: "capitalize" }}>
-                {cat.replace(/_/g, " ")}
+          {CATEGORIES.map((category) => (
+            <div className="card compact-card" key={category}>
+              <div className="card-title">{category.replace(/_/g, " ")}</div>
+              <div className="card-meta">
+                {categoryCounts[category] || 0} prompts ·{" "}
+                {(categoryCounts[category] || 0) * Object.keys(modelAvgs).length} generations
               </div>
-              <div className="card-meta">{catCounts[cat] || 0} prompts · {(catCounts[cat] || 0) * Object.keys(modelAvgs).length} generations</div>
             </div>
           ))}
         </div>
