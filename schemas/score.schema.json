@@ -40,6 +40,30 @@
       ],
       "default": null,
       "description": "Can the listener tell if this is real or generated? 5 = clearly identifiable, 0 = indistinguishable. Null when ground truth provenance is unknown."
+    },
+    "disclosure_integrity": {
+      "oneOf": [
+        { "$ref": "#/$defs/positive_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 manifesto axis. How completely the generation discloses its synthetic origin: generator, operator, version, and intended use. 5 = fully disclosed and legible, 1 = opaque. Null when not yet scored."
+    },
+    "homogenization_index": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 manifesto axis. Degree to which the output averages distinct ecologies, accents, voices, or places into a default rendering. 0 = situated and specific, 5 = fully averaged. Lower is better. Null when not yet scored."
+    },
+    "voice_consent_risk": {
+      "oneOf": [
+        { "$ref": "#/$defs/risk_score" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Proposed v0.2 manifesto axis. Risk attached to voice-like material whose provenance or consent status cannot be verified. 0 = no voice-like material or fully cleared, 5 = prominent voice-like material with unverifiable provenance. Lower is better. Null when no voice material or not yet scored."
     }
   },
   "$defs": {

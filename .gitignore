@@ -1,5 +1,7 @@
 .env
 .env.local
+.env.*
+!.env.example
 .DS_Store
 node_modules/
 .next/

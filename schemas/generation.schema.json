@@ -72,6 +72,51 @@
       ],
       "default": null,
       "description": "Metadata for uploaded field recordings or found sounds."
+    },
+    "compute_provenance": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["runtime_locality"],
+          "properties": {
+            "runtime_locality": {
+              "type": "string",
+              "enum": ["local", "cloud_api", "hosted_endpoint", "hybrid", "undetermined"]
+            },
+            "hardware": { "type": "string" },
+            "region": { "type": "string" },
+            "energy_note": { "type": "string" }
+          }
+        }
+      ],
+      "default": null,
+      "description": "Material footprint of the generation. Every generated sound has a body somewhere: electricity, water, hardware, heat, labor. Records where the computation ran and on what. Null for records that predate this field."
+    },
+    "voice_material": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contains_voice_like_material", "consent_status"],
+          "properties": {
+            "contains_voice_like_material": { "type": "boolean" },
+            "voice_source": {
+              "type": "string",
+              "enum": ["none", "synthetic_tts", "cloned", "recorded_consented", "recorded_unverified", "undetermined"]
+            },
+            "consent_status": {
+              "type": "string",
+              "enum": ["not_applicable", "consented", "unverified", "undetermined"]
+            },
+            "notes": { "type": "string" }
+          }
+        }
+      ],
+      "default": null,
+      "description": "Voice-as-body record. The voice is biometric: consent for the human voice, provenance for the synthetic one. Null for records that predate this field or contain no voice-like material."
     }
   }
 }

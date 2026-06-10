@@ -1,11 +1,11 @@
 # Release Checklist
 
-Pre-release validation for Algophony v0.1.1.
+Pre-release validation for Algophony v0.2.
 
 ## Documentation
 
 - [x] README states the current procedural-pilot status.
-- [x] ROADMAP distinguishes completed scaffold work from v0.2 upgrades.
+- [x] ROADMAP distinguishes the v0.2 platform release from post-v0.2 research upgrades.
 - [x] Concept note exists.
 - [x] Glossary exists.
 - [x] References are grouped and publication metadata should be checked before formal citation.
@@ -82,4 +82,4 @@ cd apps/web && npm install && npm run build
 
 - [ ] Generate at least 100 ML-model outputs before claiming a model benchmark.
 - [ ] Draft Sonic Field Labs research post.
-- [ ] Tag only after all required commands pass.
+- [ ] Tag `v0.2` only after all required commands pass.

@@ -11,7 +11,7 @@ workers/
   adapters/
     base.py
     elevenlabs_sfx.py
-    stable_audio_25_stability.py
+    stable_audio_25_stability.py  # Stability API adapters for Stable Audio 2.5 and 3.0
     stable_audio_25_fal.py
     stable_audio_25_replicate.py
     huggingface_endpoint.py
@@ -37,10 +37,36 @@ Heavy local model packages must never be imported at registry import time. Adapt
 If `scripts/generate_matrix.py` is run without `--providers`, it uses:
 
 ```text
-el_sfx,stable_audio_25_stability_api,stable_audio_25_fal,stable_audio_25_replicate,tangoflux_local,stable_audio_open_local,audiogen_local,moss_sfx_mlx,moss_sfx_local
+el_sfx,stable_audio_3_stability_api,stable_audio_25_stability_api,stable_audio_25_fal,stable_audio_25_replicate,tangoflux_local,stable_audio_open_local,audiogen_local,moss_sfx_mlx,moss_sfx_local
 ```
 
 Procedural controls are excluded from default fallback unless `--allow-procedural-fallback` is passed.
+
+## Studio Keys
+
+Place local keys in the ignored root file:
+
+```bash
+cp .env.example .env.local
+```
+
+Minimum cloud soundscape test keys:
+
+- `ALGOPHONY_ELEVENLABS_API_KEY` for ElevenLabs sound effects, max 30 seconds per generated clip.
+- `ALGOPHONY_STABILITY_API_KEY` for Stability Stable Audio 3.0/2.5. Stable Audio 3.0 is registered as `stable_audio_3_stability_api` and is capped at 360 seconds.
+
+Stability requests default to multipart form fields. Set `ALGOPHONY_STABILITY_PAYLOAD_MODE=json` only if a configured endpoint expects JSON.
+
+## LLM Listening
+
+LLM listening augmentation is disabled by default. To test a local authorized Codex CLI pass inside Studio:
+
+```bash
+ALGOPHONY_ENABLE_LLM_LISTENING=true
+ALGOPHONY_LLM_BACKEND=codex_cli
+```
+
+The LLM pass receives prompt metadata, generation metadata, signal analysis, and the deterministic AKOÚŌ draft. It must return a schema-constrained listening-mode output and is appended to `akouo_mode_outputs`.
 
 ## Metadata Safety
 

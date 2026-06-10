@@ -1,7 +1,16 @@
+import { execFile } from "node:child_process";
+import path from "node:path";
+import { promisify } from "node:util";
 import { getProviderStatuses, getSuite } from "../lib/data";
+
+const execFileAsync = promisify(execFile);
+const REPO_ROOT = process.env.ALGOPHONY_DATA_ROOT || path.resolve(process.cwd(), "../..");
+
+export const dynamic = "force-dynamic";
 
 const DEFAULT_CHAIN = [
   "el_sfx",
+  "stable_audio_3_stability_api",
   "stable_audio_25_stability_api",
   "stable_audio_25_fal",
   "stable_audio_25_replicate",
@@ -12,8 +21,31 @@ const DEFAULT_CHAIN = [
   "moss_sfx_local",
 ];
 
-export default function ProvidersPage() {
-  const providers = getProviderStatuses();
+async function getLiveProviderStatuses() {
+  try {
+    const { stdout } = await execFileAsync(
+      "python3",
+      [
+        "-c",
+        "import sys; sys.path.insert(0, '.'); from workers.provider_registry import list_provider_statuses; import json; print(json.dumps(list_provider_statuses()))",
+      ],
+      {
+        cwd: REPO_ROOT,
+        encoding: "utf-8",
+        timeout: 15_000,
+        env: { ...process.env, PYTHONUNBUFFERED: "1" },
+      },
+    );
+    const parsed = JSON.parse(stdout);
+    return Array.isArray(parsed) ? parsed : getProviderStatuses();
+  } catch (err) {
+    console.error("[providers page] live provider probe failed:", err);
+    return getProviderStatuses();
+  }
+}
+
+export default async function ProvidersPage() {
+  const providers = await getLiveProviderStatuses();
   const suite = getSuite();
   const benchmarked = new Set((suite?.models_compared || []).map((model) => model.provider_id));
   const availableDefaults = DEFAULT_CHAIN.filter((id) => providers.find((provider) => provider.provider_id === id)?.status === "available");
@@ -27,7 +59,7 @@ export default function ProvidersPage() {
     <>
       <div className="page-header">
         <h1 className="page-title">Providers</h1>
-        <p className="page-subtitle">{providers.length} configured provider contracts · ElevenLabs-first default chain</p>
+        <p className="page-subtitle">{providers.length} configured provider contracts · ElevenLabs / Stable Audio default chain</p>
       </div>
 
       {availableDefaults.length === 0 && (

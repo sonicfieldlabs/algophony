@@ -15,7 +15,14 @@ const REPO_ROOT = path.resolve(process.cwd(), "../..");
 const UPLOADS_AUDIO = path.join(REPO_ROOT, "uploads", "audio");
 const SCRIPTS_DIR = path.join(REPO_ROOT, "scripts");
 
-const ALLOWED_EXT = new Set(["wav", "mp3", "flac", "aiff", "ogg"]);
+const ALLOWED_EXT = new Set(["wav", "mp3", "flac", "aiff", "aif", "ogg"]);
+const ALLOWED_SOURCE_TYPES = new Set([
+  "generated_procedural",
+  "generated_ml",
+  "field_recording",
+  "found_sound",
+  "hybrid",
+]);
 const MAX_FILE_BYTES = 50 * 1024 * 1024;
 
 function cleanString(value: unknown, maxLength: number): string {
@@ -24,8 +31,9 @@ function cleanString(value: unknown, maxLength: number): string {
 
 function cleanUploadMetadata(value: unknown): Record<string, string> {
   const raw = typeof value === "object" && value ? (value as Record<string, unknown>) : {};
+  const sourceType = cleanString(raw.source_type, 80);
   return {
-    source_type: cleanString(raw.source_type, 80) || "field_recording",
+    source_type: ALLOWED_SOURCE_TYPES.has(sourceType) ? sourceType : "found_sound",
     recorder: cleanString(raw.recorder, 160),
     location: cleanString(raw.location, 160),
     date_recorded: cleanString(raw.date_recorded, 40),

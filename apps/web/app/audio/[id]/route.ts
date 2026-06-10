@@ -3,9 +3,18 @@ import { stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import path from "node:path";
-import { getGenerations } from "../../lib/data";
 
-const REPO_ROOT = path.resolve(/*turbopackIgnore: true*/ process.cwd(), "../..");
+function dataPath(...parts: string[]): string {
+  if (process.env.ALGOPHONY_DATA_ROOT) {
+    return path.resolve(/* turbopackIgnore: true */ process.env.ALGOPHONY_DATA_ROOT, ...parts);
+  }
+  return path.resolve(/* turbopackIgnore: true */ process.cwd(), "../..", ...parts);
+}
+
+const SEARCH_DIRS = [
+  dataPath("generations", "audio"),
+  dataPath("uploads", "audio"),
+];
 
 const MIME: Record<string, string> = {
   wav: "audio/wav",
@@ -21,23 +30,23 @@ const EXTENSIONS = Object.keys(MIME);
 /** Validate audio ID to prevent path traversal. */
 function isValidId(id: string): boolean {
   return (
-    /^ALG-[0-9]{4}-[A-Z][A-Z0-9_]+-[A-Z]$/.test(id) ||
+    /^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$/.test(id) ||
     /^PG-[0-9]{6,}-[A-Z][A-Z0-9_-]+-[A-Z]$/.test(id) ||
     /^UPL-[0-9]{6,}-UPLOAD-[A-Z0-9]+$/.test(id)
   );
 }
 
-async function findAudioFile(id: string): Promise<{ filePath: string; size: number } | null> {
-  const searchDirs = [
-    path.join(REPO_ROOT, "generations", "audio"),
-    path.join(REPO_ROOT, "uploads", "audio"),
-  ];
+function isInside(parent: string, child: string): boolean {
+  const relative = path.relative(parent, child);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+}
 
-  for (const dir of searchDirs) {
+async function findAudioFile(id: string): Promise<{ filePath: string; size: number } | null> {
+  for (const dir of SEARCH_DIRS) {
     for (const ext of EXTENSIONS) {
       const candidate = path.join(dir, `${id}.${ext}`);
       // Defense in depth — candidate must remain inside its parent dir.
-      if (!candidate.startsWith(dir + path.sep)) continue;
+      if (!isInside(dir, candidate)) continue;
       try {
         const s = await stat(candidate);
         if (s.isFile()) return { filePath: candidate, size: s.size };
@@ -57,13 +66,6 @@ export async function GET(
 
   if (!isValidId(id)) {
     return new Response("Not found", { status: 404 });
-  }
-
-  if (id.startsWith("ALG-")) {
-    const generations = getGenerations();
-    if (generations.length > 0 && !generations.some((g) => g.audio_id === id)) {
-      return new Response("Audio not found", { status: 404 });
-    }
   }
 
   const found = await findAudioFile(id);

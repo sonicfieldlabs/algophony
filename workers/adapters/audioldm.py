@@ -4,6 +4,8 @@ AudioLDM adapter — text-to-audio via latent diffusion.
 Status: Stub — requires audioldm or diffusers package.
 """
 
+from __future__ import annotations
+
 from .base import GenerationAdapter, GenerationError
 
 

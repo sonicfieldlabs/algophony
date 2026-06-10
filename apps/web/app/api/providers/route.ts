@@ -11,9 +11,6 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const staticProviders = getProviderStatuses();
-  if (staticProviders.length > 0) {
-    return Response.json(staticProviders);
-  }
 
   try {
     const { stdout } = await execFileAsync(
@@ -33,6 +30,9 @@ export async function GET() {
     return Response.json(providers);
   } catch (err) {
     console.error("[providers] probe failed:", err);
+    if (staticProviders.length > 0) {
+      return Response.json(staticProviders, { headers: { "x-algophony-provider-status": "static-fallback" } });
+    }
     return Response.json({ error: "Provider status unavailable." }, { status: 500 });
   }
 }

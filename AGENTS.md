@@ -39,6 +39,32 @@ Do not:
 - Claim a real field recording exists when the file is generated.
 - Collapse ecological critique into generic quality scoring.
 
+## AKOÚŌ v0.4 Contract
+
+Algophony is aligned with AKOÚŌ v0.4 (`../akouo` is the source of truth):
+
+- 13 listening modes plus `akouo-router` and `reference-layer` (15 skills).
+- 16 commands (`/listen` through `/route`).
+- Evidence ladder: `none`, `prompt_only`, `metadata_only`,
+  `decoded_audio_metadata`, `measured_signal`, `transcript_or_caption`,
+  `contextual_note`, `mixed`.
+- Reports may carry `akouo_router_output`, `akouo_mode_outputs`,
+  `akouo_routing_plan`, and `akouo_reference_map`. All optional. Never
+  backfill them onto old reports without an actual routed pass.
+- When a report carries `akouo_routing_plan`, its claims must respect
+  `claim_permissions`. Example: `prompt_only` evidence forbids `heard` and
+  `measured` claims about audio content.
+- Honor `stop_conditions`: stop or gather evidence instead of listening to
+  imagined input.
+- The vocabulary is duplicated in `schemas/listening-report.schema.json` and
+  `apps/web/app/lib/listening-contract.ts`; keep both in sync with
+  `../akouo/schemas/` when AKOÚŌ versions.
+
+The manifesto-derived score axes (`disclosure_integrity`,
+`homogenization_index`, `voice_consent_risk`) and generation fields
+(`compute_provenance`, `voice_material`) are nullable and unscored on the
+v0.1.1 corpus. Score or populate them only with an actual reviewing pass.
+
 ## Schema Validation
 
 After editing any data file, run:
@@ -75,7 +101,7 @@ python scripts/validate_schemas.py
 - Never commit `node_modules/`, `__pycache__/`, `.next/`, or build artifacts.
 - Keep generated audio out of git. Use `generations/audio/.gitkeep` as the only tracked file in that directory.
 - If small audio fixtures are needed for testing, place them in `fixtures/audio/` and explicitly unignore that directory.
-- Treat the current local history as private/local. Do not push it directly to `https://github.com/alephchixi/algophony`.
+- Treat the current local history as private/local. Do not push it directly to `https://github.com/emeisazam/algophony`.
 - Publish the public repository only through `scripts/prepare_public_export.py`, which creates a fresh sanitized export.
 - The public repo may contain full local-mode code, playground code, provider adapters, schemas, and benchmark machinery, but not benchmark result data, generated metadata, report corpora, generated audio, uploads, secrets, personal paths, or private notes.
 - The public website/showcase belongs in the private Sonic Field Labs repository, not in a deployed Algophony playground.

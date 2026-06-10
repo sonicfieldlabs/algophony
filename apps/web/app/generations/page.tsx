@@ -1,4 +1,4 @@
-import { getGenerations, getPrompts, getReports, modelTypeLabel } from "../lib/data";
+import { getGenerations, getPrompts, getReports, sourceTypeLabel } from "../lib/data";
 import Link from "next/link";
 
 export default function GenerationsPage() {
@@ -17,7 +17,7 @@ export default function GenerationsPage() {
       <div className="page-header">
         <h1 className="page-title">Generations</h1>
         <p className="page-subtitle">
-          {generations.length} audio files from {Object.keys(modelCounts).length} procedural controls
+          {generations.length} audio files from {Object.keys(modelCounts).length} provider outputs
         </p>
       </div>
       {generations.length === 0 && (
@@ -72,7 +72,7 @@ export default function GenerationsPage() {
                   <td>{prompt && <span className="badge badge-category">{prompt.category.replace(/_/g, " ")}</span>}</td>
                   <td>{generation.model}</td>
                   <td>
-                    <span className="badge badge-control">{modelTypeLabel(generation.model)}</span>
+                    <span className="badge badge-control">{sourceTypeLabel(generation.source_type)}</span>
                   </td>
                   <td className="mono-cell">{reportCount}</td>
                   <td className="mono-cell" style={{ color: generation.seed == null ? "var(--text-muted)" : undefined }}>

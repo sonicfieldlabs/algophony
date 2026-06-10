@@ -9,6 +9,8 @@ Usage:
     python scripts/generate_matrix.py --providers synth_baseline,el_sfx --limit 10 --dry-run
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -16,9 +18,6 @@ from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from dotenv import load_dotenv
-load_dotenv(Path(__file__).resolve().parent.parent / ".env.local")
 
 from workers.pipeline import list_provider_statuses, resolve_providers, run_pipeline
 
@@ -111,7 +110,7 @@ def main():
         print("Checked providers:")
         for provider in diagnostics:
             print(f"  - {provider['provider_id']}: {provider['status']} — {provider.get('status_reason', '')}")
-        print("\nSet ALGOPHONY_ELEVENLABS_API_KEY, configure another ML/API provider, pass --providers explicitly, or use --allow-procedural-fallback.")
+        print("\nSet ALGOPHONY_ELEVENLABS_API_KEY or ALGOPHONY_STABILITY_API_KEY in .env.local, configure another ML/API provider, pass --providers explicitly, or use --allow-procedural-fallback.")
         sys.exit(1)
     prompt_ids = [p.strip() for p in args.prompt_ids.split(",")] if args.prompt_ids else None
     categories = [c.strip() for c in args.categories.split(",")] if args.categories else None

@@ -41,6 +41,13 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## AKOÚŌ and Agentic Listening
 
-- Sonic Field Labs. AKOÚŌ: Agentic listening framework.
+- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.4: 15 portable skills, evidence ladder, routing plans, reference layer. See the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
 - Sonic Field Labs. Agentic Listening Benchmark.
 - Sonic Field Labs. https://labs.sonicfield.org
+
+## Algophony Framework Documents
+
+- Sonic Field Labs (2026). *Algophony: A Listening Manifesto*. `docs/manifesto.md`. Founding statement: the algophonic condition, the acousmatic contract, rights of the audible, the planetary ear.
+- `docs/concept-note.md` — framework definition and evaluation levels.
+- `docs/benchmark-methodology.md` — score axes and the AKOÚŌ v0.4 listening chain.
+- `docs/algophony-v0.3-integration-plan.md` — manifesto and AKOÚŌ v0.4 integration architecture.

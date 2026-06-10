@@ -1,6 +1,6 @@
 # Benchmark Methodology
 
-**Status:** v0.1.1 procedural pilot methodology.
+**Status:** v0.2 platform release methodology for the v0.1.1 procedural pilot corpus.
 
 ## Purpose
 
@@ -45,6 +45,21 @@ Measures what the model or generator assumes:
 - Documentary ambiguity.
 - Overconfident interpretation without evidence.
 
+### Level 5: Provenance, Consent, and Disclosure
+
+Measures the generation as a published object inside the algophonic condition
+(see `manifesto.md`), not only as a constructed world:
+
+- Synthetic origin is legible: generator, operator, version, intended use.
+- Voice-like material carries consent and provenance status.
+- The output does not invite false-field-recording reception.
+- Distinct ecologies, accents, voices, and places are not averaged into
+  defaults.
+
+Level 5 axes are schema-landed in v0.2 as nullable fields. They are not scored
+on the v0.1.1 procedural corpus and must never be backfilled without an actual
+reviewing pass.
+
 ## Score Axes
 
 | Axis | Range | Direction |
@@ -60,7 +75,15 @@ Measures what the model or generator assumes:
 | `generic_naturalism_index` | 0-5 | Lower is better |
 | `cultural_cliche_index` | 0-5 | Lower is better |
 
-Composite scores normalize positive and risk axes separately. Risk indices are inverted before aggregation, so a lower raw risk value improves the composite score.
+Manifesto axes (schema-landed in v0.2, nullable until scored):
+
+| Axis | Range | Direction |
+| --- | --- | --- |
+| `disclosure_integrity` | 1-5 or null | Higher is better |
+| `homogenization_index` | 0-5 or null | Lower is better |
+| `voice_consent_risk` | 0-5 or null | Lower is better |
+
+Composite scores normalize positive and risk axes separately. Risk indices are inverted before aggregation, so a lower raw risk value improves the composite score. Null axes are excluded from composites.
 
 ## Score Provenance
 
@@ -74,6 +97,31 @@ Every score axis must declare:
 - `notes`
 
 Scores are separated into `signal_scores`, `agent_scores`, `human_scores`, and `final_scores`. Current summaries use `final_scores`.
+
+## AKOÚŌ v0.4 Listening Chain
+
+Reports may carry the full AKOÚŌ v0.4 contract: router output, expanded
+routing plan, per-mode outputs, and reference map. The routing plan grades the
+available evidence and converts it into claim permissions before any listening
+mode runs.
+
+Evidence ladder for Algophony report types:
+
+| Evidence level | Typical Algophony situation | Claim ceiling |
+| --- | --- | --- |
+| `prompt_only` | Prompt exists, audio not yet generated or unavailable | No `heard`/`measured` claims about audio content |
+| `metadata_only` | Generation record without decodable audio | File facts only; content stays `undetermined` |
+| `measured_signal` | `analyze_audio.py` features available | `measured` claims allowed with stated method |
+| `mixed` | Audio, signal analysis, prompt, and metadata together | Full taxonomy, each claim tied to its basis |
+
+Recommended mode chain for generated soundscapes: signal-inspection,
+acoulogical-object, transductive-media, ecological-posthuman, with
+critical-political as corrective. Add voice-speech listening when prompts
+imply speech or vocal presence, material-event listening for resonance and
+machine categories, audiovisual-scenic listening when the prompt frames a
+scene or media context, and symbolic-fictional listening only for declared
+possible-world or impossible-ecology prompts. When stop conditions are unmet,
+stop or gather evidence instead of listening to imagined input.
 
 ## Claim Taxonomy
 

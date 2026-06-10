@@ -29,6 +29,7 @@ export default function ComparisonPage() {
   const scores = getScores();
   const promptMap = Object.fromEntries(getPrompts().map((prompt) => [prompt.prompt_id, prompt]));
   const models = [...new Set(scores.map((score) => score.model.provider))];
+  const modelTypes = Object.fromEntries(scores.map((score) => [score.model.provider, score.model.type]));
 
   const modelGlobal: Record<string, Record<string, number[]>> = {};
   const modelCategory: Record<string, Record<string, Record<string, number[]>>> = {};
@@ -55,7 +56,7 @@ export default function ComparisonPage() {
       <div className="page-header">
         <h1 className="page-title">Model Comparison</h1>
         <p className="page-subtitle">
-          {models.length} procedural controls · {scores.length} score records · risk indices are lower-is-better
+          {models.length} compared outputs · {scores.length} score records · risk indices are lower-is-better
         </p>
       </div>
       {scores.length === 0 && (
@@ -82,7 +83,7 @@ export default function ComparisonPage() {
                 <tr key={model}>
                   <td>
                     <strong>{model}</strong>
-                    <div className="table-note">procedural control</div>
+                    <div className="table-note">{(modelTypes[model] || "unknown").replace(/_/g, " ")}</div>
                   </td>
                   <td>
                     <span className="composite-score">{composite(modelGlobal[model])}</span>

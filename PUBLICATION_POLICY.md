@@ -4,7 +4,7 @@ This repository has two release surfaces.
 
 ## Public GitHub Repository
 
-`https://github.com/alephchixi/algophony` is the public code repository for the
+`https://github.com/emeisazam/algophony` is the public code repository for the
 full local-mode Algophony system. It may include schemas, scripts, provider
 adapters, the local web dashboard, playground code, benchmark machinery,
 documentation, and empty data directories.
@@ -20,8 +20,7 @@ history directly to the public remote.
 ## Sonic Field Labs Website
 
 The public-facing Algophony page lives in the private Sonic Field Labs website
-repository at `https://github.com/alephchixi/sonic-field-labs`. That page is a
-curated read-only showcase. It must not expose playground generation, upload
+repository. That page is a curated read-only showcase. It must not expose playground generation, upload
 workflows, private benchmark data, local API endpoints, local filesystem paths,
 or private notes.
 

@@ -1,15 +1,17 @@
 # Algophony Roadmap
 
-## v0.1.1 Status
+## v0.2 Status
 
-Algophony is currently a procedural pilot and research scaffold with validated contracts:
+Algophony is currently a local-mode platform release with a validated
+procedural pilot corpus:
 
 - 100 Atlas prompts.
 - 200 procedural control generations.
 - 200 listening reports.
 - 200 score records with provenance.
 - Strict dataset validation.
-- Dashboard routes for Atlas, prompts, generations, reports, comparison, benchmark, references, export, and collaboration.
+- Dashboard routes for Atlas, prompts, generations, reports, comparison, providers, benchmark, observatory, studio, and export.
+- Sanitized public-export workflow for publishing code without local corpus data or private history.
 
 The project should not be tagged as a full ML benchmark until real ML-generated files are included and reviewed.
 
@@ -58,7 +60,17 @@ The project should not be tagged as a full ML benchmark until real ML-generated 
 - Report detail pages expose the AKOÚŌ taxonomy and score provenance.
 - UI labels procedural controls separately from ML model outputs.
 
-## v0.1.1 Release Gates
+### June 2026: Manifesto and AKOÚŌ v0.4 Contract Expansion
+
+- Algophony Manifesto adopted as the founding statement (`docs/manifesto.md`); concept note, glossary, and methodology expanded around it.
+- AKOÚŌ contract synced to v0.4: 13 listening modes, 16 commands, evidence ladder, claim permissions.
+- Report schema carries optional `akouo_routing_plan` and `akouo_reference_map`; dashboard report pages render them when present.
+- Score schema gains proposed nullable manifesto axes: `disclosure_integrity`, `homogenization_index`, `voice_consent_risk`.
+- Generation schema gains optional `compute_provenance` and `voice_material` records.
+- Evaluation Level 5 (provenance, consent, disclosure) defined in `docs/benchmark-methodology.md`.
+- Execution plan: `docs/algophony-v0.3-integration-plan.md`.
+
+## v0.2 Release Gates
 
 All of the following must pass before a public tag:
 
@@ -71,7 +83,7 @@ python3 scripts/export_release.py --dry-run
 cd apps/web && npm run build
 ```
 
-## v0.2 Research Upgrades
+## Post-v0.2 Research Upgrades
 
 - Add at least 100 ML-model generations.
 - Prioritize ElevenLabs SFX as first configured ML backend.
@@ -81,6 +93,10 @@ cd apps/web && npm run build
 - Add human annotation workflow and inter-annotator agreement.
 - Add field-recording reference comparisons where licensing permits.
 - Add model cards for every generation backend.
+- Score the proposed manifesto axes (`disclosure_integrity`, `homogenization_index`, `voice_consent_risk`) on new reports; keep them null on the pilot corpus.
+- Populate `compute_provenance` and `voice_material` on new generation records at generation time.
+- Add provider openness profiles (open-weights local, open-code hosted, closed API) to the registry, the providers page, and benchmark exports.
+- Produce routed listening passes with routing plans and claim-permission enforcement for new reports.
 
 ## v0.3 Collaboration Layer
 
@@ -89,6 +105,8 @@ cd apps/web && npm run build
 - Public listening-session workflow.
 - Dataset version folders with immutable manifests.
 - DOI-ready archive export.
+- Consent and provenance ledger for voice material in contributed audio.
+- Planetary-cost (compute provenance) summaries in benchmark exports.
 
 ## v0.4 Platform Hardening
 

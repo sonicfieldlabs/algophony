@@ -135,7 +135,8 @@ export const getProviderStatuses = cache((): ProviderStatus[] =>
 
 export function fileExists(relPath: string): boolean {
   const target = path.resolve(REPO_ROOT, relPath);
-  return target.startsWith(REPO_ROOT) && fs.existsSync(target);
+  const relative = path.relative(REPO_ROOT, target);
+  return (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) && fs.existsSync(target);
 }
 
 export function getPrompt(id: string): Prompt | undefined {

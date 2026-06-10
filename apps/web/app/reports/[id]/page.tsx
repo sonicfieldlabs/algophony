@@ -19,6 +19,8 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
   const scores = report.scores || report.score_sets.final_scores;
   const route = report.akouo_router_output;
   const modeOutputs = report.akouo_mode_outputs || [];
+  const plan = report.akouo_routing_plan;
+  const referenceMap = report.akouo_reference_map;
 
   return (
     <>
@@ -54,9 +56,9 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
 
       <div className="detail-section">
         <div className="detail-section-title">AKOÚŌ Claim Taxonomy</div>
-        {!route && (
+        {!route && !plan && (
           <div className="notice-card" style={{ marginBottom: 16 }}>
-            This report preserves the AKOÚŌ claim taxonomy, but it predates the explicit router and mode-output contract.
+            This report preserves the AKOÚŌ claim taxonomy, but it predates the explicit router, routing-plan, and mode-output contract.
           </div>
         )}
         <div className="claim-grid">
@@ -92,6 +94,49 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
         </div>
       )}
 
+      {plan && (
+        <div className="detail-section">
+          <div className="detail-section-title">AKOÚŌ Routing Plan</div>
+          <div className="card">
+            <div className="detail-row"><span className="detail-label">Object</span><span className="detail-value">{plan.object_listened_to}</span></div>
+            <div className="detail-row"><span className="detail-label">Evidence level</span><span className="detail-value">{plan.evidence_level.replace(/_/g, " ")}</span></div>
+            <div className="detail-row"><span className="detail-label">Route confidence</span><span className="detail-value">{plan.route_confidence}</span></div>
+            <div style={{ marginTop: 12 }}>
+              <p className="source-heading">Mode chain</p>
+              {plan.mode_chain.map((step) => (
+                <p className="claim-text" key={`${step.role}-${step.mode}`}>
+                  <span className="claim-confidence">{step.role}</span>{" "}
+                  {LISTENING_MODE_LABELS[step.mode as AkouoListeningMode] || step.mode}
+                  <span className="claim-basis">{step.reason}</span>
+                </p>
+              ))}
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <p className="source-heading">Claim permissions</p>
+              {Object.entries(plan.claim_permissions).map(([permission, allowed]) => (
+                <span key={permission} className="source-tag">
+                  {permission.replace(/_/g, " ")}: {allowed ? "yes" : "no"}
+                </span>
+              ))}
+            </div>
+            {plan.stop_conditions.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Stop conditions</p>
+                {plan.stop_conditions.map((item) => <p className="section-note" key={item}>{item}</p>)}
+              </div>
+            )}
+            <div style={{ marginTop: 12 }}>
+              <p className="source-heading">Agent handoff</p>
+              <p className="body-copy">{plan.agent_handoff.summary}</p>
+              {plan.agent_handoff.forbidden_assumptions.map((item) => (
+                <p className="section-note" key={item}>Must not assume: {item}</p>
+              ))}
+              <p className="section-note">Recommended command: {plan.agent_handoff.recommended_command}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {modeOutputs.length > 0 && (
         <div className="detail-section">
           <div className="detail-section-title">AKOÚŌ Mode Outputs</div>
@@ -103,6 +148,37 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
                 <p className="section-note">{output.what_remains_hidden.join(" ")}</p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {referenceMap && (
+        <div className="detail-section">
+          <div className="detail-section-title">AKOÚŌ Reference Map</div>
+          <div className="card">
+            {([
+              "concepts_triggered",
+              "sonic_methodologies",
+              "authors_or_traditions",
+              "possible_research_routes",
+              "research_questions",
+              "cautions",
+            ] as const).map((kind) =>
+              referenceMap[kind].length > 0 ? (
+                <div key={kind} style={{ marginBottom: 10 }}>
+                  <p className="source-heading">{kind.replace(/_/g, " ")}</p>
+                  {referenceMap[kind].map((item) => <span key={item} className="source-tag">{item}</span>)}
+                </div>
+              ) : null
+            )}
+            {referenceMap.adjacent_modes.length > 0 && (
+              <div>
+                <p className="source-heading">adjacent modes</p>
+                {referenceMap.adjacent_modes.map((mode) => (
+                  <span key={mode} className="source-tag">{LISTENING_MODE_LABELS[mode as AkouoListeningMode] || mode}</span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

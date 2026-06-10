@@ -1441,3 +1441,24 @@ Implementation order:
 17. Prepare v0.1 release.
 
 If uncertain, preserve the research-first priority: Atlas and Benchmark before dashboard polish.
+
+## 28. June 2026 expansion addendum
+
+This plan remains the execution record for v0.1.x. Two later layers extend it
+without changing its data contracts:
+
+1. The Algophony Manifesto (`docs/manifesto.md`) was adopted as the founding
+   statement. It adds evaluation Level 5 (provenance, consent, disclosure),
+   three proposed nullable score axes (`disclosure_integrity`,
+   `homogenization_index`, `voice_consent_risk`), and optional generation
+   metadata (`compute_provenance`, `voice_material`).
+2. The AKOÚŌ contract was synced to v0.4: 13 listening modes plus router and
+   reference-layer, 16 commands, an evidence ladder with claim permissions,
+   and optional `akouo_routing_plan` / `akouo_reference_map` fields on
+   listening reports.
+
+All additions are backward compatible: the v0.1.1 corpus validates unchanged,
+and the new fields stay null until an actual scored or routed pass produces
+them. The execution plan for these layers is
+`docs/algophony-v0.3-integration-plan.md`; section 14's listening discipline
+and the claim taxonomy in section 5 remain binding.

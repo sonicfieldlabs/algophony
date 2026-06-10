@@ -5,6 +5,8 @@ Every adapter must implement the `generate` method and provide metadata that
 validates against schemas/generation.schema.json.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from datetime import date
 import hashlib
@@ -145,6 +147,8 @@ class GenerationAdapter(ABC):
             "file_format": file_format,
             "storage_uri": storage_uri,
             "human_notes": [],
+            "source_type": "generated_ml" if self.provider_type == "ml_model" else "generated_procedural",
+            "upload_metadata": None,
         }
         if sha256:
             record["sha256"] = sha256

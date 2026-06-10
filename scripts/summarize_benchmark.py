@@ -6,6 +6,8 @@ The v0.1.1 summary reads `final_scores` and treats positive axes and risk
 indices separately. Lower risk-index values are better.
 """
 
+from __future__ import annotations
+
 import argparse
 import csv
 import json
