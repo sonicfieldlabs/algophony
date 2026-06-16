@@ -1,6 +1,6 @@
-# Algophony
+# Algophony Framework
 
-Algophony studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is a Sonic Field Labs research framework for evaluating algorithmic soundscapes as generated, simulated, hybrid, or recursively interpreted sonic environments.
+The Algophony Framework studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is a Sonic Field Labs research framework for evaluating algorithmic soundscapes as generated, simulated, hybrid, or recursively interpreted sonic environments.
 
 The central claim is simple: generative audio systems do not only produce sounds. They produce assumptions about worlds: what a forest is, what a city is, what a ritual is, what counts as background, what gets erased, and what becomes audible.
 
