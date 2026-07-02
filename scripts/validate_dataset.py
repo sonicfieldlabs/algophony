@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -207,6 +208,44 @@ def check_analysis(analysis_records: list[dict], generations: list[dict]) -> lis
     return errors
 
 
+def check_readme_counts(project_root: Path, prompts: list[dict], generations: list[dict], reports: list[dict]) -> list[str]:
+    """Fail strict validation when README corpus counts drift from the data."""
+    readme_path = project_root / "README.md"
+    if not readme_path.exists():
+        return ["README.md is missing"]
+
+    text = readme_path.read_text(errors="ignore")
+    audio_count = 0
+    for generation in generations:
+        storage_uri = generation.get("storage_uri")
+        if not isinstance(storage_uri, str):
+            continue
+        target = (project_root / storage_uri).resolve()
+        try:
+            target.relative_to(project_root)
+        except ValueError:
+            continue
+        if target.exists():
+            audio_count += 1
+    hybrid_reviewed = sum(1 for report in reports if report.get("review_status") == "hybrid_reviewed")
+    agent_draft = sum(1 for report in reports if report.get("review_status") == "agent_draft")
+
+    expectations = [
+        ("prompt count", rf"{len(prompts)}\s+schema-valid Atlas prompts"),
+        ("generation metadata count", rf"{len(generations)}\s+generation metadata records"),
+        ("local audio count", rf"{audio_count}\s+local audio files"),
+        ("JSON report count", rf"{len(reports)}\s+JSON reports"),
+        ("hybrid-reviewed seed report count", rf"{hybrid_reviewed}\s+hybrid-reviewed seed reports"),
+        ("agent-draft report count", rf"{agent_draft}\s+agent-draft reports"),
+    ]
+
+    errors = []
+    for label, pattern in expectations:
+        if not re.search(pattern, text):
+            errors.append(f"README {label} does not match derived data ({pattern})")
+    return errors
+
+
 def check_strict_quality(project_root: Path, suite: dict, generations: list[dict], reports: list[dict], scores: list[dict]) -> list[str]:
     errors = []
 
@@ -364,6 +403,10 @@ def main() -> None:
     print(f"  {'OK' if not analysis_errors else 'FAIL'} Audio analysis: {len(analysis_errors)} issue(s)")
 
     if args.strict:
+        readme_errors = check_readme_counts(project_root, prompts, generations, reports)
+        all_errors.extend(readme_errors)
+        print(f"  {'OK' if not readme_errors else 'FAIL'} README corpus counts: {len(readme_errors)} issue(s)")
+
         strict_errors = check_strict_quality(project_root, suite, generations, reports, scores)
         all_errors.extend(strict_errors)
         print(f"  {'OK' if not strict_errors else 'FAIL'} Strict release quality: {len(strict_errors)} issue(s)")

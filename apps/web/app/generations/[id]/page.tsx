@@ -15,6 +15,7 @@ export default async function GenerationDetail({ params }: { params: Promise<{ i
 
   const prompt = getPrompt(generation.prompt_id);
   const reports = getReportsForAudio(generation.audio_id);
+  const earwormTrace = generation.earworm_trace;
 
   return (
     <>
@@ -74,6 +75,33 @@ export default async function GenerationDetail({ params }: { params: Promise<{ i
           </div>
         </div>
       </div>
+
+      {earwormTrace && (
+        <div className="detail-section">
+          <div className="detail-section-title">Earworm / Akousmata Trace</div>
+          <div className="card">
+            <div className="detail-row"><span className="detail-label">Trace status</span><span className="detail-value">{earwormTrace.trace_status.replace(/_/g, " ")}</span></div>
+            <div className="detail-row"><span className="detail-label">Session</span><span className="detail-value">{earwormTrace.session_id || "not retained"}</span></div>
+            <div className="detail-row"><span className="detail-label">Events</span><span className="detail-value">{earwormTrace.event_chain.length}</span></div>
+            <div className="detail-row"><span className="detail-label">Context bundles</span><span className="detail-value">{earwormTrace.context_bundle_refs.length}</span></div>
+            <div className="detail-row"><span className="detail-label">Retention</span><span className="detail-value">{earwormTrace.retention_policy.retention_class.replace(/_/g, " ")}</span></div>
+            {earwormTrace.akousmata_operations.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Memory operations</p>
+                {earwormTrace.akousmata_operations.map((operation) => <span key={operation} className="source-tag">{operation}</span>)}
+              </div>
+            )}
+            {earwormTrace.signal_packets.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Attached signal packets</p>
+                {earwormTrace.signal_packets.map((packet) => (
+                  <span key={packet.packet_id} className="source-tag">{packet.signal_type}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="detail-section">
         <div className="detail-section-title">Reports</div>

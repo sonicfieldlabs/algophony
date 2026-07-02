@@ -98,9 +98,9 @@ Every score axis must declare:
 
 Scores are separated into `signal_scores`, `agent_scores`, `human_scores`, and `final_scores`. Current summaries use `final_scores`.
 
-## AKOÚŌ v0.4 Listening Chain
+## AKOÚŌ v0.5 Listening Chain
 
-Reports may carry the full AKOÚŌ v0.4 contract: router output, expanded
+Reports may carry the full AKOÚŌ v0.5 contract: router output, expanded
 routing plan, per-mode outputs, and reference map. The routing plan grades the
 available evidence and converts it into claim permissions before any listening
 mode runs.
@@ -122,6 +122,23 @@ machine categories, audiovisual-scenic listening when the prompt frames a
 scene or media context, and symbolic-fictional listening only for declared
 possible-world or impossible-ecology prompts. When stop conditions are unmet,
 stop or gather evidence instead of listening to imagined input.
+
+## Earworm and Akousmata Trace Layer
+
+Generations and reports may carry an optional `earworm_trace` that points to an
+Earworm session, event chain, asset/provenance refs, signal packets, context
+bundles, retention policy, and Akousmata memory operations. This makes the
+route of a listening object traceable across audio and non-audio context such
+as prompts, field notes, captions, images, video, control streams, ambiente
+frames, analysis summaries, user edits, agent actions, and render history.
+
+An Earworm trace does not automatically authorize stronger claims. It changes
+the evidence inventory that the AKOÚŌ router can inspect: a retained prompt is
+still `prompt_only`; a context bundle may support `contextual_note`; signal
+analysis packets may support `measured_signal`; and mixed prompt, metadata,
+analysis, and audio evidence may support `mixed`. Claim permissions remain the
+gate. The v0.1.1 procedural corpus predates this integration and correctly
+leaves the trace field null.
 
 ## Claim Taxonomy
 

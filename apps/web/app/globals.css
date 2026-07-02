@@ -47,7 +47,7 @@ a:hover { color: var(--accent-strong); }
 }
 .main-content { margin-left: 240px; flex: 1; padding: 32px 40px; max-width: 1400px; }
 
-.sidebar-brand { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.5px; }
+.sidebar-brand { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; letter-spacing: 0; }
 .sidebar-version { font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 28px; }
 .sidebar-nav { list-style: none; display: flex; flex-direction: column; gap: 2px; }
 .sidebar-nav a {
@@ -63,7 +63,7 @@ a:hover { color: var(--accent-strong); }
 
 /* Page header */
 .page-header { margin-bottom: 32px; }
-.page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+.page-title { font-size: 28px; font-weight: 700; letter-spacing: 0; margin-bottom: 6px; }
 .page-subtitle { font-size: 14px; color: var(--text-secondary); }
 .body-copy { color: var(--text-secondary); font-size: 14px; line-height: 1.7; }
 .section-note { color: var(--text-secondary); font-size: 12px; margin-top: 10px; }

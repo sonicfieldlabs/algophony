@@ -5,7 +5,7 @@
  * This file intentionally copies the public contract shape needed by
  * Algophony instead of importing from an adjacent local repository.
  *
- * Aligned with AKOÚŌ v0.4: 13 listening modes plus router and reference
+ * Aligned with AKOÚŌ v0.5: 13 listening modes plus router and reference
  * layer (15 portable skills), 16 commands, evidence ladder, claim
  * permissions, routing plans, and reference maps. Canonical source:
  * the AKOÚŌ repository schemas (`../akouo/schemas/`).
@@ -78,7 +78,7 @@ export const AKOUO_LISTENING_MODES = [
 
 export type AkouoListeningMode = (typeof AKOUO_LISTENING_MODES)[number];
 
-/** All 15 portable AKOÚŌ v0.4 skills: meta-skills plus listening modes. */
+/** All 15 portable AKOÚŌ v0.5 skills: meta-skills plus listening modes. */
 export const AKOUO_SKILLS = [
   "akouo-router",
   "reference-layer",
@@ -186,7 +186,7 @@ export interface AkouoAgentHandoff {
 }
 
 /**
- * AKOÚŌ v0.4 expanded routing plan for agent handoff: weighted mode
+ * AKOÚŌ v0.5 expanded routing plan for agent handoff: weighted mode
  * selection, evidence limits, claim permissions, and stop conditions.
  */
 export interface AkouoRoutingPlan {

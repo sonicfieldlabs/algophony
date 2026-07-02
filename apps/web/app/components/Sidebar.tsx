@@ -49,7 +49,7 @@ export default function Sidebar({ studioEnabled }: { studioEnabled: boolean }) {
       </button>
       {open && <div className="mobile-nav-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />}
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
-        <div className="sidebar-brand">Algophony</div>
+        <div className="sidebar-brand">Algophony Framework</div>
         <div className="sidebar-version">platform v0.2</div>
         <nav aria-label="Primary">
           <ul className="sidebar-nav">
