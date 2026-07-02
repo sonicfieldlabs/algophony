@@ -3,6 +3,9 @@
 Status: draft execution plan
 Date: 2026-05-23
 
+This document describes the v0.2 integration-plan series, not the public
+software release number (see `ROADMAP.md` for release versions).
+
 ## Goal
 
 Algophony v0.2 turns the v0.1 atlas/benchmark into a working soundscape studio and listening system. The core loop is:

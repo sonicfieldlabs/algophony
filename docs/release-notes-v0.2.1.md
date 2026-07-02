@@ -23,8 +23,8 @@ not claim a full ML model benchmark.
   listening routes and non-audio context attachment.
 - Normalized the official public repository target to
   `https://github.com/sonicfieldlabs/algophony`.
-- Added strict README corpus-count validation so public count claims drift when
-  the canonical JSON/JSONL corpus changes.
+- Added strict README corpus-count validation that fails when public count
+  claims drift from the canonical JSON/JSONL corpus.
 
 ## Unchanged Boundaries
 

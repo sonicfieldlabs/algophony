@@ -3,14 +3,14 @@
 Status: draft execution plan, contract layer landed
 Date: 2026-06-10
 
+This document describes the v0.3 integration-plan series, not the public
+software release number (see `ROADMAP.md` for release versions).
+
 ## Goal
 
 v0.2 (see `algophony-v0.2-integration-plan.md`) planned the studio loop:
 providers, LLM listening layer, STT/TTS interop, local models. v0.3 aligns the
 framework's concept and contracts with three upstream sources:
-
-This document describes the v0.3 integration-plan series, not the public
-software release number.
 
 1. **Algophonya: A Pluriversal Listening Manifesto** (`docs/manifesto.md`),
    adopted as the founding statement. Its claims become instruments:

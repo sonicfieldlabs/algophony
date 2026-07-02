@@ -1,5 +1,10 @@
 # Algophony Framework Roadmap
 
+Version labels in this roadmap are Algophony Framework release versions
+(v0.1.1, v0.2, v0.2.1, ...). They are distinct from the
+`docs/algophony-v0.x-integration-plan.md` planning series and from AKOÚŌ
+contract versions.
+
 ## v0.2 Status
 
 The Algophony Framework is currently a local-mode platform release with a validated
