@@ -21,6 +21,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
   const modeOutputs = report.akouo_mode_outputs || [];
   const plan = report.akouo_routing_plan;
   const referenceMap = report.akouo_reference_map;
+  const earwormTrace = report.earworm_trace;
 
   return (
     <>
@@ -176,6 +177,54 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
                 <p className="source-heading">adjacent modes</p>
                 {referenceMap.adjacent_modes.map((mode) => (
                   <span key={mode} className="source-tag">{LISTENING_MODE_LABELS[mode as AkouoListeningMode] || mode}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {earwormTrace && (
+        <div className="detail-section">
+          <div className="detail-section-title">Earworm / Akousmata Trace</div>
+          <div className="card">
+            <div className="detail-row"><span className="detail-label">Trace status</span><span className="detail-value">{earwormTrace.trace_status.replace(/_/g, " ")}</span></div>
+            <div className="detail-row"><span className="detail-label">Session</span><span className="detail-value">{earwormTrace.session_id || "not retained"}</span></div>
+            <div className="detail-row"><span className="detail-label">Retention</span><span className="detail-value">{earwormTrace.retention_policy.retention_class.replace(/_/g, " ")}</span></div>
+            <div className="detail-row"><span className="detail-label">Consent</span><span className="detail-value">{earwormTrace.retention_policy.consent_status.replace(/_/g, " ")}</span></div>
+            {earwormTrace.akousmata_operations.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Akousmata operations</p>
+                {earwormTrace.akousmata_operations.map((operation) => <span key={operation} className="source-tag">{operation}</span>)}
+              </div>
+            )}
+            {earwormTrace.event_chain.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Event chain</p>
+                {earwormTrace.event_chain.slice(0, 6).map((event) => (
+                  <p className="claim-text" key={event.event_id}>
+                    <span className="claim-confidence">{event.type}</span> {event.summary || event.event_id}
+                    <span className="claim-basis">Actor: {event.actor} · {event.wall_clock}</span>
+                  </p>
+                ))}
+                {earwormTrace.event_chain.length > 6 && (
+                  <p className="section-note">{earwormTrace.event_chain.length - 6} more event(s) retained in the trace.</p>
+                )}
+              </div>
+            )}
+            {earwormTrace.signal_packets.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Attached signals</p>
+                {earwormTrace.signal_packets.map((packet) => (
+                  <span key={packet.packet_id} className="source-tag">{packet.signal_type}</span>
+                ))}
+              </div>
+            )}
+            {earwormTrace.context_bundle_refs.length > 0 && (
+              <div style={{ marginTop: 12 }}>
+                <p className="source-heading">Context bundles</p>
+                {earwormTrace.context_bundle_refs.map((bundle) => (
+                  <p className="section-note" key={bundle.bundle_id}>{bundle.summary}</p>
                 ))}
               </div>
             )}

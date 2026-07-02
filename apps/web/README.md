@@ -1,6 +1,6 @@
 # Algophony Framework Dashboard
 
-Next.js dashboard for browsing the Algophony Framework Atlas, procedural generations, listening reports, benchmark scores, references, and export files.
+Next.js dashboard for browsing the Algophony Framework Atlas, procedural generations, listening reports, benchmark scores, provider status, observatory views, and export files.
 
 ## Requirements
 

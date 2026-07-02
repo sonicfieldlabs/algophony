@@ -1,0 +1,99 @@
+# Earworm and Akousmata Integration
+
+Status: contract surface landed, no legacy corpus backfill
+
+## Purpose
+
+The Listening Stack treats a sound object as more than an audio file. In an
+agentic workflow, the object includes prompt intent, generation metadata,
+analysis, field notes, ambiente frames, user edits, agent actions, provenance,
+retention policy, and any render or transformation history that changes what
+the sound can responsibly mean.
+
+Algophony represents that expanded object through an optional
+`earworm_trace` field on generation records and listening reports. The field is
+a compact bridge to Earworm, not a full session export. It lets Algophony point
+to a traceable route through the signal/context chain while keeping older
+v0.1.1 pilot records unchanged.
+
+## Upstream Vocabulary
+
+Earworm is the project-agnostic persistence protocol. Its current public
+objects are sessions, append-only events, asset refs, provenance records,
+signal packets, analysis frames, feature-stream refs, context selectors,
+context bundles, modulation intents, automation lanes, retention policies, and
+export manifests.
+
+Akousmata is the Listening Stack memory-operations surface over Earworm
+chains:
+
+- `remember`
+- `list`
+- `search`
+- `similarity`
+- `export`
+- `forget`
+
+Algophony does not import the Earworm runtime. It copies only the minimal
+interchange shape it needs into `schemas/earworm-trace.schema.json`, following
+the same local-contract pattern used for AKOÚŌ.
+
+## Algophony Trace Shape
+
+`earworm_trace` may appear on:
+
+- `schemas/generation.schema.json`
+- `schemas/listening-report.schema.json`
+
+The trace carries:
+
+- `trace_status`: whether a trace is planned, active, exported, forgotten,
+  partial, unknown, or deliberately not recorded.
+- `session_id`: the Earworm session when retained.
+- `akousmata_operations`: memory operations available or executed.
+- `event_chain`: compact event references such as prompt ingestion, generation
+  request, audio generation, signal packet ingestion, AKOÚŌ route planning,
+  mode completion, context attachment, or report creation.
+- `asset_refs`: audio plus attached text, image, video, control, metadata, or
+  analysis assets.
+- `provenance_refs`: source, consent, rights, provider, model, and hash
+  references.
+- `signal_packets`: audio and non-audio signal references with time ranges and
+  context references.
+- `context_bundle_refs`: queryable bundles for prompts, field notes, ambiente
+  frames, analysis summaries, edits, actions, or render history.
+- `retention_policy`: locality, consent, deletion support, expiry, and
+  restricted fields.
+
+## Evidence Discipline
+
+Earworm traces do not strengthen listening claims by themselves. They provide
+route and provenance evidence that AKOÚŌ claim permissions can use. A context
+bundle containing a field note can support a `contextual_note` evidence level;
+a signal packet with analysis can support `measured_signal`; a retained prompt
+alone still cannot support `heard` or `measured` claims about audio content.
+
+Do not backfill `earworm_trace` onto old reports without an actual traced pass.
+For the v0.1.1 procedural corpus, null is the correct value.
+
+## Future Population Path
+
+1. Generation workers create an Earworm session per generated or uploaded
+   object when retention is enabled.
+2. The generation request, provider result, audio asset, analysis frames, and
+   prompt context are appended as events.
+3. The AKOÚŌ router and each mode pass append route and mode-completion events.
+4. Report generation writes `earworm_trace` with compact refs, not full private
+   payloads.
+5. Public exports include the schema and code surface but exclude local trace
+   corpora unless a future release explicitly publishes consent-cleared traces.
+
+## Guardrails
+
+- Keep traces optional and nullable.
+- Keep private raw session data local unless explicitly consent-cleared.
+- Use relative URIs or opaque IDs; never publish machine-local paths.
+- Treat `forget` as a first-class operation and preserve deletion support in
+  the retention policy.
+- Preserve AKOÚŌ claim taxonomy and stop conditions even when a rich trace is
+  available.
