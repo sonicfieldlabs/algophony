@@ -1,16 +1,22 @@
-# Algophony Framework
+# Algophony
 
-The Algophony Framework studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is the Sonic Field Labs evaluation layer for **Algophonya**: the algorithmic soundscape and the pluriversal field it opens.
+Algophony is the Sonic Field Labs system for studying, generating, organizing, and evaluating algorithmic soundscapes. It combines a research framework, a benchmark dashboard, and a local-first sound workspace:
+
+- **Algophony Framework**: schemas, Atlas prompts, generation metadata, AKOÚŌ listening reports, score contracts, provider adapters, workers, and release hygiene.
+- **Algophony Bench Dashboard**: the Next.js benchmark interface in `apps/web/` for inspecting Atlas coverage, providers, reports, scores, observatory views, playground runs, and export state.
+- **Algophony Studio**: the local sound-library and sonic-production workspace in `studio/`, imported from the former local sound app and renamed as part of Algophony.
+
+Algophony studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is the software and research-instrument layer for **Algophonya**: the algorithmic soundscape and the pluriversal field it opens.
 
 The central claim is simple: generative audio systems do not only produce sounds. They produce assumptions about worlds: what a forest is, what a city is, what a ritual is, what counts as background, what gets erased, and what becomes audible.
 
 The founding statement of the project is [*Algophonya framework*](docs/benchmark-methodology.md) (Sonic Field, 2026). Algophonya names the condition; Algophony Framework keeps the software/research-instrument name and translates the framework into evaluation levels, score axes, metadata disciplines, and traceable listening reports (see `docs/benchmark-methodology.md`).
 
-## Current State
+## Current System
 
-This repository is now a v0.2.1 paper-alignment release on the v0.2 local-mode
-platform, carrying the v0.1.1 procedural pilot corpus. It is not a full ML
-model benchmark.
+This repository is a local-mode Algophony system. It contains the framework contracts and two apps: the Bench Dashboard for benchmark inspection and Algophony Studio for local sonic-library work. It is not a full public ML leaderboard.
+
+The full local research tree can carry the v0.1.1 procedural pilot corpus. Public/code exports intentionally ship without private corpus records, generated audio, report corpora, uploads, secrets, private paths, or local git history.
 
 What exists:
 
@@ -20,7 +26,8 @@ What exists:
 - 200 JSON reports plus matching Markdown reports.
 - 100 hybrid-reviewed seed reports and 100 agent-draft reports.
 - Discriminative benchmark scores with score provenance and normalized comparison exports.
-- A Next.js dashboard for prompt, generation, report, score, benchmark, provider, observatory, studio, and export inspection.
+- A Studio-aligned Next.js **Algophony Bench Dashboard** for prompt, generation, report, score, benchmark, provider, observatory, playground, and export inspection.
+- A standalone **Algophony Studio** app in `studio/` for local sound libraries, prompt cards, stacks, tags, comparisons, provider-key-controlled generation, and export workflows.
 - Optional Earworm/Akousmata trace fields for future append-only listening routes, non-audio context bundles, provenance, retention, and memory operations.
 - A sanitized public-export workflow that publishes code without local corpus data, generated audio, uploads, secrets, private paths, or private local git history.
 
@@ -32,8 +39,19 @@ What does not exist yet:
 - Procedural controls are not presented as equivalent to text-to-audio model systems.
 
 See `docs/release-notes-v0.2.md` for the public-code platform changes since
-v0.1.1 and `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
-release.
+v0.1.1, `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
+release, and `docs/release-notes-v0.2.2.md` for the Studio and Bench
+integration release.
+
+## System Layers
+
+| Layer | Path | Role | Runs as |
+| --- | --- | --- | --- |
+| Framework contracts | `schemas/`, `atlas/`, `benchmark/`, `generations/`, `reports/`, `workers/`, `scripts/` | Defines the Atlas, generation metadata, AKOÚŌ reports, score records, provider adapters, validation, and release export machinery. | Python scripts and JSON/JSONL data contracts |
+| Bench Dashboard | `apps/web/` | Studio-styled benchmark dashboard for inspecting prompts, generations, reports, providers, score tables, observatory views, playground runs, and release/export state. | Next.js local app, default daemon port `3010` |
+| Algophony Studio | `studio/` | Local-first workspace for sonic libraries: folder indexing, prompt cards, stacks, variants, DAW handoff, metadata, listening notes, and optional user-key model calls. | Next.js local app, default daemon port `3001` |
+
+See `docs/architecture.md` for the integrated model, data flow, and publication boundaries.
 
 ## Conceptual Distinction
 
@@ -88,6 +106,9 @@ algophony/
   scripts/
   workers/
   apps/web/
+    public/
+    scripts/
+  studio/
 ```
 
 ## Setup
@@ -98,11 +119,12 @@ Install Python dependencies:
 python3 -m pip install -r requirements.txt
 ```
 
-Validate schemas and dataset:
+Validate schemas and dataset. In a public/code-only checkout the default dataset validator allows an empty mounted corpus; use strict mode only when the local research corpus is mounted.
 
 ```bash
 python3 scripts/validate_schemas.py
-python3 scripts/validate_dataset.py --strict --report
+python3 scripts/validate_dataset.py
+python3 scripts/validate_dataset.py --strict --report  # local corpus release gate
 ```
 
 Run release hygiene checks:
@@ -112,15 +134,37 @@ python3 scripts/run_scenario_tests.py
 python3 scripts/export_release.py --dry-run
 ```
 
-Run the dashboard:
+Run the Algophony Bench Dashboard:
 
 ```bash
 cd apps/web
 npm install
-npm run dev
+npm run dev:daemon
 ```
 
-Then open `http://localhost:3000`.
+Then open `http://localhost:3010` or `http://127.0.0.1:3010`.
+
+Stop it with:
+
+```bash
+npm run dev:stop
+```
+
+Run Algophony Studio:
+
+```bash
+cd studio
+npm install
+npm run dev:daemon
+```
+
+Then open `http://localhost:3001` or `http://127.0.0.1:3001`.
+
+Stop it with:
+
+```bash
+npm run dev:stop
+```
 
 ## Generation Backends
 
@@ -192,10 +236,15 @@ local paths, or private notes.
 
 The public-facing Algophony page is maintained in the private Sonic Field Labs
 website repository as a read-only curated showcase. Do not deploy the local
-playground as the public page.
+playground or Studio as the public page.
 
 Use `scripts/prepare_public_export.py` for public publication. Do not push the
 current local git history directly to the public remote.
+
+Local app deployment in this repository means local preview or internal review.
+The Bench Dashboard and Studio are not configured as public multi-user services
+in this repo, and both assume local data boundaries unless explicitly adapted
+elsewhere.
 
 ## Related Projects
 

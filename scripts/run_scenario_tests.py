@@ -115,7 +115,23 @@ SCENARIOS = [
 ]
 
 
+REQUIRED_MUTATION_FIXTURES = [
+    Path("benchmark/suites/algophony-benchmark-lite-v0.1.json"),
+    Path("generations/metadata/generations-v0.1.jsonl"),
+    Path("reports/json/AK-0001.json"),
+    Path("benchmark/scores/scores-v0.1.jsonl"),
+]
+
+
+def has_mutation_fixtures(project_root: Path) -> bool:
+    return all((project_root / path).exists() for path in REQUIRED_MUTATION_FIXTURES)
+
+
 def run_mutation_scenarios(project_root: Path) -> bool:
+    if not has_mutation_fixtures(project_root):
+        print("SKIP mutation scenarios: local corpus fixtures are not present in this checkout.")
+        return True
+
     passed = True
     with tempfile.TemporaryDirectory(prefix="algophony-scenarios-") as tmp:
         base = Path(tmp)

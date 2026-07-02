@@ -1,6 +1,8 @@
-# Algophony Framework Dashboard
+# Algophony Bench Dashboard
 
-Next.js dashboard for browsing the Algophony Framework Atlas, procedural generations, listening reports, benchmark scores, provider status, observatory views, and export files.
+Studio-styled Next.js dashboard for browsing the Algophony Framework Atlas, procedural and future ML generations, AKOÚŌ listening reports, benchmark scores, provider status, observatory views, playground runs, and export files.
+
+The dashboard is the inspection surface for Algophony benchmark records. It does not replace schema validation and does not turn generated audio into documentary evidence. Framework data remains the source of truth.
 
 ## Requirements
 
@@ -12,10 +14,24 @@ Next.js dashboard for browsing the Algophony Framework Atlas, procedural generat
 ```bash
 npm install
 npm run dev
+npm run dev:daemon
+npm run dev:stop
 npm run build
 ```
 
-The local app runs at `http://localhost:3000`.
+Foreground development (`npm run dev`) uses the default Next.js port unless one
+is supplied. The durable local preview command (`npm run dev:daemon`) defaults
+to `http://localhost:3010` and writes logs to `apps/web/dev_server.log`.
+
+The daemon is useful for agent-driven reviews because it keeps the preview
+available after the shell command exits.
+
+## Design System
+
+Bench follows the Algophony Studio visual language: light Atlas surfaces,
+compact cards, quiet tables, neutral chrome, and status color used only for
+meaningful state. Keep the app work-focused. The first screen should show the
+benchmark state, not a marketing page.
 
 ## Data Root
 
@@ -25,23 +41,31 @@ By default the app expects to be run from `apps/web` and reads data from the rep
 ALGOPHONY_DATA_ROOT=/path/to/algophony npm run dev
 ```
 
-## Studio (Playground)
+Public code exports may contain no mounted corpus data. In that case the
+dashboard renders empty counts and explanatory notices instead of inventing
+records.
+
+## Playground
 
 The Playground (generation + upload) is gated and disabled by default. To enable
 it locally:
 
 ```bash
-ALGOPHONY_ENABLE_STUDIO=true npm run dev
+ALGOPHONY_ENABLE_PLAYGROUND=true npm run dev
 ```
 
-Studio endpoints (`/api/generate`, `/api/upload`) require either:
+Playground endpoints (`/api/generate`, `/api/upload`) require either:
 
 - the request to originate from `localhost` / `127.0.0.1` (the default), OR
-- a matching `x-studio-token` header when `ALGOPHONY_STUDIO_TOKEN` is set
+- a matching `x-playground-token` header when `ALGOPHONY_PLAYGROUND_TOKEN` is set
   (required if you expose the dashboard behind a proxy).
 
-Concurrent Python subprocesses are capped by `ALGOPHONY_STUDIO_MAX_CONCURRENT`
+Concurrent Python subprocesses are capped by `ALGOPHONY_PLAYGROUND_MAX_CONCURRENT`
 (default `2`). Excess requests get `503 Retry-After: 15`.
+
+Do not expose the Playground publicly without making explicit auth, provider
+key, upload, storage, and provenance decisions. Localhost access is intended for
+private research use.
 
 ## Routes
 
@@ -57,7 +81,7 @@ Concurrent Python subprocesses are capped by `ALGOPHONY_STUDIO_MAX_CONCURRENT`
 - `/providers` provider registry and configuration status
 - `/benchmark` suite metadata
 - `/observatory` data visualizations and field data
-- `/playground` interactive generation and listening (requires `ALGOPHONY_ENABLE_STUDIO=true`)
+- `/playground` interactive generation and listening (requires `ALGOPHONY_ENABLE_PLAYGROUND=true`)
 - `/export` export file links
 
 ## Release Notes
@@ -69,3 +93,6 @@ Provider status is read from `benchmark/exports/provider-status.json`, generated
 ```bash
 python3 scripts/generate_matrix.py --list-providers --json > benchmark/exports/provider-status.json
 ```
+
+The app is included in sanitized public exports. Runtime state, build output,
+logs, `node_modules`, and local preview PID files are excluded.

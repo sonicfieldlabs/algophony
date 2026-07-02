@@ -40,16 +40,39 @@ export default function Overview() {
 
   const categoryCounts: Record<string, number> = {};
   for (const prompt of prompts) categoryCounts[prompt.category] = (categoryCounts[prompt.category] || 0) + 1;
+  const suiteTitle = suite?.title || "Algophony Framework";
+  const benchmarkStatus = suite?.benchmark_status?.replace(/_/g, " ") || "public code release";
+  const dataMode = suite ? "Local corpus mounted" : "Code-only checkout";
 
   return (
     <>
-      <div className="page-header">
-        <h1 className="page-title">Algophony Framework Dashboard</h1>
-        <p className="page-subtitle">
-          {suite?.title || "Algophony Framework"} ·{" "}
-          <span className="status-pill">{suite?.benchmark_status?.replace(/_/g, " ")}</span>
-        </p>
-      </div>
+      <section className="bench-hero">
+        <div>
+          <p className="bench-eyebrow">Benchmark workspace</p>
+          <h1 className="page-title">Algophony Bench Dashboard</h1>
+          <p className="page-subtitle">
+            Studio-aligned benchmark controls for inspecting Atlas coverage, AKOUO listening reports, provider status,
+            and model score provenance.
+          </p>
+        </div>
+        <div className="bench-hero-panel">
+          <span className="status-pill">{benchmarkStatus}</span>
+          <div className="bench-metadata">
+            <div className="bench-metadata-row">
+              <span className="bench-metadata-label">Suite</span>
+              <span className="bench-metadata-value">{suiteTitle}</span>
+            </div>
+            <div className="bench-metadata-row">
+              <span className="bench-metadata-label">Data</span>
+              <span className="bench-metadata-value">{dataMode}</span>
+            </div>
+            <div className="bench-metadata-row">
+              <span className="bench-metadata-label">ML generations</span>
+              <span className="bench-metadata-value">{suite?.ml_generation_count || 0}</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {!suite && prompts.length === 0 && (
         <div className="notice-card">

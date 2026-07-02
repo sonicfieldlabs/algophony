@@ -149,12 +149,12 @@ const CLAIM_COLORS: Record<string, string> = {
 
 /* ---------- component ---------- */
 
-export default function PlaygroundPage({ studioToken = "" }: { studioToken?: string }) {
+export default function PlaygroundPage({ playgroundToken = "" }: { playgroundToken?: string }) {
   const authHeaders = useCallback(
     (extra?: Record<string, string>): Record<string, string> => {
-      return { ...(studioToken ? { "x-studio-token": studioToken } : {}), ...(extra || {}) };
+      return { ...(playgroundToken ? { "x-playground-token": playgroundToken } : {}), ...(extra || {}) };
     },
-    [studioToken],
+    [playgroundToken],
   );
 
   /* state — mode */

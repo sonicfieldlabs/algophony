@@ -1,0 +1,11 @@
+description,category,subcategory,source,action,surface,environment,perspective,loop
+Heavy boots walking on wet concrete,Footsteps,boots,wet heavy boots,walking slowly,wet concrete,empty parking garage,close-mic,false
+Glass bottle rolling on tile floor,Foley,glass,glass bottle,rolling,tile floor,kitchen,overhead,false
+Rain hitting tin roof steadily,Weather,rain,rainfall,hitting continuously,corrugated tin,covered patio,overhead,true
+Creature crawling through shallow water,Creature,crawl,large creature,crawling,wet stone,flooded cave,close-mic,false
+Distant subway train approaching,Vehicle,train,subway train,approaching from distance,,underground tunnel,distant,false
+Wooden door creaking open slowly,Foley,door,old wooden door,creaking open,aged wood,abandoned house,close-mic,false
+Electrical sparks from loose cable,Electricity,spark,exposed cable,sparking intermittently,,dark corridor,close-mic,false
+Birds chirping in morning forest,Ambience,nature,bird chorus,singing,,forest clearing,room mic,true
+Metal chain dragging across concrete,Foley,chain,heavy chain,dragging,concrete floor,warehouse,close-mic,false
+Wind howling through narrow alley,Weather,wind,strong wind,howling,,narrow urban alley,binaural,true

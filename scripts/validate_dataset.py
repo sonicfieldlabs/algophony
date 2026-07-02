@@ -376,19 +376,35 @@ def main() -> None:
     all_errors.extend(validate_records(report_records, schemas["report"], "report_id", "Reports", registry))
     all_errors.extend(validate_records(score_records, schemas["score_record"], "audio_id", "Scores", registry))
 
-    suite_path = project_root / "benchmark/suites/algophony-benchmark-lite-v0.1.json"
-    all_errors.extend(validate_json_file(suite_path, schemas["suite"], "Benchmark suite", registry))
-    suite = load_json(suite_path) or {}
-
     prompts = jsonl_values(prompt_records)
     generations = jsonl_values(generation_records)
     analysis = jsonl_values(analysis_records)
     reports = jsonl_values(report_records)
     scores = jsonl_values(score_records)
 
-    balance_errors = check_category_balance(prompts)
-    all_errors.extend(balance_errors)
-    print(f"  {'OK' if not balance_errors else 'FAIL'} Category balance: {len(balance_errors)} issue(s)")
+    suite_path = project_root / "benchmark/suites/algophony-benchmark-lite-v0.1.json"
+    public_empty_checkout = (
+        not args.strict
+        and not suite_path.exists()
+        and not prompt_records
+        and not generation_records
+        and not report_records
+        and not score_records
+    )
+    if public_empty_checkout:
+        suite = {}
+        print("  OK Public empty checkout: no mounted corpus; skipped suite manifest gate")
+    else:
+        all_errors.extend(validate_json_file(suite_path, schemas["suite"], "Benchmark suite", registry))
+        suite = load_json(suite_path) or {}
+
+    if public_empty_checkout:
+        balance_errors = []
+        print("  OK Category balance: skipped for public empty checkout")
+    else:
+        balance_errors = check_category_balance(prompts)
+        all_errors.extend(balance_errors)
+        print(f"  {'OK' if not balance_errors else 'FAIL'} Category balance: {len(balance_errors)} issue(s)")
 
     xref_errors = check_cross_refs(prompts, generations, reports, scores)
     all_errors.extend(xref_errors)

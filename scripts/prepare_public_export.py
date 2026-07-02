@@ -25,6 +25,7 @@ INCLUDE_ROOTS = [
     "docs",
     "schemas",
     "scripts",
+    "studio",
     "workers",
 ]
 
@@ -58,6 +59,10 @@ EXCLUDE_PATTERNS = [
     "**/node_modules/**",
     "**/dist/**",
     "**/build/**",
+    "**/*.log",
+    "apps/web/.algophony-bench/**",
+    "studio/.algophony-studio/**",
+    "studio/ref/**",
     "**/*.pyc",
     "**/*.tsbuildinfo",
     "**/next-env.d.ts",

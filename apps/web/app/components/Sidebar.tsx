@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 type Item = { href: string; icon: string; label: string };
 
-export default function Sidebar({ studioEnabled }: { studioEnabled: boolean }) {
+export default function Sidebar({ playgroundEnabled }: { playgroundEnabled: boolean }) {
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
 
@@ -27,7 +27,7 @@ export default function Sidebar({ studioEnabled }: { studioEnabled: boolean }) {
     { href: "/export", icon: "↗", label: "Export" },
     { href: "/observatory", icon: "◉", label: "Observatory" },
   ];
-  if (studioEnabled) {
+  if (playgroundEnabled) {
     items.push({ href: "/playground", icon: "⚗", label: "Playground" });
   }
 
@@ -48,9 +48,15 @@ export default function Sidebar({ studioEnabled }: { studioEnabled: boolean }) {
         {open ? "✕" : "☰"}
       </button>
       {open && <div className="mobile-nav-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />}
-      <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
-        <div className="sidebar-brand">Algophony Framework</div>
-        <div className="sidebar-version">platform v0.2</div>
+      <aside className={`sidebar ${open ? "sidebar-open" : ""}`} aria-label="Algophony Bench Dashboard">
+        <div className="sidebar-identity">
+          <img className="sidebar-logo" src="/logo-dark.jpeg" alt="" aria-hidden="true" />
+          <div className="sidebar-brand-block">
+            <div className="sidebar-brand">Algophony</div>
+            <div className="sidebar-product">Bench Dashboard</div>
+          </div>
+        </div>
+        <div className="sidebar-version">benchmark v0.2</div>
         <nav aria-label="Primary">
           <ul className="sidebar-nav">
             {items.map((item) => (

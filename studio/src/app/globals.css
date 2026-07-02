@@ -1,0 +1,660 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════
+   Algophony Studio — Dual Theme Design System
+   Light (default) + Dark — switched via [data-theme="dark"]
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Light theme (default) ─────────────────────────────────── */
+:root,
+[data-theme="light"] {
+  --color-atlas-bg: #f8f9fb;
+  --color-atlas-bg-raised: #ffffff;
+  --color-atlas-surface: #ffffff;
+  --color-atlas-surface-hover: #f1f3f5;
+  --color-atlas-surface-active: #e9ecef;
+  --color-atlas-border: #d0d5dd;
+  --color-atlas-border-subtle: #e4e7ec;
+  --color-atlas-text: #101828;
+  --color-atlas-text-muted: #475467;
+  /* §5.6 typography pass: bumped from #98a2b3 (4.1:1, barely AA) to #6b7280
+     (4.6:1, comfortable AA) so the hundreds of -dim usages across cards,
+     timestamps, metadata, and form helper text stay legible. */
+  --color-atlas-text-dim: #6b7280;
+  /* Grayscale chrome accents — the UI shell (sidebar active state, player,
+     focus rings, title chips) reads as monochrome while the per-page cards
+     keep their own inline hue palette. */
+  --color-atlas-accent: #1f2937;
+  --color-atlas-accent-hover: #0b0f17;
+  --color-atlas-accent-muted: rgba(17, 24, 39, 0.06);
+  --color-atlas-accent-strong: rgba(17, 24, 39, 0.1);
+  /* HSL component values consumed by the Waveform canvas — kept in sync
+     with --color-atlas-accent / --color-atlas-text-dim above. */
+  --atlas-accent-raw: 220 14% 17%;
+  --atlas-text-dim-raw: 220 9% 46%;
+  --color-atlas-success: #12b76a;
+  --color-atlas-warning: #f79009;
+  --color-atlas-danger: #f04438;
+  --color-atlas-mock: #f79009;
+
+  --atlas-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --atlas-shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --atlas-shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.06), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+  --atlas-shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --atlas-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.04), 0 0 0 1px rgba(16, 24, 40, 0.04);
+  --atlas-shadow-glow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+
+  --atlas-sidebar-bg: #fcfcfd;
+  --atlas-sidebar-border: #e4e7ec;
+
+  --atlas-scrollbar-track: transparent;
+  --atlas-scrollbar-thumb: #d0d5dd;
+  --atlas-scrollbar-thumb-hover: #98a2b3;
+}
+
+/* ── Dark theme ────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-atlas-bg: #0c0d10;
+  --color-atlas-bg-raised: #111318;
+  --color-atlas-surface: #16181e;
+  --color-atlas-surface-hover: #1e2028;
+  --color-atlas-surface-active: #262830;
+  --color-atlas-border: #2e303a;
+  --color-atlas-border-subtle: #1f2028;
+  --color-atlas-text: #eaebef;
+  --color-atlas-text-muted: #8b8d97;
+  /* §5.6 typography pass: bumped from #5c5e67 (2.8:1, fails AA) to #7a7d87
+     (4.6:1, comfortable AA) so hundreds of -dim usages across cards,
+     timestamps, metadata, and form helper text stay legible in dark mode. */
+  --color-atlas-text-dim: #7a7d87;
+  /* Grayscale chrome accents (dark theme). */
+  --color-atlas-accent: #e5e7eb;
+  --color-atlas-accent-hover: #ffffff;
+  --color-atlas-accent-muted: rgba(229, 231, 235, 0.08);
+  --color-atlas-accent-strong: rgba(229, 231, 235, 0.14);
+  --atlas-accent-raw: 220 13% 91%;
+  --atlas-text-dim-raw: 220 6% 56%;
+  --color-atlas-success: #34d399;
+  --color-atlas-warning: #fbbf24;
+  --color-atlas-danger: #f87171;
+  --color-atlas-mock: #fbbf24;
+
+  --atlas-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --atlas-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --atlas-shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --atlas-shadow-lg: 0 12px 16px -4px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --atlas-shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --atlas-shadow-glow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+
+  --atlas-sidebar-bg: #111318;
+  --atlas-sidebar-border: #1f2028;
+
+  --atlas-scrollbar-track: transparent;
+  --atlas-scrollbar-thumb: #2e303a;
+  --atlas-scrollbar-thumb-hover: #5c5e67;
+}
+
+/* Grayscale-accent foreground correction.
+   In dark theme our accent is now a light gray, so the existing
+   `bg-atlas-accent text-white` markup would render white-on-light-gray.
+   These unlayered rules sit above Tailwind's utilities layer and force
+   on-accent text to use the inverse (page background) for contrast. */
+[data-theme="dark"] .bg-atlas-accent,
+[data-theme="dark"] .bg-atlas-accent-hover,
+[data-theme="dark"] .hover\:bg-atlas-accent:hover,
+[data-theme="dark"] .hover\:bg-atlas-accent-hover:hover {
+  color: var(--color-atlas-bg);
+}
+
+/* ── AtlasMark theme-aware logo ────────────────────────────── */
+/* Light theme: show the black-on-white variant, hide dark */
+.atlas-mark-dark { display: none; }
+.atlas-mark-light { display: inline-block; object-fit: cover; border-radius: 4px; }
+
+/* Dark theme: show the white-on-black variant, hide light */
+[data-theme="dark"] .atlas-mark-dark { display: inline-block; object-fit: cover; border-radius: 4px; }
+[data-theme="dark"] .atlas-mark-light { display: none; }
+
+/* ── Tailwind v4 theme tokens ─────────────────────────────── */
+@theme {
+  --color-atlas-bg: var(--color-atlas-bg);
+  --color-atlas-bg-raised: var(--color-atlas-bg-raised);
+  --color-atlas-surface: var(--color-atlas-surface);
+  --color-atlas-surface-hover: var(--color-atlas-surface-hover);
+  --color-atlas-surface-active: var(--color-atlas-surface-active);
+  --color-atlas-border: var(--color-atlas-border);
+  --color-atlas-border-subtle: var(--color-atlas-border-subtle);
+  --color-atlas-text: var(--color-atlas-text);
+  --color-atlas-text-muted: var(--color-atlas-text-muted);
+  --color-atlas-text-dim: var(--color-atlas-text-dim);
+  --color-atlas-accent: var(--color-atlas-accent);
+  --color-atlas-accent-hover: var(--color-atlas-accent-hover);
+  --color-atlas-accent-muted: var(--color-atlas-accent-muted);
+  --color-atlas-accent-strong: var(--color-atlas-accent-strong);
+  --color-atlas-success: var(--color-atlas-success);
+  --color-atlas-warning: var(--color-atlas-warning);
+  --color-atlas-danger: var(--color-atlas-danger);
+  --color-atlas-mock: var(--color-atlas-mock);
+  --font-sans: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono, "JetBrains Mono"), ui-monospace, monospace;
+}
+
+/* ── Base styles ───────────────────────────────────────────── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth theme transitions — scoped to interactive elements */
+.atlas-card,
+button,
+a,
+.glass,
+nav,
+header,
+aside,
+[role="tablist"],
+[data-theme-transition] {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.15s;
+  transition-timing-function: ease-out;
+}
+/* Exclude elements where transition causes jank */
+input, textarea, select, audio, video, canvas,
+[data-no-transition], [data-no-transition] * {
+  transition-property: none !important;
+}
+
+body {
+  background-color: var(--color-atlas-bg);
+  color: var(--color-atlas-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Typography scale ───────────────────────────────────────
+   Use these reusable classes for legibility consistency.
+   Avoid arbitrary text-[10px]/[11px] in markup. */
+.atlas-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-atlas-text-muted);
+}
+.atlas-meta {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-atlas-text-muted);
+}
+.atlas-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-atlas-text);
+}
+.atlas-body-muted {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-atlas-text-muted);
+}
+.atlas-title {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-atlas-text);
+}
+.atlas-title-lg {
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--color-atlas-text);
+}
+.atlas-prompt {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-atlas-text);
+  font-family: var(--font-mono);
+}
+.atlas-label {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-atlas-text-muted);
+}
+
+/* Min-tappable target — applies to small icon buttons */
+.atlas-tap {
+  min-width: 32px;
+  min-height: 32px;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--atlas-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--atlas-scrollbar-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--atlas-scrollbar-thumb-hover);
+}
+
+/* ── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: var(--color-atlas-accent-muted);
+  color: var(--color-atlas-accent);
+}
+
+/* ── Focus Rings ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-atlas-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-atlas-accent);
+  outline-offset: 2px;
+}
+
+.atlas-agent-prompt-input:focus,
+.atlas-agent-prompt-input:focus-visible {
+  outline: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Keyframe Animations
+   ════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toast-exit {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-8px) scale(0.96); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 120, 120, 0.35); }
+  50% { box-shadow: 0 0 12px 2px rgba(120, 120, 120, 0.18); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes expand-down {
+  from { opacity: 0; transform: scaleY(0.95) translateY(-4px); }
+  to { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+
+@keyframes glow-ring {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(120, 120, 120, 0.15); }
+  50% { box-shadow: 0 0 0 4px rgba(120, 120, 120, 0.22); }
+}
+
+@keyframes waveform-pulse {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin-in {
+  from { opacity: 0; transform: rotate(-90deg) scale(0.8); }
+  to { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Animation Utility Classes
+   ════════════════════════════════════════════════════════════ */
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.25s ease-out both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.25s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.25s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out both;
+}
+
+.animate-toast-enter {
+  animation: toast-enter 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) both;
+}
+
+.animate-toast-exit {
+  animation: toast-exit 0.2s ease-in both;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-atlas-surface) 25%,
+    var(--color-atlas-surface-hover) 50%,
+    var(--color-atlas-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.animate-expand-down {
+  animation: expand-down 0.2s ease-out both;
+  transform-origin: top center;
+}
+
+.animate-glow-ring {
+  animation: glow-ring 2s ease-in-out infinite;
+}
+
+.animate-count-up {
+  animation: count-up 0.4s ease-out both;
+}
+
+.animate-spin-in {
+  animation: spin-in 0.3s ease-out both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ── Staggered children ────────────────────────────────────── */
+[data-stagger] > * {
+  animation: slide-up 0.3s ease-out both;
+}
+[data-stagger] > *:nth-child(1) { animation-delay: 0ms; }
+[data-stagger] > *:nth-child(2) { animation-delay: 40ms; }
+[data-stagger] > *:nth-child(3) { animation-delay: 80ms; }
+[data-stagger] > *:nth-child(4) { animation-delay: 120ms; }
+[data-stagger] > *:nth-child(5) { animation-delay: 160ms; }
+[data-stagger] > *:nth-child(6) { animation-delay: 200ms; }
+[data-stagger] > *:nth-child(n+7) { animation-delay: 240ms; }
+
+/* ════════════════════════════════════════════════════════════
+   Utility Helpers
+   ════════════════════════════════════════════════════════════ */
+
+/* Card with theme-aware shadow */
+.atlas-card {
+  background: var(--color-atlas-surface);
+  border: 1px solid var(--color-atlas-border-subtle);
+  border-radius: 12px;
+  box-shadow: var(--atlas-shadow-card);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.atlas-card:hover {
+  box-shadow: var(--atlas-shadow-md);
+  border-color: var(--color-atlas-border);
+}
+
+.atlas-card-interactive:hover {
+  box-shadow: var(--atlas-shadow-md);
+  border-color: var(--color-atlas-accent);
+  transform: translateY(-1px);
+}
+
+/* Waveform bars for loading states */
+.waveform-bar {
+  display: inline-block;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-atlas-accent);
+  animation: waveform-pulse 0.8s ease-in-out infinite;
+}
+.waveform-bar:nth-child(1) { animation-delay: 0ms; height: 12px; }
+.waveform-bar:nth-child(2) { animation-delay: 100ms; height: 18px; }
+.waveform-bar:nth-child(3) { animation-delay: 200ms; height: 14px; }
+.waveform-bar:nth-child(4) { animation-delay: 300ms; height: 20px; }
+.waveform-bar:nth-child(5) { animation-delay: 400ms; height: 10px; }
+
+/* Status dot indicator */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0.2;
+}
+
+.status-dot-active { background: var(--color-atlas-success); color: var(--color-atlas-success); }
+.status-dot-warning { background: var(--color-atlas-warning); color: var(--color-atlas-warning); }
+.status-dot-error { background: var(--color-atlas-danger); color: var(--color-atlas-danger); }
+.status-dot-idle { background: var(--color-atlas-text-dim); color: var(--color-atlas-text-dim); }
+
+/* Gradient text */
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--color-atlas-accent), var(--color-atlas-accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glassmorphism surface */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .glass {
+  background: rgba(22, 24, 30, 0.7);
+}
+
+/* Progress bar gradient */
+.progress-gradient {
+  background: linear-gradient(90deg, var(--color-atlas-accent) 0%, var(--color-atlas-accent-hover) 100%);
+}
+
+/* Kbd key styling */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  background: var(--color-atlas-bg);
+  border: 1px solid var(--color-atlas-border-subtle);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--color-atlas-border-subtle);
+  color: var(--color-atlas-text-dim);
+}
+
+/* ── Toast progress bar ───────────────────────────────────── */
+@keyframes shrink-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+/* ── Audio player polish ──────────────────────────────────── */
+audio::-webkit-media-controls-panel {
+  background: var(--color-atlas-surface);
+  border-radius: 12px;
+}
+audio::-webkit-media-controls-play-button {
+  border-radius: 8px;
+}
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: var(--color-atlas-text-dim);
+  font-size: 11px;
+}
+
+/* ── Range slider (atlas-slider) ──────────────────────────── */
+input[type="range"].atlas-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-atlas-border-subtle);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"].atlas-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-atlas-accent);
+  box-shadow: 0 0 0 3px var(--color-atlas-bg), 0 1px 3px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type="range"].atlas-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px var(--color-atlas-bg), 0 0 8px var(--color-atlas-accent);
+}
+input[type="range"].atlas-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-atlas-accent);
+  box-shadow: 0 0 0 3px var(--color-atlas-bg), 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+/* ── Focus-visible accessibility ring ─────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-atlas-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Status badges ────────────────────────────────────────── */
+.status-badge-succeeded {
+  background: hsla(140, 50%, 45%, 0.12);
+  color: hsl(140, 55%, 45%);
+}
+.status-badge-failed {
+  background: hsla(0, 50%, 50%, 0.12);
+  color: hsl(0, 55%, 50%);
+}
+.status-badge-pending {
+  background: hsla(45, 50%, 50%, 0.12);
+  color: hsl(45, 55%, 45%);
+}
+
+/* ── Interactive card hover lift ──────────────────────────── */
+.atlas-card-interactive {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.atlas-card-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-atlas-border);
+}
+[data-theme="dark"] .atlas-card-interactive:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ════════════════════════════════════════════════════════════
+   §5.6: Accessibility — Reduced Motion
+   ════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-breathe,
+  .animate-pulse-glow,
+  .animate-shimmer,
+  .animate-float,
+  .animate-glow-ring,
+  .waveform-bar {
+    animation: none !important;
+  }
+}
