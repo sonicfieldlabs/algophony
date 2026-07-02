@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/earworm-trace.schema.json",
+  "title": "Algophony Earworm Trace",
+  "description": "Optional bridge record linking an Algophony generation or listening report to an Earworm persistent-listening chain and Akousmata memory operations. This stores trace references only; old corpus records may leave it null.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "trace_status",
+    "session_id",
+    "akousmata_operations",
+    "event_chain",
+    "asset_refs",
+    "provenance_refs",
+    "signal_packets",
+    "context_bundle_refs",
+    "retention_policy"
+  ],
+  "properties": {
+    "trace_status": {
+      "type": "string",
+      "enum": ["not_recorded", "planned", "active", "exported", "forgotten", "partial", "unknown"],
+      "description": "Lifecycle state of the attached Earworm trace."
+    },
+    "session_id": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        { "type": "null" }
+      ],
+      "description": "Earworm session identifier. Null when the trace is planned, unavailable, forgotten, or intentionally not recorded."
+    },
+    "app_id": {
+      "type": "string",
+      "default": "algophony",
+      "description": "Originating app or integration surface that created the Earworm session."
+    },
+    "akousmata_operations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["remember", "list", "search", "similarity", "export", "forget"]
+      },
+      "default": [],
+      "description": "Memory operations made available or executed through the Akousmata surface over this Earworm chain."
+    },
+    "event_chain": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event_ref" },
+      "default": [],
+      "description": "Ordered Earworm event references relevant to this Algophony object. These are references and compact summaries, not a full session export."
+    },
+    "asset_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/asset_ref" },
+      "default": [],
+      "description": "Earworm asset references for audio and any attached non-audio context."
+    },
+    "provenance_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/provenance_ref" },
+      "default": [],
+      "description": "Earworm provenance references carrying source, consent, rights, provider, model, and transformation metadata."
+    },
+    "signal_packets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/signal_packet_ref" },
+      "default": [],
+      "description": "Signal packet references for audio plus attached text, control, video, image, MIDI, or feature streams."
+    },
+    "context_bundle_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/context_bundle_ref" },
+      "default": [],
+      "description": "Queryable context bundles that can attach prompts, field notes, ambiente frames, analysis summaries, user edits, agent actions, or render history to the sonic data."
+    },
+    "retention_policy": {
+      "$ref": "#/$defs/retention_policy",
+      "description": "Consent, retention, locality, and forgetting policy for this trace."
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    }
+  },
+  "$defs": {
+    "earworm_event_type": {
+      "type": "string",
+      "enum": [
+        "prompt.ingested",
+        "generation.requested",
+        "audio.generated",
+        "signal.packet.ingested",
+        "alignment.ingested",
+        "analysis.frame",
+        "dsp.parameter.changed",
+        "agent.action.proposed",
+        "agent.action.applied",
+        "automation.committed",
+        "automation.reverted",
+        "render.created",
+        "snapshot.created",
+        "listening.report.created",
+        "akouo.route.planned",
+        "akouo.mode.completed",
+        "akousmata.operation.applied",
+        "context.attached"
+      ]
+    },
+    "event_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "type", "actor", "wall_clock", "parent_event_ids"],
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/earworm_event_type" },
+        "actor": {
+          "type": "string",
+          "enum": ["user", "agent", "system", "provider"]
+        },
+        "wall_clock": { "type": "string", "minLength": 1 },
+        "parent_event_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "default": []
+        },
+        "provenance_id": { "type": "string" },
+        "event_hash": { "type": "string" },
+        "summary": { "type": "string" }
+      }
+    },
+    "asset_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["asset_id"],
+      "properties": {
+        "asset_id": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["audio", "midi", "text", "control", "video", "image", "metadata", "analysis"]
+        },
+        "uri": {
+          "type": "string",
+          "not": { "pattern": "^(/U[s]ers/|/h[o]me/|[A-Za-z]:\\\\)" }
+        },
+        "duration_seconds": { "type": "number", "minimum": 0 },
+        "sample_rate": { "type": "integer", "minimum": 1 },
+        "channels": { "type": "integer", "minimum": 1 },
+        "provenance_id": { "type": "string" }
+      }
+    },
+    "provenance_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provenance_id", "source_type", "consent_status"],
+      "properties": {
+        "provenance_id": { "type": "string", "minLength": 1 },
+        "source_type": {
+          "type": "string",
+          "enum": ["generated", "recorded", "imported", "cloned", "designed", "unknown"]
+        },
+        "provider": { "type": "string" },
+        "model_id": { "type": "string" },
+        "request_hash": { "type": "string" },
+        "asset_hash": { "type": "string" },
+        "consent_status": {
+          "type": "string",
+          "enum": ["owned", "licensed", "public_domain", "unknown", "restricted"]
+        },
+        "usage_constraints": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "signal_packet_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packet_id", "signal_type", "time_range", "context_refs", "tags"],
+      "properties": {
+        "packet_id": { "type": "string", "minLength": 1 },
+        "signal_type": {
+          "type": "string",
+          "enum": ["audio", "midi", "text", "control", "video", "image"]
+        },
+        "asset_ref": { "type": "string" },
+        "segment_id": { "type": "string" },
+        "time_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start", "end", "unit"],
+          "properties": {
+            "start": { "type": "number" },
+            "end": { "type": "number" },
+            "unit": { "type": "string", "enum": ["seconds", "samples", "frames"] }
+          }
+        },
+        "context_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "features_ref": { "type": "string" },
+        "feature_stream_ref": { "type": "string" },
+        "provenance_id": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "context_bundle_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_id", "selector", "summary"],
+      "properties": {
+        "bundle_id": { "type": "string", "minLength": 1 },
+        "selector": { "type": "object", "additionalProperties": true },
+        "summary": { "type": "string" },
+        "event_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "asset_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "provenance_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "retention_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retention_class", "consent_status", "local_only", "deletion_supported"],
+      "properties": {
+        "retention_class": {
+          "type": "string",
+          "enum": ["ephemeral", "session", "project", "release", "restricted", "forget_requested", "unknown"]
+        },
+        "consent_status": {
+          "type": "string",
+          "enum": ["owned", "licensed", "public_domain", "unknown", "restricted", "not_applicable"]
+        },
+        "local_only": { "type": "boolean" },
+        "deletion_supported": { "type": "boolean" },
+        "expires_at": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ],
+          "default": null
+        },
+        "restricted_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    }
+  }
+}

@@ -37,6 +37,78 @@ export interface UploadMetadata {
   notes?: string;
 }
 
+export interface EarwormTrace {
+  trace_status:
+    | "not_recorded"
+    | "planned"
+    | "active"
+    | "exported"
+    | "forgotten"
+    | "partial"
+    | "unknown";
+  session_id: string | null;
+  app_id?: string;
+  akousmata_operations: ("remember" | "list" | "search" | "similarity" | "export" | "forget")[];
+  event_chain: {
+    event_id: string;
+    type: string;
+    actor: "user" | "agent" | "system" | "provider";
+    wall_clock: string;
+    parent_event_ids: string[];
+    provenance_id?: string;
+    event_hash?: string;
+    summary?: string;
+  }[];
+  asset_refs: {
+    asset_id: string;
+    type?: "audio" | "midi" | "text" | "control" | "video" | "image" | "metadata" | "analysis";
+    uri?: string;
+    duration_seconds?: number;
+    sample_rate?: number;
+    channels?: number;
+    provenance_id?: string;
+  }[];
+  provenance_refs: {
+    provenance_id: string;
+    source_type: "generated" | "recorded" | "imported" | "cloned" | "designed" | "unknown";
+    provider?: string;
+    model_id?: string;
+    request_hash?: string;
+    asset_hash?: string;
+    consent_status: "owned" | "licensed" | "public_domain" | "unknown" | "restricted";
+    usage_constraints?: string[];
+  }[];
+  signal_packets: {
+    packet_id: string;
+    signal_type: "audio" | "midi" | "text" | "control" | "video" | "image";
+    asset_ref?: string;
+    segment_id?: string;
+    time_range: { start: number; end: number; unit: "seconds" | "samples" | "frames" };
+    context_refs: string[];
+    features_ref?: string;
+    feature_stream_ref?: string;
+    provenance_id?: string;
+    tags: string[];
+  }[];
+  context_bundle_refs: {
+    bundle_id: string;
+    selector: Record<string, unknown>;
+    summary: string;
+    event_ids?: string[];
+    asset_ids?: string[];
+    provenance_ids?: string[];
+  }[];
+  retention_policy: {
+    retention_class: "ephemeral" | "session" | "project" | "release" | "restricted" | "forget_requested" | "unknown";
+    consent_status: "owned" | "licensed" | "public_domain" | "unknown" | "restricted" | "not_applicable";
+    local_only: boolean;
+    deletion_supported: boolean;
+    expires_at?: string | null;
+    restricted_fields?: string[];
+  };
+  notes?: string[];
+}
+
 export interface Prompt {
   prompt_id: string;
   prompt_text: string;
@@ -69,6 +141,7 @@ export interface Generation {
   human_notes: string[];
   source_type: SourceType;
   upload_metadata: UploadMetadata | null;
+  earworm_trace?: EarwormTrace | null;
 }
 
 export interface ScoreSet {
@@ -175,6 +248,7 @@ export interface Report {
     cautions: string[];
     adjacent_modes: string[];
   } | null;
+  earworm_trace?: EarwormTrace | null;
   basic_description: string;
   sources: {
     detected: string[];

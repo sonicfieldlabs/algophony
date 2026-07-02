@@ -1,4 +1,4 @@
-# Algophony v0.3 Integration Plan: Manifesto and AKOÚŌ v0.4
+# Algophony v0.3 Integration Plan: Manifesto, AKOÚŌ v0.5, and Listening Stack Traceability
 
 Status: draft execution plan, contract layer landed
 Date: 2026-06-10
@@ -7,28 +7,34 @@ Date: 2026-06-10
 
 v0.2 (see `algophony-v0.2-integration-plan.md`) planned the studio loop:
 providers, LLM listening layer, STT/TTS interop, local models. v0.3 aligns the
-framework's concept and contracts with two upstream sources:
+framework's concept and contracts with three upstream sources:
 
-1. The **Algophony Manifesto** (`docs/manifesto.md`), adopted as the founding
-   statement. Its claims become instruments: disclosure, consent,
-   homogenization, compute provenance, openness/capture profiles, and the nine
-   standing questions.
-2. **AKOÚŌ v0.4** (`../akouo`), which expanded from 9 listening modes and 10
-   commands to 13 modes plus router and reference-layer (15 portable skills),
-   16 commands, an evidence ladder with claim permissions, expanded routing
-   plans, and an explicit agentic integration contract.
+This document describes the v0.3 integration-plan series, not the public
+software release number.
 
-## What Landed in This Pass (2026-06-10)
+1. **Algophonya: A Pluriversal Listening Manifesto** (`docs/manifesto.md`),
+   adopted as the founding statement. Its claims become instruments:
+   disclosure, consent, homogenization, compute provenance,
+   openness/capture profiles, and the standing questions.
+2. **AKOÚŌ v0.5** (`../akouo`), which consolidates 13 listening modes plus
+   router and reference-layer (15 portable skills), 16 commands, an evidence
+   ladder with claim permissions, expanded routing plans, and an explicit
+   agentic integration contract.
+3. **Earworm/Akousmata** (`../earworm`), which provides the persistent
+   signal/context-chain vocabulary and memory operations needed for traceable
+   listening routes.
+
+## What Landed in This Pass (2026-06-10; updated 2026-07-02)
 
 Contract and concept layer, all backward compatible (200 existing reports and
 scores still validate strict):
 
 - `docs/manifesto.md`: manifesto adopted into the repository.
 - `docs/concept-note.md`: expanded with the algophonic condition, middle
-  matter, evaluation Level 5, the AKOÚŌ v0.4 listening layer, the planetary
+  matter, evaluation Level 5, the AKOÚŌ v0.5 listening layer, the planetary
   ear, literacy-or-capture, and the nine questions.
-- `docs/glossary.md`: new entries for the manifesto and v0.4 vocabulary.
-- `docs/benchmark-methodology.md`: Level 5, proposed axes, v0.4 listening
+- `docs/glossary.md`: new entries for the manifesto and v0.5 vocabulary.
+- `docs/benchmark-methodology.md`: Level 5, proposed axes, v0.5 listening
   chain and evidence ladder.
 - `schemas/listening-report.schema.json`: mode enum widened to 13, command
   enum widened to 16, optional nullable `akouo_routing_plan` and
@@ -37,7 +43,9 @@ scores still validate strict):
   `homogenization_index`, `voice_consent_risk`.
 - `schemas/generation.schema.json`: optional nullable `compute_provenance`
   and `voice_material` records.
-- `apps/web/app/lib/listening-contract.ts`: synced to v0.4 (modes, commands,
+- `schemas/earworm-trace.schema.json`: optional local bridge for Earworm
+  session/event/context refs and Akousmata memory operations.
+- `apps/web/app/lib/listening-contract.ts`: synced to v0.5 (modes, commands,
   skills, evidence levels, routing plan and reference map types).
 - `apps/web/app/lib/types.ts`: report and score types extended to match.
 - `apps/web/app/reports/[id]/page.tsx`: renders routing plans and reference
@@ -45,7 +53,7 @@ scores still validate strict):
 
 ## The Consumption Loop in the Pipeline
 
-AKOÚŌ v0.4 defines a six-step agentic integration contract. Algophony
+AKOÚŌ v0.5 defines a six-step agentic integration contract. Algophony
 implements it inside its own report pipeline without importing the AKOÚŌ app
 runtime:
 
@@ -136,8 +144,12 @@ models: suites and axes version, the protocol persists.
   and out of scope for the public Algophony surface.
 - `../bench` — benchmark suite/run conventions; Algophony's suite manifests
   and score records stay structurally compatible.
+- `../earworm` — source of truth for persistent listening sessions, event
+  chains, asset/provenance refs, signal packets, context bundles, and
+  retention policy. Algophony stores only compact optional `earworm_trace`
+  refs and never backfills them onto old corpus records.
 - `../sonic field labs` — public showcase. The read-only Algophony page can
-  now present the manifesto, the five evaluation levels, and the v0.4
+  now present the manifesto, the five evaluation levels, the v0.5
   listening chain; it must not expose playground, upload, or generation
   workflows (see `PUBLICATION_POLICY.md`).
 - MOSS-SoundEffect local/MLX providers — the local-first lane that makes
@@ -166,5 +178,6 @@ cd apps/web && npx tsc --noEmit && npm run build
   Studio mode, per the v0.2 plan.
 - No backfilled routing plans, reference maps, or manifesto axes on the
   v0.1.1 corpus.
+- No backfilled Earworm traces on the v0.1.1 corpus.
 - No change to the procedural-pilot status: the project is not presented as
   a mature ML benchmark until real model generations are reviewed and scored.

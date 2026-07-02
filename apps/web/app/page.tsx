@@ -44,9 +44,9 @@ export default function Overview() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Algophony Benchmark Dashboard</h1>
+        <h1 className="page-title">Algophony Framework Dashboard</h1>
         <p className="page-subtitle">
-          {suite?.title || "Algophony"} ·{" "}
+          {suite?.title || "Algophony Framework"} ·{" "}
           <span className="status-pill">{suite?.benchmark_status?.replace(/_/g, " ")}</span>
         </p>
       </div>

@@ -1,14 +1,20 @@
 # Algophony Public Release Audit
 
 Date: 2026-06-10
-Scope: v0.2 local-mode platform and sanitized public-code export
+Updated: 2026-07-02
+Scope: v0.2.1 local-mode platform patch, sanitized public-code export, and Listening Stack paper-alignment pass
 
 ## Executive Summary
 
 No release-blocking data, schema, hygiene, or build failures are open in the
-current local tree. The project remains a v0.2 platform release carrying the
-v0.1.1 procedural pilot corpus; it must not be described as a mature ML
-text-to-audio benchmark.
+current local tree. The project remains on the v0.2 platform, with a v0.2.1
+paper-alignment patch carrying the v0.1.1 procedural pilot corpus; it must not
+be described as a mature ML text-to-audio benchmark.
+
+The July 2026 alignment pass resolves the known publication-drift items:
+Algophonya terminology, AKOÚŌ v0.5 labels, official
+`sonicfieldlabs/algophony` repository references, and optional
+Earworm/Akousmata traceability for future reports and generations.
 
 ## Passing Checks
 
@@ -80,6 +86,40 @@ text-to-audio benchmark.
 - **Fix:** Generation tables use `source_type`; comparison tables use score
   model metadata.
 - **Verification:** `npm run build` passes.
+
+### F-006: Paper Terminology and Contract Drift
+
+- **Severity:** fixed release-blocker
+- **Area:** docs/schema
+- **Files:** `README.md`, `docs/manifesto.md`, `docs/concept-note.md`,
+  `docs/glossary.md`, `docs/benchmark-methodology.md`,
+  `docs/references.md`, `schemas/listening-report.schema.json`,
+  `apps/web/app/lib/listening-contract.ts`
+- **Issue:** Local docs still centered the old Algophony manifesto wording and
+  v0.4 AKOÚŌ labels while the Listening Stack paper and adjacent AKOÚŌ repo use
+  Algophonya and AKOÚŌ v0.5.
+- **Fix:** Replaced the manifesto, introduced the Algophonya/Algophony
+  Framework naming split, and updated AKOÚŌ labels to v0.5 without changing the
+  already-synced contract shape.
+- **Verification:** Schema, dataset, export, and web build gates must pass.
+
+### F-007: Missing Traceable Memory Route
+
+- **Severity:** fixed high
+- **Area:** schema/docs/UX
+- **Files:** `schemas/earworm-trace.schema.json`,
+  `schemas/generation.schema.json`, `schemas/listening-report.schema.json`,
+  `apps/web/app/lib/types.ts`, `apps/web/app/generations/[id]/page.tsx`,
+  `apps/web/app/reports/[id]/page.tsx`,
+  `docs/earworm-akousmata-integration.md`
+- **Issue:** The framework had no local contract for the Listening Stack paper's
+  Akousmata/Earworm memory layer, so future reports could not point to an
+  append-only route across audio and attached non-audio context.
+- **Fix:** Added nullable `earworm_trace` fields and dashboard rendering for
+  compact session/event/asset/provenance/signal/context/retention refs. Legacy
+  v0.1.1 records remain unbackfilled.
+- **Verification:** Schema and dataset validation must pass with old records
+  unchanged.
 
 ## Residual Risk
 

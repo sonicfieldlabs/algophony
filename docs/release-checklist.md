@@ -1,6 +1,6 @@
 # Release Checklist
 
-Pre-release validation for Algophony v0.2.
+Pre-release validation for Algophony v0.2.1.
 
 ## Documentation
 
@@ -11,6 +11,8 @@ Pre-release validation for Algophony v0.2.
 - [x] References are grouped and publication metadata should be checked before formal citation.
 - [x] Dataset card documents limits, ethics, licenses, and missing data.
 - [x] Benchmark methodology explains positive axes, risk axes, score provenance, and composite normalization.
+- [x] Earworm/Akousmata integration note documents traceability, retention, and nullable legacy-corpus behavior.
+- [x] v0.2.1 release notes document the Listening Stack alignment boundary.
 - [x] Web app README is project-specific.
 
 ## Data
@@ -20,6 +22,7 @@ Pre-release validation for Algophony v0.2.
 - [x] 200 local audio files exist in gitignored storage.
 - [x] 200 audio-analysis records exist.
 - [x] 200 JSON reports validate against `listening-report.schema.json`.
+- [x] Optional Earworm trace schema validates and remains nullable on legacy records.
 - [x] 200 Markdown reports match JSON report IDs.
 - [x] 200 benchmark score records validate against `benchmark-run.schema.json`.
 - [x] Benchmark suite validates against `benchmark-suite.schema.json`.

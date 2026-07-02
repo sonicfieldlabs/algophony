@@ -1,8 +1,8 @@
-# Algophony Roadmap
+# Algophony Framework Roadmap
 
 ## v0.2 Status
 
-Algophony is currently a local-mode platform release with a validated
+The Algophony Framework is currently a local-mode platform release with a validated
 procedural pilot corpus:
 
 - 100 Atlas prompts.
@@ -60,15 +60,23 @@ The project should not be tagged as a full ML benchmark until real ML-generated 
 - Report detail pages expose the AKOÚŌ taxonomy and score provenance.
 - UI labels procedural controls separately from ML model outputs.
 
-### June 2026: Manifesto and AKOÚŌ v0.4 Contract Expansion
+### June 2026: Manifesto and AKOÚŌ Contract Expansion
 
-- Algophony Manifesto adopted as the founding statement (`docs/manifesto.md`); concept note, glossary, and methodology expanded around it.
-- AKOÚŌ contract synced to v0.4: 13 listening modes, 16 commands, evidence ladder, claim permissions.
+- Algophonya manifesto adopted as the founding statement (`docs/manifesto.md`); concept note, glossary, and methodology expanded around it.
+- AKOÚŌ contract synced: 13 listening modes, 16 commands, evidence ladder, claim permissions.
 - Report schema carries optional `akouo_routing_plan` and `akouo_reference_map`; dashboard report pages render them when present.
 - Score schema gains proposed nullable manifesto axes: `disclosure_integrity`, `homogenization_index`, `voice_consent_risk`.
 - Generation schema gains optional `compute_provenance` and `voice_material` records.
 - Evaluation Level 5 (provenance, consent, disclosure) defined in `docs/benchmark-methodology.md`.
 - Execution plan: `docs/algophony-v0.3-integration-plan.md`.
+
+### July 2026: Listening Stack Alignment
+
+- Founding statement replaced with *Algophonya: A Pluriversal Listening Manifesto*; project terminology now distinguishes Algophonya (condition) from Algophony Framework (evaluation layer).
+- AKOÚŌ labels updated to v0.5 while preserving the already-synced schema surface: router, 13 listening modes, reference-layer, 16 commands, evidence ladder, claim permissions, routing plans, and reference maps.
+- Earworm/Akousmata trace contract landed as nullable optional fields on generation records and listening reports. The v0.1.1 corpus is not backfilled.
+- Dashboard detail pages render Earworm/Akousmata trace status, event chains, context bundles, signal packets, retention policy, and memory operations when future records carry them.
+- Publication policy normalized to `https://github.com/sonicfieldlabs/algophony` and the sanitized export workflow remains the only public publication path.
 
 ## v0.2 Release Gates
 
@@ -97,6 +105,7 @@ cd apps/web && npm run build
 - Populate `compute_provenance` and `voice_material` on new generation records at generation time.
 - Add provider openness profiles (open-weights local, open-code hosted, closed API) to the registry, the providers page, and benchmark exports.
 - Produce routed listening passes with routing plans and claim-permission enforcement for new reports.
+- Populate Earworm traces for new generation and listening runs when retention is enabled, including non-audio context bundles and Akousmata memory-operation refs.
 
 ## v0.3 Collaboration Layer
 

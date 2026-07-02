@@ -1,15 +1,16 @@
-# Algophony
+# Algophony Framework
 
-Algophony studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is a Sonic Field Labs research framework for evaluating algorithmic soundscapes as generated, simulated, hybrid, or recursively interpreted sonic environments.
+The Algophony Framework studies how algorithms generate, imitate, distort, classify, and listen to soundscapes. It is the Sonic Field Labs evaluation layer for **Algophonya**: the algorithmic soundscape and the pluriversal field it opens.
 
 The central claim is simple: generative audio systems do not only produce sounds. They produce assumptions about worlds: what a forest is, what a city is, what a ritual is, what counts as background, what gets erased, and what becomes audible.
 
-The founding statement of the project is the [Algophony Manifesto](docs/manifesto.md) (June 2026). It names the algophonic condition — algorithmic systems producing, transforming, mimicking, distributing, and interpreting voices, signals, and sonic worlds — and the framework translates its claims into evaluation levels, score axes, and metadata disciplines (see `docs/concept-note.md`).
+The founding statement of the project is [*Algophonya: A Pluriversal Listening Manifesto*](docs/manifesto.md) (Sonic Field, 2026). Algophonya names the condition; Algophony Framework keeps the software/research-instrument name and translates the manifesto into evaluation levels, score axes, metadata disciplines, and traceable listening reports (see `docs/concept-note.md`).
 
 ## Current State
 
-This repository is now a v0.2 local-mode platform release carrying the v0.1.1
-procedural pilot corpus. It is not a full ML model benchmark.
+This repository is now a v0.2.1 paper-alignment release on the v0.2 local-mode
+platform, carrying the v0.1.1 procedural pilot corpus. It is not a full ML
+model benchmark.
 
 What exists:
 
@@ -20,6 +21,7 @@ What exists:
 - 100 hybrid-reviewed seed reports and 100 agent-draft reports.
 - Discriminative benchmark scores with score provenance and normalized comparison exports.
 - A Next.js dashboard for prompt, generation, report, score, benchmark, provider, observatory, studio, and export inspection.
+- Optional Earworm/Akousmata trace fields for future append-only listening routes, non-audio context bundles, provenance, retention, and memory operations.
 - A sanitized public-export workflow that publishes code without local corpus data, generated audio, uploads, secrets, private paths, or private local git history.
 
 What does not exist yet:
@@ -29,7 +31,9 @@ What does not exist yet:
 - No field-recording reference comparison is included.
 - Procedural controls are not presented as equivalent to text-to-audio model systems.
 
-See `docs/release-notes-v0.2.md` for the public-code changes since v0.1.1.
+See `docs/release-notes-v0.2.md` for the public-code platform changes since
+v0.1.1 and `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
+release.
 
 ## Conceptual Distinction
 
@@ -43,9 +47,9 @@ See `docs/release-notes-v0.2.md` for the public-code changes since v0.1.1.
 
 Technophony is the sound of machines in the world. Algophony is the soundscape as produced, mediated, or re-heard by computational systems.
 
-## AKOÚŌ v0.4 Listening Contract
+## AKOÚŌ v0.5 Listening Contract
 
-Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system, in its v0.4 form:
+Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system, in its v0.5 contract:
 
 - 15 portable skills: `akouo-router`, 13 listening modes, and `reference-layer`.
 - 16 commands, from `/listen` to `/route`.
@@ -54,6 +58,12 @@ Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system,
 - Routing plans: reports may carry an `akouo_routing_plan` (weighted mode chain, claim permissions, forbidden assumptions, stop conditions) and an `akouo_reference_map` (concepts, methods, traditions, research routes).
 
 The consumption loop is route → check stop conditions → listen → map → merge → hand off. The contract shape is copied into `schemas/listening-report.schema.json` and `apps/web/app/lib/listening-contract.ts`; the canonical source is the adjacent AKOÚŌ repository. Integration details: `docs/algophony-v0.3-integration-plan.md`.
+
+## Earworm and Akousmata Traceability
+
+Algophony can attach an optional `earworm_trace` to generation records and listening reports. The trace points to an Earworm context chain: session, event refs, asset/provenance refs, signal packets, context bundles, and retention policy. Akousmata names the memory operations over that chain: remember, list, search, similarity, export, and forget.
+
+The field is nullable and intentionally absent from the v0.1.1 procedural corpus. Do not backfill traces onto older reports without an actual traced pass. See `docs/earworm-akousmata-integration.md`.
 
 ## Repository Structure
 
@@ -174,7 +184,7 @@ python3 -m pip install -r requirements-local-macos-mlx.txt
 
 ## Publication Model
 
-The public GitHub repository is a clean code release for the full local-mode
+The official public GitHub repository is `https://github.com/sonicfieldlabs/algophony`, published as a clean code release for the full local-mode
 system. It includes the dashboard, playground code, provider adapters, schemas,
 scripts, and benchmark machinery. It does not include the local benchmark
 corpus, generated metadata, report corpora, generated audio, uploads, secrets,
@@ -189,7 +199,9 @@ current local git history directly to the public remote.
 
 ## Related Projects
 
-- AKOÚŌ — agentic listening system: 15 portable skills, six-category claim taxonomy, evidence ladder, routing plans, and reference layer (v0.4).
+- AKOÚŌ — agentic listening system: 15 portable skills, six-category claim taxonomy, evidence ladder, routing plans, and reference layer (v0.5).
+- Earworm and Akousmata — persistent listening and memory operations for traceable signal/context chains.
+- The Listening Stack — companion paper describing AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos as one agentic sonic-computation stack.
 - Agentic Listening Benchmark — benchmark structure and scoring conventions.
 - Sonic Field Labs — research unit for sound, listening, and sonic culture in computational systems.
 

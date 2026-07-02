@@ -1,4 +1,4 @@
-# Algophony Development Plan and Agent Execution Manual
+# Algophony Framework Development Plan and Agent Execution Manual
 
 Status: v0.1 planning document  
 Date: 2026-05-14  
@@ -6,7 +6,7 @@ Workspace: `$SFL_ROOT/algophony`
 
 ## 1. Purpose of this document
 
-This file is the complete implementation handoff for Algophony. It is written for a future coding or research agent that must create the project from an empty workspace and carry it through the first 12-week MVP.
+This file is the complete implementation handoff for the Algophony Framework. It is written for a future coding or research agent that must create the project from an empty workspace and carry it through the first 12-week MVP.
 
 The agent must not treat this as a loose inspiration document. It is the project specification. Follow the phases, file structure, schemas, acceptance criteria, and validation steps unless the user explicitly changes direction.
 

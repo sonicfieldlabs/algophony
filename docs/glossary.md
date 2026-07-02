@@ -1,12 +1,16 @@
 # Algophony Glossary
 
-## Algophony
+## Algophonya
 
-The algorithmic layer of the soundscape: sonic environments generated, simulated, transformed, classified, reconstructed, or hallucinated by computational systems. Algophony extends the established soundscape source taxonomy (geophony, biophony, anthrophony, technophony) by identifying computation as a distinct mediating force that does not merely reproduce but constructs sonic worlds.
+The algorithmic soundscape and the pluriversal field it opens: the condition in which computational systems take part in making, hearing, classifying, and judging sound across many worlds that need not become one.
+
+## Algophony Framework
+
+The Sonic Field Labs evaluation layer for Algophonya: Atlas prompts, generation metadata, AKOÚŌ-style listening reports, scoring axes, dashboard views, and release machinery for studying algorithmic soundscapes.
 
 ## Algophonic Condition
 
-The situation named by the Algophony Manifesto: algorithmic systems produce, transform, mimic, distribute, and interpret voices, signals, soundscapes, and sonic worlds. The algophonic condition is not machine sound alone, nor human speech rendered artificial, but the expanded field where human, machine, animal, planetary, synthetic, and infrastructural listening meet — not fused, not harmonized, coexisting in friction.
+The situation named by *Algophonya: A Pluriversal Listening Manifesto*: algorithmic systems take part in making, hearing, classifying, and judging sound. This term is retained for continuity, but new project text should prefer **Algophonya** for the condition and **Algophony Framework** for the software.
 
 ## Artificial Audio Intelligence (AAI)
 
@@ -30,7 +34,7 @@ A structured mode of listening performed by an AI agent operating under the AKO�
 
 ## Evidence Ladder
 
-The AKOÚŌ v0.4 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
+The AKOÚŌ v0.5 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
 
 ## Claim Permissions
 
@@ -38,11 +42,23 @@ The set of claim categories a listening pass is allowed to emit, derived from it
 
 ## Routing Plan
 
-The AKOÚŌ v0.4 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, and stop conditions. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
+The AKOÚŌ v0.5 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, and stop conditions. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
 
 ## Reference Layer
 
 The AKOÚŌ skill that turns a listening result into a conceptual map: concepts triggered, sonic methodologies, authors or traditions, possible research routes, research questions, cautions, and adjacent modes. In Algophony, reference maps connect benchmark reports to research literature without letting citation replace listening.
+
+## Earworm
+
+The project-agnostic persistence protocol for agentic signal chains. Earworm pairs the signal chain with a context chain: sessions, append-only events, asset references, provenance records, signal packets, context bundles, retention policies, analysis, user edits, agent actions, modulation, and render history.
+
+## Akousmata
+
+The Listening Stack memory-operations surface over Earworm chains: remember, list, search, similarity, export, and forget. In Algophony, Akousmata operations are represented through optional `earworm_trace` records rather than by importing the Earworm runtime.
+
+## Earworm Trace
+
+An optional compact bridge record on Algophony generations and reports. It points to a retained or planned Earworm session, event chain, assets, provenance, signal packets, context bundles, and retention policy, allowing future agents to reconstruct the route without publishing private raw session data.
 
 ## False Ecology
 
@@ -110,7 +126,7 @@ The condition of audio systems whose weights, terms, training data, or outputs a
 
 ## Rights of the Audible
 
-The five claims of the Algophony Manifesto: the right to one's own voice against cloning and commerce; the right to silence, to exist unrecorded; the right to opacity, to make noise that resists classification; the right of an accent, dialect, or language not to be averaged into a default voice; and the right to know whether what we hear was generated, by whom, and for what.
+The rights named by *Algophonya: A Pluriversal Listening Manifesto*: voice, silence, opacity, accent and listening difference, disclosure, consent/refusal/revocation/credit/payment, community protocols, contestability, redress, and the right to remake the tools.
 
 ## Planetary Ear
 

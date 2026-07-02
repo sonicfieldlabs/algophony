@@ -41,13 +41,18 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## AKOÚŌ and Agentic Listening
 
-- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.4: 15 portable skills, evidence ladder, routing plans, reference layer. See the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
+- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.5: 15 portable skills, evidence ladder, routing plans, claim permissions, and reference layer. See `https://github.com/sonicfieldlabs/akouo` and the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
+- Sonic Field Labs. Earworm: persistent listening protocol for agentic signal chains. v0.1 protocol implementation, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm` and the adjacent repository's `README.md`.
+- Sonic Field Labs. Akousmata: memory-operations surface over Earworm chains: remember, list, search, similarity, export, and forget.
 - Sonic Field Labs. Agentic Listening Benchmark.
 - Sonic Field Labs. https://labs.sonicfield.org
 
 ## Algophony Framework Documents
 
-- Sonic Field Labs (2026). *Algophony: A Listening Manifesto*. `docs/manifesto.md`. Founding statement: the algophonic condition, the acousmatic contract, rights of the audible, the planetary ear.
+- Sonic Field Labs (2026). *Algophonya: A Pluriversal Listening Manifesto*. `docs/manifesto.md`. Founding statement: Algophonya, algorithmic acoulogy, the ladder of claims, rights of the audible, the planetary ear.
+- Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos.
+- Sonic Field Labs (2026). *germ* companion paper on generative cultivation and lineage-bearing sound.
 - `docs/concept-note.md` — framework definition and evaluation levels.
-- `docs/benchmark-methodology.md` — score axes and the AKOÚŌ v0.4 listening chain.
-- `docs/algophony-v0.3-integration-plan.md` — manifesto and AKOÚŌ v0.4 integration architecture.
+- `docs/benchmark-methodology.md` — score axes, AKOÚŌ v0.5 listening chain, and Earworm/Akousmata trace layer.
+- `docs/earworm-akousmata-integration.md` — local trace contract for persistent listening routes and attached context.
+- `docs/algophony-v0.3-integration-plan.md` — manifesto, AKOÚŌ v0.5, and Listening Stack integration architecture.

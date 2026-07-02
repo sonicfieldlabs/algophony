@@ -16,8 +16,8 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Algophony - Soundscape Benchmark",
-  description: "Research dashboard for algorithmic soundscape evaluation",
+  title: "Algophony Framework - Soundscape Benchmark",
+  description: "Research dashboard for the Algophony Framework",
 };
 
 const STUDIO_ENABLED = process.env.ALGOPHONY_ENABLE_STUDIO === "true";

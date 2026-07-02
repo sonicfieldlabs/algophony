@@ -103,7 +103,7 @@
         { "type": "null" }
       ],
       "default": null,
-      "description": "Optional AKOÚŌ v0.4 expanded routing plan: evidence level, claim permissions, weighted mode chain, agent handoff, and stop conditions."
+      "description": "Optional AKOÚŌ v0.5 expanded routing plan: evidence level, claim permissions, weighted mode chain, agent handoff, and stop conditions."
     },
     "akouo_reference_map": {
       "oneOf": [
@@ -112,6 +112,14 @@
       ],
       "default": null,
       "description": "Optional AKOÚŌ reference-layer output mapping the listening result to concepts, methods, traditions, research routes, questions, and cautions."
+    },
+    "earworm_trace": {
+      "oneOf": [
+        { "$ref": "earworm-trace.schema.json" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Optional Earworm/Akousmata trace linking this report to the append-only listening context chain, attached non-audio context, provenance, retention policy, and memory operations. Null for reports that predate Earworm integration or intentionally have no retained trace."
     },
     "basic_description": { "type": "string", "minLength": 1 },
     "sources": {

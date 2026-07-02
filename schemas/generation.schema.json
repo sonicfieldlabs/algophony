@@ -117,6 +117,14 @@
       ],
       "default": null,
       "description": "Voice-as-body record. The voice is biometric: consent for the human voice, provenance for the synthetic one. Null for records that predate this field or contain no voice-like material."
+    },
+    "earworm_trace": {
+      "oneOf": [
+        { "$ref": "earworm-trace.schema.json" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Optional Earworm/Akousmata trace linking this generation to an append-only context chain, including non-audio context packets, provenance, retention policy, and memory operations. Null for records that predate Earworm integration or deliberately have no retained trace."
     }
   }
 }
