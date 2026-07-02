@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
   if (!tryAcquireStudioSlot()) {
     return NextResponse.json(
-      { error: "Studio is busy. Please retry in a moment." },
+      { error: "Playground is busy. Please retry in a moment." },
       { status: 503, headers: { "Retry-After": "15" } },
     );
   }

@@ -4,16 +4,13 @@ import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import path from "node:path";
 
-function dataPath(...parts: string[]): string {
-  if (process.env.ALGOPHONY_DATA_ROOT) {
-    return path.resolve(/* turbopackIgnore: true */ process.env.ALGOPHONY_DATA_ROOT, ...parts);
-  }
-  return path.resolve(/* turbopackIgnore: true */ process.cwd(), "../..", ...parts);
-}
+const DATA_ROOT = process.env.ALGOPHONY_DATA_ROOT
+  ? path.resolve(/* turbopackIgnore: true */ process.env.ALGOPHONY_DATA_ROOT)
+  : path.resolve(/* turbopackIgnore: true */ process.cwd(), "../..");
 
 const SEARCH_DIRS = [
-  dataPath("generations", "audio"),
-  dataPath("uploads", "audio"),
+  path.join(DATA_ROOT, "generations", "audio"),
+  path.join(DATA_ROOT, "uploads", "audio"),
 ];
 
 const MIME: Record<string, string> = {
@@ -26,6 +23,9 @@ const MIME: Record<string, string> = {
 };
 
 const EXTENSIONS = Object.keys(MIME);
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 /** Validate audio ID to prevent path traversal. */
 function isValidId(id: string): boolean {

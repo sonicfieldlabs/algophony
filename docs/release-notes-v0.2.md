@@ -17,11 +17,11 @@ ML model benchmark.
   Audio Open, AudioGen, MOSS-SoundEffect, TangoFlux, SpatialScaper, and
   user-hosted Hugging Face endpoints.
 - Added provider status export and safer provider-status reporting.
-- Added gated local Studio routes for generation and uploads. Studio is
-  disabled by default and requires `ALGOPHONY_ENABLE_STUDIO=true`.
+- Added gated local Playground routes for generation and uploads. Playground is
+  disabled by default and requires `ALGOPHONY_ENABLE_PLAYGROUND=true`.
 - Added upload and generation guardrails for local-only operation, concurrency
   limits, sanitized errors, and relative storage paths.
-- Added dashboard routes for providers, observatory views, playground/studio
+- Added dashboard routes for providers, observatory views, playground
   workflows, generated-file access, API data access, and export inspection.
 - Added release hygiene checks for secrets, private paths, public-export data
   policy, strict validation, and tracked audio binaries.

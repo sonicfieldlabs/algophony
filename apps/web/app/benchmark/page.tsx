@@ -23,7 +23,7 @@ export default function BenchmarkPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Benchmark</h1>
+        <h1 className="page-title">Algophony Bench Dashboard</h1>
         <p className="page-subtitle">{suite ? `${suite.title} · ${suite.benchmark_status.replace(/_/g, " ")}` : "No benchmark suite mounted"}</p>
       </div>
       {!suite && (

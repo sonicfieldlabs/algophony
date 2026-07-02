@@ -1,9 +1,9 @@
 /**
- * Process-wide concurrency gate for Studio endpoints.
+ * Process-wide concurrency gate for Playground endpoints.
  * Caps in-flight Python subprocesses so a single user can't fork-bomb the dev server.
  */
 
-const MAX_IN_FLIGHT = Number(process.env.ALGOPHONY_STUDIO_MAX_CONCURRENT) || 2;
+const MAX_IN_FLIGHT = Number(process.env.ALGOPHONY_PLAYGROUND_MAX_CONCURRENT) || 2;
 let inFlight = 0;
 
 export function tryAcquireStudioSlot(): boolean {

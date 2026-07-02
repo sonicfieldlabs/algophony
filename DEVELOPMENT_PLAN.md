@@ -1,12 +1,40 @@
-# Algophony Framework Development Plan and Agent Execution Manual
+# Algophony Development Plan and Agent Execution Manual
 
-Status: v0.1 planning document  
-Date: 2026-05-14  
+Status: active local-mode system  
+Updated: 2026-07-02  
 Workspace: `$SFL_ROOT/algophony`
+
+## 0. Current System State
+
+This document began as the v0.1 implementation plan. It remains the operational
+specification for data integrity, schemas, AKOÚŌ claim discipline, and release
+hygiene, but the repository is no longer an empty scaffold. The current system
+has three coordinated layers:
+
+1. **Algophony Framework**: the research contracts and code for Atlas prompts,
+   generation metadata, AKOÚŌ listening reports, score records, provider
+   adapters, workers, validation, and sanitized publication.
+2. **Algophony Bench Dashboard**: the Next.js app in `apps/web/`, redesigned to
+   use the Algophony Studio visual language and renamed as the benchmark
+   dashboard for Atlas, providers, reports, scores, observatory views,
+   playground runs, and export inspection.
+3. **Algophony Studio**: the local-first app in `studio/`, imported from the
+   former local sound workspace and renamed as Algophony Studio. It organizes
+   local sound libraries, prompt cards, stacks, tags, variants, listening notes,
+   provider-key-controlled generation, DAW handoff, and export sets.
+
+The current architecture is documented in `docs/architecture.md`. Future work
+must keep these boundaries clear: Framework data is the benchmark source of
+truth, Bench audits and visualizes it, and Studio prepares or organizes sonic
+material before any record is promoted into the framework.
+
+The public repository target remains `https://github.com/sonicfieldlabs/algophony`,
+but local history must not be pushed directly there. Use
+`scripts/prepare_public_export.py` to create the sanitized public export.
 
 ## 1. Purpose of this document
 
-This file is the complete implementation handoff for the Algophony Framework. It is written for a future coding or research agent that must create the project from an empty workspace and carry it through the first 12-week MVP.
+This file is the implementation handoff for Algophony. It is written for a future coding or research agent that must maintain the current local-mode system and carry it through the next benchmark, Studio, and publication milestones.
 
 The agent must not treat this as a loose inspiration document. It is the project specification. Follow the phases, file structure, schemas, acceptance criteria, and validation steps unless the user explicitly changes direction.
 
@@ -48,9 +76,9 @@ Key distinction:
 
 > Technophony is the sound of machines in the world. Algophony is the soundscape as produced, mediated, or re-heard by computational systems.
 
-## 4. MVP decision
+## 4. MVP decision and current extension
 
-The first milestone is not a full production app. The first milestone is:
+The first milestone was not a full production app. The first milestone was:
 
 > Algophony Atlas v0.1 plus Algophony Benchmark Lite v0.1.
 
@@ -78,6 +106,17 @@ Primary outputs:
 8. Dataset card and methodology document.
 9. Thin dashboard for browsing prompts, generations, reports, and scores.
 10. Contributor guide and release checklist.
+
+Current extension:
+
+- The benchmark dashboard has become **Algophony Bench Dashboard**, a local
+  Studio-styled inspection app rather than a temporary prototype.
+- The former local sound workspace has been imported as **Algophony Studio** in
+  `studio/`.
+- The repository now supports two local app daemons: Bench on port `3010` and
+  Studio on port `3001`.
+- Public release remains a sanitized code export, not a deployment of private
+  local corpus data or user-provider workspace state.
 
 ## 5. Agent execution contract
 

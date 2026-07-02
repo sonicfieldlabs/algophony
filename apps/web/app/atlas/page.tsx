@@ -11,7 +11,7 @@ export default function AtlasPage() {
   return (
     <>
       <div className="page-header">
-        <h1 className="page-title">Algophony Framework Atlas</h1>
+        <h1 className="page-title">Algophony Atlas</h1>
         <p className="page-subtitle">100 controlled prompts for algorithmic soundscape evaluation</p>
       </div>
       {prompts.length === 0 && (

@@ -1,6 +1,6 @@
 # Release Checklist
 
-Pre-release validation for Algophony v0.2.1.
+Pre-release validation for the current Algophony local-mode system.
 
 ## Documentation
 
@@ -13,7 +13,9 @@ Pre-release validation for Algophony v0.2.1.
 - [x] Benchmark methodology explains positive axes, risk axes, score provenance, and composite normalization.
 - [x] Earworm/Akousmata integration note documents traceability, retention, and nullable legacy-corpus behavior.
 - [x] v0.2.1 release notes document the Listening Stack alignment boundary.
+- [x] Architecture note documents Framework, Bench Dashboard, and Studio boundaries.
 - [x] Web app README is project-specific.
+- [x] Studio README is integrated with the Algophony system model.
 
 ## Data
 
@@ -37,6 +39,8 @@ Pre-release validation for Algophony v0.2.1.
 - [x] 100 agent-draft reports are included.
 - [x] ML provider adapters are present but not included in score data.
 - [x] Suite status is `procedural_pilot`.
+- [x] Algophony Studio is included as local-first workspace source code.
+- [x] Algophony Bench Dashboard uses the Studio visual language.
 
 ## Publication Readiness
 
@@ -48,6 +52,7 @@ Pre-release validation for Algophony v0.2.1.
 - [x] Release hygiene check scans for secrets, private paths, license fields, staged audio, and strict dataset validation.
 - [ ] Public GitHub export is created from `scripts/prepare_public_export.py`, not from local history.
 - [ ] Public export excludes benchmark result data, generated metadata, report corpora, generated audio, uploads, secrets, personal paths, and private notes.
+- [ ] Public export excludes Studio and Bench local state, logs, build artifacts, and node modules.
 - [ ] Sonic Field Labs owns the read-only public Algophony showcase page.
 - [ ] Local full-corpus data remains local and is mounted only with `ALGOPHONY_DATA_ROOT`.
 
@@ -70,6 +75,7 @@ python3 scripts/run_scenario_tests.py
 python3 scripts/export_release.py --dry-run
 python3 scripts/prepare_public_export.py --dry-run
 cd apps/web && npm install && npm run build
+cd studio && npm install && npm run lint && npm run typecheck && npm run test && npm run build
 ```
 
 ## Known Limitations
@@ -80,6 +86,8 @@ cd apps/web && npm install && npm run build
 - No field-recording references are included.
 - No independent human listening panel has reviewed the full corpus.
 - Audio files remain local and gitignored; public release needs a storage/archive decision.
+- Bench and Studio are local-first apps in this repository. Public deployment
+  requires a separate data/auth/provider-key decision.
 
 ## Final
 

@@ -16,18 +16,18 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Algophony Framework - Soundscape Benchmark",
-  description: "Research dashboard for the Algophony Framework",
+  title: "Algophony Bench Dashboard",
+  description: "Studio-aligned research and benchmark dashboard for Algophony",
 };
 
-const STUDIO_ENABLED = process.env.ALGOPHONY_ENABLE_STUDIO === "true";
+const PLAYGROUND_ENABLED = process.env.ALGOPHONY_ENABLE_PLAYGROUND === "true";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
       <body suppressHydrationWarning>
         <div className="app-layout">
-          <Sidebar studioEnabled={STUDIO_ENABLED} />
+          <Sidebar playgroundEnabled={PLAYGROUND_ENABLED} />
           <main className="main-content">{children}</main>
         </div>
       </body>

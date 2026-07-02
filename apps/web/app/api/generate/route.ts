@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
   if (!tryAcquireStudioSlot()) {
     return Response.json(
-      { ok: false, error: "Studio is busy. Please retry in a moment." },
+      { ok: false, error: "Playground is busy. Please retry in a moment." },
       { status: 503, headers: { "Retry-After": "15" } },
     );
   }

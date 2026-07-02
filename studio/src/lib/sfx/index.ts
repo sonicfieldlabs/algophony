@@ -1,0 +1,14 @@
+export { SFX_CATEGORIES, DEFAULT_EXCLUSIONS, getCategoryDefinition, getCategoryNames, getSubcategories, getSurfaces, getEnvironments } from "./taxonomy";
+export { sfxPromptSchema, validatePromptAttributes } from "./prompt-schema";
+export type { SfxPromptAttributes, SfxPromptInput, SfxPromptParsed, SonicDNAProfile } from "./prompt-schema";
+export { composePrompt, getPromptCharCount, isPromptOverLimit } from "./compose-prompt";
+export { criticize } from "./critic";
+export type { CriticReport, CriticIssue } from "./critic";
+export { breakdownScene } from "./scene-breakdown";
+export type { SceneEvent } from "./scene-breakdown";
+export { suggestMappings, mapRowToAttributes, mapRowsToCards, MAPPABLE_FIELDS } from "./metadata-map";
+export type { FieldMapping, CsvRow } from "./metadata-map";
+export { hasEntitlement, getMonthlyCredits, getSavedCardLimit, getPlanEntitlements, isPaidPlan, requiredPlanForEntitlement } from "./entitlements";
+export type { Plan, EntitlementKey, UserEntitlementState } from "./entitlements";
+export { canGenerate, debitGeneration, applyLedgerEntry } from "./credits";
+export type { CreditState, LedgerEntry } from "./credits";

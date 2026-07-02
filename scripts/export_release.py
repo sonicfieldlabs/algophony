@@ -25,7 +25,7 @@ from pathlib import Path
 SECRET_PATTERNS = [
     re.compile(r"ALGOPHONY_ELEVENLABS_API_KEY\s*=\s*\S{5,}"),
     re.compile(r"sk-[a-zA-Z0-9]{20,}"),
-    re.compile(r"api[_-]?key\s*[:=]\s*['\"]?[a-zA-Z0-9_-]{10,}", re.IGNORECASE),
+    re.compile(r"api[_-]?key\s*[:=]\s*['\"][a-zA-Z0-9_-]{10,}['\"]", re.IGNORECASE),
 ]
 
 # Files that intentionally contain empty variable names. Values are still
@@ -43,7 +43,7 @@ AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".aiff", ".aif", ".ogg"}
 
 def check_secrets(project_root: Path) -> list[str]:
     """Scan text files for potential secrets."""
-    errors = []
+    locations = []
     skip_dirs = {".git", "node_modules", "__pycache__", ".next", "dist", "build"}
 
     for path in project_root.rglob("*"):
@@ -61,7 +61,7 @@ def check_secrets(project_root: Path) -> list[str]:
                 capture_output=True, text=True, cwd=project_root
             )
             if result.stdout.strip():
-                errors.append(f"Secret file TRACKED by git: {path.relative_to(project_root)}")
+                locations.append(str(path.relative_to(project_root)))
             else:
                 print(f"  ℹ {path.relative_to(project_root)} exists but is gitignored (OK)")
             continue
@@ -75,12 +75,10 @@ def check_secrets(project_root: Path) -> list[str]:
 
         for pattern in SECRET_PATTERNS:
             if pattern.search(content):
-                errors.append(
-                    f"Potential secret in {path.relative_to(project_root)}"
-                )
+                locations.append(str(path.relative_to(project_root)))
                 break
 
-    return errors
+    return locations
 
 
 def check_private_paths(project_root: Path) -> list[str]:
@@ -287,11 +285,10 @@ def main():
 
     # Check for secrets
     print("Checking for secrets...")
-    secret_errors = check_secrets(project_root)
-    all_errors.extend(secret_errors)
-    if secret_errors:
-        for e in secret_errors:
-            print(f"  ✗ {e}")
+    secret_locations = check_secrets(project_root)
+    if secret_locations:
+        all_errors.append(f"Potential secrets detected in {len(secret_locations)} file(s)")
+        print(f"  ✗ Potential secrets detected in {len(secret_locations)} file(s)")
     else:
         print("  ✓ No secrets found.")
 

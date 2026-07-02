@@ -1,14 +1,18 @@
 import type { NextConfig } from "next";
 import { loadEnvConfig } from "@next/env";
-import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const repoRoot = path.resolve(/* turbopackIgnore: true */ process.cwd(), "../..");
+const appRoot = fileURLToPath(new URL(".", import.meta.url));
+const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 loadEnvConfig(repoRoot);
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: repoRoot,
+  outputFileTracingExcludes: {
+    "/*": ["next.config.ts", "next.config.js", "next.config.mjs"],
+    "/audio/[id]": ["next.config.ts", "next.config.js", "next.config.mjs"],
+  },
   turbopack: {
-    root: repoRoot,
+    root: appRoot,
   },
 };
 

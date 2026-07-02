@@ -1,21 +1,23 @@
-# Algophony Framework Roadmap
+# Algophony Roadmap
 
-Version labels in this roadmap are Algophony Framework release versions
+Version labels in this roadmap are Algophony release versions
 (v0.1.1, v0.2, v0.2.1, ...). They are distinct from the
 `docs/algophony-v0.x-integration-plan.md` planning series and from AKOÚŌ
 contract versions.
 
 ## v0.2 Status
 
-The Algophony Framework is currently a local-mode platform release with a validated
-procedural pilot corpus:
+Algophony is currently a local-mode platform release with framework contracts,
+the Bench Dashboard, and Algophony Studio. The full local research tree may
+carry a validated procedural pilot corpus:
 
 - 100 Atlas prompts.
 - 200 procedural control generations.
 - 200 listening reports.
 - 200 score records with provenance.
 - Strict dataset validation.
-- Dashboard routes for Atlas, prompts, generations, reports, comparison, providers, benchmark, observatory, studio, and export.
+- Algophony Bench Dashboard routes for Atlas, prompts, generations, reports, comparison, providers, benchmark, observatory, playground, and export.
+- Algophony Studio in `studio/` as the local sound-library, prompt-card, stacking, variation, provider-key, listening, and export workspace.
 - Sanitized public-export workflow for publishing code without local corpus data or private history.
 
 The project should not be tagged as a full ML benchmark until real ML-generated files are included and reviewed.
@@ -83,6 +85,23 @@ The project should not be tagged as a full ML benchmark until real ML-generated 
 - Dashboard detail pages render Earworm/Akousmata trace status, event chains, context bundles, signal packets, retention policy, and memory operations when future records carry them.
 - Publication policy normalized to `https://github.com/sonicfieldlabs/algophony` and the sanitized export workflow remains the only public publication path.
 
+### July 2026: Studio and Bench Integration
+
+- Imported the full local sound workspace into `studio/` and renamed it
+  **Algophony Studio**.
+- Added Studio local state boundaries: `.algophony-studio/` is ignored,
+  provider keys are user-owned, and Studio is not deployed as a public
+  multi-user service from this repository.
+- Renamed the benchmark app as **Algophony Bench Dashboard** and redesigned its
+  frontend to match Studio's light Atlas visual system.
+- Added Studio logo assets to the benchmark app and a durable local daemon
+  preview command for Bench (`npm run dev:daemon`, default port `3010`).
+- Updated the public export workflow to include Studio source code and exclude
+  Studio/Bench local state, logs, build artifacts, node modules, and private
+  app data.
+- Fixed the Turbopack NFT tracing warning for the audio route by making the
+  route explicitly dynamic and excluding build config from output file traces.
+
 ## v0.2 Release Gates
 
 All of the following must pass before a public tag:
@@ -94,6 +113,7 @@ python3 scripts/generate_matrix.py --providers synth_baseline,spectral_fm --limi
 python3 scripts/generate_matrix.py --providers el_sfx --limit 1 --dry-run
 python3 scripts/export_release.py --dry-run
 cd apps/web && npm run build
+cd studio && npm run build
 ```
 
 ## Post-v0.2 Research Upgrades
@@ -111,6 +131,10 @@ cd apps/web && npm run build
 - Add provider openness profiles (open-weights local, open-code hosted, closed API) to the registry, the providers page, and benchmark exports.
 - Produce routed listening passes with routing plans and claim-permission enforcement for new reports.
 - Populate Earworm traces for new generation and listening runs when retention is enabled, including non-audio context bundles and Akousmata memory-operation refs.
+- Define a promotion workflow from Studio export sets into schema-valid Atlas,
+  generation, report, and benchmark records.
+- Add optional Studio-to-Bench export previews without weakening benchmark
+  validation or provenance rules.
 
 ## v0.3 Collaboration Layer
 
@@ -125,9 +149,12 @@ cd apps/web && npm run build
 ## v0.4 Platform Hardening
 
 - SQLite or DuckDB registry for dashboard queries.
-- Authenticated internal generation dashboard.
+- Authenticated internal generation dashboard, if the project moves beyond
+  local-only preview.
 - API routes for generation, analysis, scoring, and export.
 - Richer waveform, spectrogram, and side-by-side audio comparison.
+- Hardened Studio/Bench shared design tokens and a documented component
+  migration path.
 
 ## v1.0
 

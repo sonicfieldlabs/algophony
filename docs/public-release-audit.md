@@ -123,10 +123,6 @@ Earworm/Akousmata traceability for future reports and generations.
 
 ## Residual Risk
 
-- `npm run build` still emits a non-fatal Turbopack NFT tracing warning for
-  `apps/web/app/audio/[id]/route.ts`. The route intentionally serves local
-  audio files from gitignored data folders. The warning does not fail the build
-  and no audio binaries are tracked.
 - Public GitHub publication must still use `scripts/prepare_public_export.py`;
   the private local git history must not be pushed directly.
 
