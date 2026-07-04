@@ -97,3 +97,21 @@ For the v0.1.1 procedural corpus, null is the correct value.
   the retention policy.
 - Preserve AKOÚŌ claim taxonomy and stop conditions even when a rich trace is
   available.
+
+## Batch access to the shared akousmata store (added 2026-07-04)
+
+The shared store shipped (earworm `akousma_spec_v1.md`; default location
+`~/workspace/akousmata`, `$AKOUSMATA_PATH` override). Algophony's batch surface is
+`workers/akousmata_source.py`:
+
+- `load_akousmata(originating_app=..., origin=..., limit=...)` — query records for a run.
+- `akousma_to_prompt_record(record)` — one akousma → an Algophony prompt/eval input,
+  carrying a schema-conformant `earworm_trace` bridge.
+- `write_eval(akousma_id, payload)` — stamp results back as `extensions["algophony.eval"]`.
+- `ancestry(akousma_id)` — the lineage behind a sound.
+- CLI: `python -m workers.akousmata_source --app germ --prompt-records`.
+
+The `akousma` reference package is an **optional** dependency
+(`pip install -e <sonic-field>/earworm/packages/py-akousma`); without it the module
+raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
+`scripts/test_akousmata_source.py` (skips when the package is absent).
