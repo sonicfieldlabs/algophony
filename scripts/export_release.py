@@ -70,7 +70,8 @@ def check_secrets(project_root: Path) -> list[str]:
 
         try:
             content = path.read_text(errors="ignore")
-        except Exception:
+        except Exception as exc:
+            print(f"  ! unreadable during secret scan (skipped): {path.relative_to(project_root)} ({exc})")
             continue
 
         for pattern in SECRET_PATTERNS:
@@ -96,7 +97,8 @@ def check_private_paths(project_root: Path) -> list[str]:
             continue
         try:
             content = path.read_text(errors="ignore")
-        except Exception:
+        except Exception as exc:
+            print(f"  ! unreadable during path scan (skipped): {path.relative_to(project_root)} ({exc})")
             continue
 
         for pattern in PRIVATE_PATH_PATTERNS:

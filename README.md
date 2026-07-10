@@ -29,6 +29,7 @@ What exists:
 - A Studio-aligned Next.js **Algophony Bench Dashboard** for prompt, generation, report, score, benchmark, provider, observatory, playground, and export inspection.
 - A standalone **Algophony Studio** app in `studio/` for local sound libraries, prompt cards, stacks, tags, comparisons, provider-key-controlled generation, and export workflows.
 - Optional Earworm/Akousmata trace fields for future append-only listening routes, non-audio context bundles, provenance, retention, and memory operations.
+- Optional real Oída v0.2 gateway passes, using either Oída-owned perception or an audio-capable host model, normalized into the same AKOÚŌ/Earworm report fields.
 - A sanitized public-export workflow that publishes code without local corpus data, generated audio, uploads, secrets, private paths, or private local git history.
 
 What does not exist yet:
@@ -41,7 +42,8 @@ What does not exist yet:
 See `docs/release-notes-v0.2.md` for the public-code platform changes since
 v0.1.1, `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
 release, and `docs/release-notes-v0.2.2.md` for the Studio and Bench
-integration release.
+integration release. The current `v0.3.2` integration notes describe the
+provider-neutral Oída gateway adapter without changing the frozen corpus.
 
 ## System Layers
 
@@ -78,6 +80,10 @@ Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system,
 The consumption loop is route → check stop conditions → listen → map → merge → hand off. `workers/listening_plan.py` implements the route step deterministically (no LLM): artifact availability derives the evidence level, and `enforce_claim_permissions` moves blocked claims into `undetermined` instead of dropping them. The contract shape is copied into `schemas/listening-report.schema.json` and `apps/web/app/lib/listening-contract.ts`, and `scripts/test_listening_plan.py` drift-checks both against the machine-readable `../akouo/akouo.manifest.json`. Integration details: `ROADMAP.md`.
 
 ## Earworm and Akousmata Traceability
+
+`workers/oida_gateway.py` is the preferred path for a new traced listen. It
+preserves session-scoped Earworm context even when the result is not remembered
+and writes an Akousmata trace id only after an explicit remember operation.
 
 Algophony can attach an optional `earworm_trace` to generation records and listening reports. The trace points to an Earworm context chain: session, event refs, asset/provenance refs, signal packets, context bundles, and retention policy. Akousmata names the memory operations over that chain: remember, list, search, similarity, export, and forget.
 

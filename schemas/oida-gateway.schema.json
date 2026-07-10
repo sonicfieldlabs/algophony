@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://algophony.sonicfieldlabs.org/schemas/oida-gateway.schema.json",
+  "title": "Algophony Oída gateway reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "perception_path",
+    "listening_event_id",
+    "route_preset",
+    "earworm_session_id",
+    "akousmata_trace_id",
+    "apparatus"
+  ],
+  "properties": {
+    "contract": {"const": "oida/gateway/v0.2"},
+    "perception_path": {"enum": ["oida_owned", "host_supplied"]},
+    "listening_event_id": {"type": "string", "minLength": 1},
+    "route_preset": {"type": "string", "minLength": 1},
+    "earworm_session_id": {"type": ["string", "null"]},
+    "akousmata_trace_id": {"type": ["string", "null"]},
+    "apparatus": {"type": "object"},
+    "host": {"type": ["object", "null"]},
+    "raw_audio_policy": {"enum": ["not_stored", "temp", "saved", "external_ref"]},
+    "memory_persistence": {"enum": ["session_only", "remembered"]}
+  }
+}

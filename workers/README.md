@@ -8,6 +8,7 @@ Generation pipeline, provider registry, adapters, and audio analysis modules.
 workers/
   provider_registry.py       # Lightweight provider specs and status checks
   pipeline.py                # Orchestration pipeline
+  oida_gateway.py            # Unified Oída listen/host-harness adapter
   adapters/
     base.py
     elevenlabs_sfx.py
@@ -67,6 +68,15 @@ ALGOPHONY_LLM_BACKEND=codex_cli
 ```
 
 The LLM pass receives prompt metadata, generation metadata, signal analysis, and the deterministic AKOÚŌ draft. It must return a schema-constrained listening-mode output and is appended to `akouo_mode_outputs`.
+
+## Oída gateway listening
+
+For a complete stack pass, workers/oida_gateway.py calls the local Oída
+gateway. listen_audio() lets Oída own perception; harness_host() accepts an
+audio-capable host report. algophony_patch() translates the result into the
+existing AKOÚŌ fields, a schema-valid compact Earworm trace, and an
+oida_gateway reference. Session tracing is always present; Akousmata
+persistence is still explicit.
 
 ## Metadata Safety
 

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from typing import Any
 
@@ -304,7 +305,7 @@ def main(argv: list[str] | None = None) -> int:
             with open_store() as store:
                 record = store.get(args.show)
             if record is None:
-                print(f"not found: {args.show}")
+                print(f"not found: {args.show}", file=sys.stderr)
                 return 1
             print(json.dumps(record, indent=2, ensure_ascii=False))
             return 0
@@ -315,7 +316,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(records, indent=2, ensure_ascii=False))
         return 0
     except AkousmataUnavailable as exc:
-        print(f"error: {exc}")
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
 

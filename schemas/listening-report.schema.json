@@ -208,6 +208,14 @@
       "default": null,
       "description": "Optional Earworm/Akousmata trace linking this report to the append-only listening context chain, attached non-audio context, provenance, retention policy, and memory operations. Null for reports that predate Earworm integration or intentionally have no retained trace."
     },
+    "oida_gateway": {
+      "oneOf": [
+        {"$ref": "oida-gateway.schema.json"},
+        {"type": "null"}
+      ],
+      "default": null,
+      "description": "Optional reference to an actual Oída v0.2 gateway pass. Never backfill without running the gateway."
+    },
     "basic_description": {
       "type": "string",
       "minLength": 1
