@@ -101,5 +101,36 @@ class ProviderContractTests(unittest.TestCase):
         self.assertEqual(meta["model_version"], "stable-audio-3.0")
 
 
+class ProviderOpennessTests(unittest.TestCase):
+    def test_openness_profiles_cover_registry(self) -> None:
+        from workers.provider_registry import (
+            PROVIDER_OPENNESS_VALUES,
+            PROVIDER_REGISTRY,
+            provider_openness,
+            provider_status,
+        )
+
+        for key, spec in PROVIDER_REGISTRY.items():
+            openness = provider_openness(spec)
+            self.assertIn(openness, PROVIDER_OPENNESS_VALUES, key)
+            self.assertEqual(provider_status(key)["openness"], openness)
+
+        by_id = {key: provider_openness(spec) for key, spec in PROVIDER_REGISTRY.items()}
+        self.assertEqual(by_id["synth_baseline"], "open_source_internal")
+        self.assertEqual(by_id["stable_audio_open_local"], "open_weights_local")
+        self.assertEqual(by_id["tangoflux_hf_endpoint"], "open_code_hosted")
+        self.assertEqual(by_id["el_sfx"], "closed_api")
+        self.assertEqual(by_id["stable_audio_3_stability_api"], "closed_api")
+
+    def test_compute_provenance_stamps_locality(self) -> None:
+        from workers.provider_registry import compute_provenance_for
+
+        local = compute_provenance_for("synth_baseline")
+        self.assertEqual(local["runtime_locality"], "local")
+        self.assertIn("hardware", local)
+        self.assertEqual(compute_provenance_for("el_sfx"), {"runtime_locality": "cloud_api"})
+        self.assertEqual(compute_provenance_for("moss_sfx_hf_endpoint"), {"runtime_locality": "hosted_endpoint"})
+
+
 if __name__ == "__main__":
     unittest.main()

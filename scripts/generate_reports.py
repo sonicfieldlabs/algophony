@@ -11,8 +11,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from workers.listening_plan import (  # noqa: E402
+    AKOUO_CONTRACT_VERSION,
+    build_routing_plan,
+    enforce_claim_permissions,
+)
 
 
 SCORE_AXES = [
@@ -381,6 +390,12 @@ def build_report(prompt: dict, generation: dict, analysis: dict, report_num: int
             "loopability, and spatial-coherence evidence."
         )
 
+    routing_plan = build_routing_plan(prompt, generation, analysis, command="/listen")
+    claim_taxonomy = enforce_claim_permissions(
+        build_claims(prompt, generation, analysis, review_status),
+        routing_plan["claim_permissions"],
+    )
+
     return {
         "report_id": report_id,
         "report_type": "listening_report",
@@ -389,6 +404,8 @@ def build_report(prompt: dict, generation: dict, analysis: dict, report_num: int
         "listening_date": date.today().isoformat(),
         "listener_type": "hybrid" if review_status == "hybrid_reviewed" else "agent",
         "review_status": review_status,
+        "akouo_contract_version": AKOUO_CONTRACT_VERSION,
+        "akouo_routing_plan": routing_plan,
         "reviewer_notes": [
             "v0.1.1 QA pass combining signal inspection, prompt comparison, and AKOÚŌ-style claim discipline.",
             "This is not a substitute for a formal human listening panel.",
@@ -408,7 +425,7 @@ def build_report(prompt: dict, generation: dict, analysis: dict, report_num: int
                 "change": "v0.1.1 report regenerated with review status, score provenance, and populated AKOÚŌ claim taxonomy.",
             }
         ],
-        "claim_taxonomy": build_claims(prompt, generation, analysis, review_status),
+        "claim_taxonomy": claim_taxonomy,
         "basic_description": basic_description,
         "sources": {
             "detected": layers,

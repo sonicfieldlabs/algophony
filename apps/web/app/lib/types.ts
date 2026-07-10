@@ -166,6 +166,8 @@ export interface Claim {
   statement: string;
   confidence: "high" | "medium" | "low" | "undetermined";
   basis: string;
+  source?: "audio" | "dsp" | "metadata" | "model" | "transcript" | "context" | "memory" | "human" | "other";
+  time_range?: { start_s: number; end_s: number };
 }
 
 export type ReportClaimTaxonomy = Record<
@@ -189,6 +191,7 @@ export interface Report {
   classifier_outputs: Record<string, unknown>[];
   revision_history: Record<string, unknown>[];
   claim_taxonomy: ReportClaimTaxonomy;
+  akouo_contract_version?: string | null;
   akouo_router_output?: {
     object_listened_to: string;
     input_type: string;
@@ -216,6 +219,19 @@ export interface Report {
     main_reading: string;
     alternative_reading: string;
     recommended_next_mode: string;
+    akouo_version?: string;
+    apparatus?: {
+      substrate: string;
+      perception_sources?: string[];
+      model_ids?: string[];
+      sample_rate_hz?: number | null;
+      channels?: number | null;
+      bandwidth_limit_hz?: number | null;
+      known_blind_spots: string[];
+      capture_notes?: string[];
+    };
+    listener?: { type: "human" | "agent" | "hybrid"; process?: string };
+    memory?: { akousma_id?: string | null; akousmata_refs?: string[]; lineage_note?: string | null };
   }[];
   akouo_routing_plan?: {
     object_listened_to: string;
@@ -238,6 +254,8 @@ export interface Report {
       recommended_command: string;
     };
     stop_conditions: string[];
+    budget?: "light" | "standard" | "deep";
+    preset_id?: string;
   } | null;
   akouo_reference_map?: {
     concepts_triggered: string[];
@@ -335,4 +353,5 @@ export interface ProviderStatus {
   default_parameters: Record<string, unknown>;
   status: "available" | "configured_missing_key" | "not_installed" | "not_implemented" | "failed";
   status_reason: string;
+  openness?: "open_source_internal" | "open_weights_local" | "open_code_hosted" | "closed_api";
 }

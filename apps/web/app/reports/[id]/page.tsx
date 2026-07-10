@@ -102,6 +102,15 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
             <div className="detail-row"><span className="detail-label">Object</span><span className="detail-value">{plan.object_listened_to}</span></div>
             <div className="detail-row"><span className="detail-label">Evidence level</span><span className="detail-value">{plan.evidence_level.replace(/_/g, " ")}</span></div>
             <div className="detail-row"><span className="detail-label">Route confidence</span><span className="detail-value">{plan.route_confidence}</span></div>
+            {report.akouo_contract_version && (
+              <div className="detail-row"><span className="detail-label">Contract</span><span className="detail-value">{report.akouo_contract_version}</span></div>
+            )}
+            {plan.budget && (
+              <div className="detail-row"><span className="detail-label">Budget</span><span className="detail-value">{plan.budget}</span></div>
+            )}
+            {plan.preset_id && (
+              <div className="detail-row"><span className="detail-label">Preset</span><span className="detail-value">{plan.preset_id}</span></div>
+            )}
             <div style={{ marginTop: 12 }}>
               <p className="source-heading">Mode chain</p>
               {plan.mode_chain.map((step) => (

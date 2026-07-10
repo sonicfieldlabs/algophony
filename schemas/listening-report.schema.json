@@ -34,177 +34,391 @@
     "scores"
   ],
   "properties": {
-    "report_id": { "type": "string", "pattern": "^AK-[0-9]{4}$" },
-    "report_type": { "type": "string", "enum": ["signal_report", "listening_report"] },
-    "audio_id": { "type": "string", "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$" },
-    "prompt_id": { "type": "string", "pattern": "^ALG-[0-9]{4}$" },
-    "listening_date": { "type": "string", "format": "date" },
-    "listener_type": { "type": "string", "enum": ["human", "agent", "hybrid"] },
+    "report_id": {
+      "type": "string",
+      "pattern": "^AK-[0-9]{4}$"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "signal_report",
+        "listening_report"
+      ]
+    },
+    "audio_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}-[A-Z0-9-]+-[A-Z]$"
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^ALG-[0-9]{4}$"
+    },
+    "listening_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "listener_type": {
+      "type": "string",
+      "enum": [
+        "human",
+        "agent",
+        "hybrid"
+      ]
+    },
     "review_status": {
       "type": "string",
-      "enum": ["unreviewed", "agent_draft", "human_reviewed", "hybrid_reviewed", "playground_draft"]
+      "enum": [
+        "unreviewed",
+        "agent_draft",
+        "human_reviewed",
+        "hybrid_reviewed",
+        "playground_draft"
+      ]
     },
     "listening_process": {
       "type": "string",
-      "enum": ["agent_automated", "agent_interactive", "human_blind", "human_informed", "hybrid"],
+      "enum": [
+        "agent_automated",
+        "agent_interactive",
+        "human_blind",
+        "human_informed",
+        "hybrid"
+      ],
       "default": "agent_automated",
       "description": "How the listening report was produced."
     },
     "source_type_ground_truth": {
       "oneOf": [
-        { "type": "string", "enum": ["generated_procedural", "generated_ml", "field_recording", "found_sound", "hybrid"] },
-        { "type": "null" }
+        {
+          "type": "string",
+          "enum": [
+            "generated_procedural",
+            "generated_ml",
+            "field_recording",
+            "found_sound",
+            "hybrid"
+          ]
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "Actual provenance of the audio. Null when unknown or withheld for blind tests."
     },
     "source_type_listener_guess": {
       "oneOf": [
-        { "type": "string", "enum": ["generated", "field_recording", "uncertain"] },
-        { "type": "null" }
+        {
+          "type": "string",
+          "enum": [
+            "generated",
+            "field_recording",
+            "uncertain"
+          ]
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "What the listener believes the source to be. Used for Turing discriminability."
     },
     "reviewer_notes": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "evidence_inputs": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "classifier_outputs": {
       "type": "array",
-      "items": { "type": "object", "additionalProperties": true }
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
     },
     "revision_history": {
       "type": "array",
-      "items": { "type": "object", "additionalProperties": true }
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
     },
-    "claim_taxonomy": { "$ref": "#/$defs/claim_taxonomy" },
+    "claim_taxonomy": {
+      "$ref": "#/$defs/claim_taxonomy"
+    },
     "akouo_router_output": {
       "oneOf": [
-        { "$ref": "#/$defs/akouo_router_output" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/akouo_router_output"
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "Optional AKOÚŌ router output for reports produced after router integration."
     },
     "akouo_mode_outputs": {
       "type": "array",
-      "items": { "$ref": "#/$defs/akouo_listening_output" },
+      "items": {
+        "$ref": "#/$defs/akouo_listening_output"
+      },
       "default": [],
       "description": "Optional AKOÚŌ mode outputs for reports produced by routed listening."
     },
     "akouo_routing_plan": {
       "oneOf": [
-        { "$ref": "#/$defs/akouo_routing_plan" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/akouo_routing_plan"
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
-      "description": "Optional AKOÚŌ v0.5 expanded routing plan: evidence level, claim permissions, weighted mode chain, agent handoff, and stop conditions."
+      "description": "Optional AKOÚŌ v0.6 expanded routing plan: evidence level, claim permissions, weighted mode chain, optional budget and preset id, agent handoff, and stop conditions."
     },
     "akouo_reference_map": {
       "oneOf": [
-        { "$ref": "#/$defs/akouo_reference_map" },
-        { "type": "null" }
+        {
+          "$ref": "#/$defs/akouo_reference_map"
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "Optional AKOÚŌ reference-layer output mapping the listening result to concepts, methods, traditions, research routes, questions, and cautions."
     },
     "earworm_trace": {
       "oneOf": [
-        { "$ref": "earworm-trace.schema.json" },
-        { "type": "null" }
+        {
+          "$ref": "earworm-trace.schema.json"
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "Optional Earworm/Akousmata trace linking this report to the append-only listening context chain, attached non-audio context, provenance, retention policy, and memory operations. Null for reports that predate Earworm integration or intentionally have no retained trace."
     },
-    "basic_description": { "type": "string", "minLength": 1 },
+    "basic_description": {
+      "type": "string",
+      "minLength": 1
+    },
     "sources": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["detected", "inferred", "absent_expected", "forbidden_detected", "hallucinated"],
+      "required": [
+        "detected",
+        "inferred",
+        "absent_expected",
+        "forbidden_detected",
+        "hallucinated"
+      ],
       "properties": {
-        "detected": { "$ref": "#/$defs/text_list" },
-        "inferred": { "$ref": "#/$defs/text_list" },
-        "absent_expected": { "$ref": "#/$defs/text_list" },
-        "forbidden_detected": { "$ref": "#/$defs/text_list" },
-        "hallucinated": { "$ref": "#/$defs/text_list" }
+        "detected": {
+          "$ref": "#/$defs/text_list"
+        },
+        "inferred": {
+          "$ref": "#/$defs/text_list"
+        },
+        "absent_expected": {
+          "$ref": "#/$defs/text_list"
+        },
+        "forbidden_detected": {
+          "$ref": "#/$defs/text_list"
+        },
+        "hallucinated": {
+          "$ref": "#/$defs/text_list"
+        }
       }
     },
-    "spatial_structure": { "type": "object", "additionalProperties": true },
-    "temporal_behavior": { "type": "object", "additionalProperties": true },
-    "ecological_plausibility": { "type": "string", "minLength": 1 },
-    "causal_coherence": { "type": "string", "minLength": 1 },
-    "cultural_assumptions": { "type": "string" },
-    "false_sources": { "$ref": "#/$defs/text_list" },
-    "prompt_comparison": { "type": "string", "minLength": 1 },
-    "suggested_prompt_revision": { "type": "string", "minLength": 1 },
-    "regeneration_recommendation": { "type": "string", "enum": ["keep", "revise", "reject"] },
+    "spatial_structure": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "temporal_behavior": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "ecological_plausibility": {
+      "type": "string",
+      "minLength": 1
+    },
+    "causal_coherence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cultural_assumptions": {
+      "type": "string"
+    },
+    "false_sources": {
+      "$ref": "#/$defs/text_list"
+    },
+    "prompt_comparison": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suggested_prompt_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "regeneration_recommendation": {
+      "type": "string",
+      "enum": [
+        "keep",
+        "revise",
+        "reject"
+      ]
+    },
     "score_sets": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["signal_scores", "agent_scores", "human_scores", "final_scores"],
+      "required": [
+        "signal_scores",
+        "agent_scores",
+        "human_scores",
+        "final_scores"
+      ],
       "properties": {
-        "signal_scores": { "$ref": "score.schema.json" },
-        "agent_scores": { "$ref": "score.schema.json" },
+        "signal_scores": {
+          "$ref": "score.schema.json"
+        },
+        "agent_scores": {
+          "$ref": "score.schema.json"
+        },
         "human_scores": {
           "oneOf": [
-            { "$ref": "score.schema.json" },
-            { "type": "null" }
+            {
+              "$ref": "score.schema.json"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
-        "final_scores": { "$ref": "score.schema.json" }
+        "final_scores": {
+          "$ref": "score.schema.json"
+        }
       }
     },
     "score_provenance": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/score_provenance" }
+      "items": {
+        "$ref": "#/$defs/score_provenance"
+      }
     },
     "scores": {
       "$ref": "score.schema.json",
       "description": "Backward-compatible alias for score_sets.final_scores."
+    },
+    "akouo_contract_version": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "AKOÚŌ contract that shaped this report's listening blocks (e.g. \"akouo/v0.6\"). Null for reports that predate the contract."
     }
   },
   "$defs": {
     "text_list": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "default": []
     },
     "confidence": {
       "type": "string",
-      "enum": ["high", "medium", "low", "undetermined"]
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "undetermined"
+      ]
     },
     "claim": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["statement", "confidence", "basis"],
+      "required": [
+        "statement",
+        "confidence",
+        "basis"
+      ],
       "properties": {
-        "statement": { "type": "string", "minLength": 1 },
-        "confidence": { "$ref": "#/$defs/confidence" },
-        "basis": { "type": "string", "minLength": 1 }
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/akouo_claim_source",
+          "description": "Optional AKOÚŌ v0.6 field naming which apparatus or evidence stream produced this claim."
+        },
+        "time_range": {
+          "$ref": "#/$defs/akouo_time_range",
+          "description": "Optional AKOÚŌ v0.6 anchor to a time window in the audio; a claim without one is a claim about the whole object."
+        }
       }
     },
     "claim_list": {
       "type": "array",
-      "items": { "$ref": "#/$defs/claim" },
+      "items": {
+        "$ref": "#/$defs/claim"
+      },
       "default": []
     },
     "claim_taxonomy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["heard", "measured", "inferred", "interpreted", "speculative", "undetermined"],
+      "required": [
+        "heard",
+        "measured",
+        "inferred",
+        "interpreted",
+        "speculative",
+        "undetermined"
+      ],
       "properties": {
-        "heard": { "$ref": "#/$defs/claim_list" },
-        "measured": { "$ref": "#/$defs/claim_list" },
-        "inferred": { "$ref": "#/$defs/claim_list" },
-        "interpreted": { "$ref": "#/$defs/claim_list" },
-        "speculative": { "$ref": "#/$defs/claim_list" },
-        "undetermined": { "$ref": "#/$defs/claim_list" }
+        "heard": {
+          "$ref": "#/$defs/claim_list"
+        },
+        "measured": {
+          "$ref": "#/$defs/claim_list"
+        },
+        "inferred": {
+          "$ref": "#/$defs/claim_list"
+        },
+        "interpreted": {
+          "$ref": "#/$defs/claim_list"
+        },
+        "speculative": {
+          "$ref": "#/$defs/claim_list"
+        },
+        "undetermined": {
+          "$ref": "#/$defs/claim_list"
+        }
       }
     },
     "akouo_input_type": {
@@ -241,7 +455,8 @@
         "audiovisual-scenic-listening",
         "voice-speech-listening",
         "accessibility-normative-listening",
-        "material-event-listening"
+        "material-event-listening",
+        "memory-lineage-listening"
       ]
     },
     "akouo_command": {
@@ -262,7 +477,8 @@
         "/access",
         "/field",
         "/method",
-        "/route"
+        "/route",
+        "/remember"
       ]
     },
     "akouo_evidence_level": {
@@ -280,7 +496,13 @@
     },
     "akouo_mode_role": {
       "type": "string",
-      "enum": ["primary", "secondary", "corrective", "optional", "deferred"]
+      "enum": [
+        "primary",
+        "secondary",
+        "corrective",
+        "optional",
+        "deferred"
+      ]
     },
     "akouo_claim_permissions": {
       "type": "object",
@@ -294,12 +516,24 @@
         "must_include_undetermined"
       ],
       "properties": {
-        "heard_allowed": { "type": "boolean" },
-        "measured_allowed": { "type": "boolean" },
-        "inferred_allowed": { "type": "boolean" },
-        "interpreted_allowed": { "type": "boolean" },
-        "speculative_allowed": { "type": "boolean" },
-        "must_include_undetermined": { "type": "boolean" }
+        "heard_allowed": {
+          "type": "boolean"
+        },
+        "measured_allowed": {
+          "type": "boolean"
+        },
+        "inferred_allowed": {
+          "type": "boolean"
+        },
+        "interpreted_allowed": {
+          "type": "boolean"
+        },
+        "speculative_allowed": {
+          "type": "boolean"
+        },
+        "must_include_undetermined": {
+          "type": "boolean"
+        }
       }
     },
     "akouo_routing_plan": {
@@ -316,37 +550,84 @@
         "stop_conditions"
       ],
       "properties": {
-        "object_listened_to": { "type": "string", "minLength": 1 },
-        "input_type": { "$ref": "#/$defs/akouo_input_type" },
-        "route_confidence": { "$ref": "#/$defs/confidence" },
-        "evidence_level": { "$ref": "#/$defs/akouo_evidence_level" },
+        "object_listened_to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_type": {
+          "$ref": "#/$defs/akouo_input_type"
+        },
+        "route_confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "evidence_level": {
+          "$ref": "#/$defs/akouo_evidence_level"
+        },
         "mode_chain": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["mode", "role", "reason"],
+            "required": [
+              "mode",
+              "role",
+              "reason"
+            ],
             "properties": {
-              "mode": { "$ref": "#/$defs/akouo_listening_mode" },
-              "role": { "$ref": "#/$defs/akouo_mode_role" },
-              "reason": { "type": "string", "minLength": 1 }
+              "mode": {
+                "$ref": "#/$defs/akouo_listening_mode"
+              },
+              "role": {
+                "$ref": "#/$defs/akouo_mode_role"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         },
-        "claim_permissions": { "$ref": "#/$defs/akouo_claim_permissions" },
+        "claim_permissions": {
+          "$ref": "#/$defs/akouo_claim_permissions"
+        },
         "agent_handoff": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["summary", "required_inputs", "forbidden_assumptions", "recommended_command"],
+          "required": [
+            "summary",
+            "required_inputs",
+            "forbidden_assumptions",
+            "recommended_command"
+          ],
           "properties": {
-            "summary": { "type": "string", "minLength": 1 },
-            "required_inputs": { "$ref": "#/$defs/text_list" },
-            "forbidden_assumptions": { "$ref": "#/$defs/text_list" },
-            "recommended_command": { "$ref": "#/$defs/akouo_command" }
+            "summary": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required_inputs": {
+              "$ref": "#/$defs/text_list"
+            },
+            "forbidden_assumptions": {
+              "$ref": "#/$defs/text_list"
+            },
+            "recommended_command": {
+              "$ref": "#/$defs/akouo_command"
+            }
           }
         },
-        "stop_conditions": { "$ref": "#/$defs/text_list" }
+        "stop_conditions": {
+          "$ref": "#/$defs/text_list"
+        },
+        "budget": {
+          "$ref": "#/$defs/akouo_budget",
+          "description": "Optional AKOÚŌ v0.6 listening budget; risk always overrides budget."
+        },
+        "preset_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional AKOÚŌ v0.6 preset id (akouo presets/presets.json) this plan derives from."
+        }
       }
     },
     "akouo_reference_map": {
@@ -362,15 +643,29 @@
         "adjacent_modes"
       ],
       "properties": {
-        "concepts_triggered": { "$ref": "#/$defs/text_list" },
-        "sonic_methodologies": { "$ref": "#/$defs/text_list" },
-        "authors_or_traditions": { "$ref": "#/$defs/text_list" },
-        "possible_research_routes": { "$ref": "#/$defs/text_list" },
-        "research_questions": { "$ref": "#/$defs/text_list" },
-        "cautions": { "$ref": "#/$defs/text_list" },
+        "concepts_triggered": {
+          "$ref": "#/$defs/text_list"
+        },
+        "sonic_methodologies": {
+          "$ref": "#/$defs/text_list"
+        },
+        "authors_or_traditions": {
+          "$ref": "#/$defs/text_list"
+        },
+        "possible_research_routes": {
+          "$ref": "#/$defs/text_list"
+        },
+        "research_questions": {
+          "$ref": "#/$defs/text_list"
+        },
+        "cautions": {
+          "$ref": "#/$defs/text_list"
+        },
         "adjacent_modes": {
           "type": "array",
-          "items": { "$ref": "#/$defs/akouo_listening_mode" },
+          "items": {
+            "$ref": "#/$defs/akouo_listening_mode"
+          },
           "default": []
         }
       }
@@ -394,45 +689,111 @@
         "recommended_next_mode"
       ],
       "properties": {
-        "object_listened_to": { "type": "string", "minLength": 1 },
-        "input_type": { "$ref": "#/$defs/akouo_input_type" },
-        "user_intent": { "type": "string", "minLength": 1 },
-        "available_evidence": { "$ref": "#/$defs/text_list" },
-        "unavailable_evidence": { "$ref": "#/$defs/text_list" },
-        "primary_mode": { "$ref": "#/$defs/akouo_listening_mode" },
-        "secondary_mode": { "$ref": "#/$defs/akouo_listening_mode" },
-        "corrective_mode": { "$ref": "#/$defs/akouo_listening_mode" },
-        "route_reasoning": { "$ref": "#/$defs/text_list" },
-        "risks": { "$ref": "#/$defs/text_list" },
-        "must_not_assume": { "$ref": "#/$defs/text_list" },
-        "recommended_command": { "$ref": "#/$defs/akouo_command" },
-        "recommended_next_mode": { "$ref": "#/$defs/akouo_listening_mode" }
+        "object_listened_to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_type": {
+          "$ref": "#/$defs/akouo_input_type"
+        },
+        "user_intent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "available_evidence": {
+          "$ref": "#/$defs/text_list"
+        },
+        "unavailable_evidence": {
+          "$ref": "#/$defs/text_list"
+        },
+        "primary_mode": {
+          "$ref": "#/$defs/akouo_listening_mode"
+        },
+        "secondary_mode": {
+          "$ref": "#/$defs/akouo_listening_mode"
+        },
+        "corrective_mode": {
+          "$ref": "#/$defs/akouo_listening_mode"
+        },
+        "route_reasoning": {
+          "$ref": "#/$defs/text_list"
+        },
+        "risks": {
+          "$ref": "#/$defs/text_list"
+        },
+        "must_not_assume": {
+          "$ref": "#/$defs/text_list"
+        },
+        "recommended_command": {
+          "$ref": "#/$defs/akouo_command"
+        },
+        "recommended_next_mode": {
+          "$ref": "#/$defs/akouo_listening_mode"
+        }
       }
     },
     "akouo_mediations": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["technical", "cultural", "spatial", "bodily", "archival", "computational"],
+      "required": [
+        "technical",
+        "cultural",
+        "spatial",
+        "bodily",
+        "archival",
+        "computational"
+      ],
       "properties": {
-        "technical": { "$ref": "#/$defs/text_list" },
-        "cultural": { "$ref": "#/$defs/text_list" },
-        "spatial": { "$ref": "#/$defs/text_list" },
-        "bodily": { "$ref": "#/$defs/text_list" },
-        "archival": { "$ref": "#/$defs/text_list" },
-        "computational": { "$ref": "#/$defs/text_list" }
+        "technical": {
+          "$ref": "#/$defs/text_list"
+        },
+        "cultural": {
+          "$ref": "#/$defs/text_list"
+        },
+        "spatial": {
+          "$ref": "#/$defs/text_list"
+        },
+        "bodily": {
+          "$ref": "#/$defs/text_list"
+        },
+        "archival": {
+          "$ref": "#/$defs/text_list"
+        },
+        "computational": {
+          "$ref": "#/$defs/text_list"
+        }
       }
     },
     "akouo_risks": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hallucination", "over_identification", "cultural_flattening", "forensic_overreach", "source_confusion", "aesthetic_overstatement"],
+      "required": [
+        "hallucination",
+        "over_identification",
+        "cultural_flattening",
+        "forensic_overreach",
+        "source_confusion",
+        "aesthetic_overstatement"
+      ],
       "properties": {
-        "hallucination": { "$ref": "#/$defs/text_list" },
-        "over_identification": { "$ref": "#/$defs/text_list" },
-        "cultural_flattening": { "$ref": "#/$defs/text_list" },
-        "forensic_overreach": { "$ref": "#/$defs/text_list" },
-        "source_confusion": { "$ref": "#/$defs/text_list" },
-        "aesthetic_overstatement": { "$ref": "#/$defs/text_list" }
+        "hallucination": {
+          "$ref": "#/$defs/text_list"
+        },
+        "over_identification": {
+          "$ref": "#/$defs/text_list"
+        },
+        "cultural_flattening": {
+          "$ref": "#/$defs/text_list"
+        },
+        "forensic_overreach": {
+          "$ref": "#/$defs/text_list"
+        },
+        "source_confusion": {
+          "$ref": "#/$defs/text_list"
+        },
+        "aesthetic_overstatement": {
+          "$ref": "#/$defs/text_list"
+        }
       }
     },
     "akouo_listening_output": {
@@ -452,35 +813,246 @@
         "recommended_next_mode"
       ],
       "properties": {
-        "object_listened_to": { "type": "string", "minLength": 1 },
-        "input_type": { "$ref": "#/$defs/akouo_input_type" },
-        "listening_mode": { "$ref": "#/$defs/akouo_listening_mode" },
-        "listening_claims": { "$ref": "#/$defs/claim_taxonomy" },
-        "what_appears": { "$ref": "#/$defs/text_list" },
-        "what_remains_hidden": { "$ref": "#/$defs/text_list" },
-        "mediations": { "$ref": "#/$defs/akouo_mediations" },
-        "risks": { "$ref": "#/$defs/akouo_risks" },
-        "main_reading": { "type": "string" },
-        "alternative_reading": { "type": "string" },
+        "object_listened_to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_type": {
+          "$ref": "#/$defs/akouo_input_type"
+        },
+        "listening_mode": {
+          "$ref": "#/$defs/akouo_listening_mode"
+        },
+        "listening_claims": {
+          "$ref": "#/$defs/claim_taxonomy"
+        },
+        "what_appears": {
+          "$ref": "#/$defs/text_list"
+        },
+        "what_remains_hidden": {
+          "$ref": "#/$defs/text_list"
+        },
+        "mediations": {
+          "$ref": "#/$defs/akouo_mediations"
+        },
+        "risks": {
+          "$ref": "#/$defs/akouo_risks"
+        },
+        "main_reading": {
+          "type": "string"
+        },
+        "alternative_reading": {
+          "type": "string"
+        },
         "recommended_next_mode": {
           "oneOf": [
-            { "$ref": "#/$defs/akouo_listening_mode" },
-            { "type": "string", "enum": ["none", "undetermined"] }
+            {
+              "$ref": "#/$defs/akouo_listening_mode"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "none",
+                "undetermined"
+              ]
+            }
           ]
+        },
+        "akouo_version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "AKOÚŌ contract version that produced this output (e.g. \"0.6\")."
+        },
+        "apparatus": {
+          "$ref": "#/$defs/akouo_apparatus",
+          "description": "Optional AKOÚŌ v0.6 declaration of the listening apparatus and its structural blind spots."
+        },
+        "listener": {
+          "$ref": "#/$defs/akouo_listener",
+          "description": "Optional AKOÚŌ v0.6 declaration of who or what listened."
+        },
+        "memory": {
+          "$ref": "#/$defs/akouo_memory_links",
+          "description": "Optional AKOÚŌ v0.6 links to stored sound-memory (akousma) records."
         }
       }
     },
     "score_provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["axis", "score", "scorer", "evidence", "confidence", "notes"],
+      "required": [
+        "axis",
+        "score",
+        "scorer",
+        "evidence",
+        "confidence",
+        "notes"
+      ],
       "properties": {
-        "axis": { "type": "string", "minLength": 1 },
-        "score": { "type": "number", "minimum": 0, "maximum": 5 },
-        "scorer": { "type": "string", "enum": ["signal", "agent", "human", "hybrid"] },
-        "evidence": { "type": "string", "minLength": 1 },
-        "confidence": { "$ref": "#/$defs/confidence" },
-        "notes": { "type": "string" }
+        "axis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "scorer": {
+          "type": "string",
+          "enum": [
+            "signal",
+            "agent",
+            "human",
+            "hybrid"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "akouo_claim_source": {
+      "type": "string",
+      "enum": [
+        "audio",
+        "dsp",
+        "metadata",
+        "model",
+        "transcript",
+        "context",
+        "memory",
+        "human",
+        "other"
+      ]
+    },
+    "akouo_time_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_s",
+        "end_s"
+      ],
+      "properties": {
+        "start_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end_s": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "akouo_budget": {
+      "type": "string",
+      "enum": [
+        "light",
+        "standard",
+        "deep"
+      ]
+    },
+    "akouo_apparatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "substrate",
+        "known_blind_spots"
+      ],
+      "properties": {
+        "substrate": {
+          "type": "string",
+          "enum": [
+            "human_ear",
+            "asr_cascade",
+            "audio_token_model",
+            "speech_native_model",
+            "dsp_toolchain",
+            "hybrid_agent_stack",
+            "text_only_agent",
+            "unknown",
+            "other"
+          ]
+        },
+        "perception_sources": {
+          "$ref": "#/$defs/text_list"
+        },
+        "model_ids": {
+          "$ref": "#/$defs/text_list"
+        },
+        "sample_rate_hz": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "channels": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "bandwidth_limit_hz": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "known_blind_spots": {
+          "$ref": "#/$defs/text_list"
+        },
+        "capture_notes": {
+          "$ref": "#/$defs/text_list"
+        }
+      }
+    },
+    "akouo_listener": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "human",
+            "agent",
+            "hybrid"
+          ]
+        },
+        "process": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "akouo_memory_links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "akousma_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "akousmata_refs": {
+          "$ref": "#/$defs/text_list"
+        },
+        "lineage_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     }
   }

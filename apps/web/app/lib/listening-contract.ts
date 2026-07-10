@@ -5,10 +5,13 @@
  * This file intentionally copies the public contract shape needed by
  * Algophony instead of importing from an adjacent local repository.
  *
- * Aligned with AKOÚŌ v0.5: 13 listening modes plus router and reference
- * layer (15 portable skills), 16 commands, evidence ladder, claim
- * permissions, routing plans, and reference maps. Canonical source:
- * the AKOÚŌ repository schemas (`../akouo/schemas/`).
+ * Aligned with AKOÚŌ v0.6: 14 listening modes plus router and reference
+ * layer (16 portable skills), 17 commands, evidence ladder, claim
+ * permissions, routing plans (with optional budget and preset id),
+ * reference maps, and the v0.6 instrumentation fields (per-claim source
+ * and time anchors; apparatus, listener, and memory blocks on outputs).
+ * Canonical source: the AKOÚŌ repository (`../akouo/schemas/` and the
+ * machine-readable `../akouo/akouo.manifest.json`).
  */
 
 export const AKOUO_NAME = "AKOÚŌ" as const;
@@ -25,10 +28,31 @@ export const CLAIM_CATEGORIES = [
 export type ClaimCategory = (typeof CLAIM_CATEGORIES)[number];
 export type ClaimConfidence = "high" | "medium" | "low" | "undetermined";
 
+export const AKOUO_CLAIM_SOURCES = [
+  "audio",
+  "dsp",
+  "metadata",
+  "model",
+  "transcript",
+  "context",
+  "memory",
+  "human",
+  "other",
+] as const;
+
+export type AkouoClaimSource = (typeof AKOUO_CLAIM_SOURCES)[number];
+
+export interface AkouoTimeRange {
+  start_s: number;
+  end_s: number;
+}
+
 export interface AkouoClaim {
   statement: string;
   confidence: ClaimConfidence;
   basis: string;
+  source?: AkouoClaimSource;
+  time_range?: AkouoTimeRange;
 }
 
 export type ClaimTaxonomy = Record<ClaimCategory, AkouoClaim[]>;
@@ -74,11 +98,12 @@ export const AKOUO_LISTENING_MODES = [
   "voice-speech-listening",
   "accessibility-normative-listening",
   "material-event-listening",
+  "memory-lineage-listening",
 ] as const;
 
 export type AkouoListeningMode = (typeof AKOUO_LISTENING_MODES)[number];
 
-/** All 15 portable AKOÚŌ v0.5 skills: meta-skills plus listening modes. */
+/** All 16 portable AKOÚŌ v0.6 skills: meta-skills plus listening modes. */
 export const AKOUO_SKILLS = [
   "akouo-router",
   "reference-layer",
@@ -121,6 +146,7 @@ export const AKOUO_COMMAND_NAMES = [
   "/field",
   "/method",
   "/route",
+  "/remember",
 ] as const;
 
 export type AkouoCommandName = (typeof AKOUO_COMMAND_NAMES)[number];
@@ -185,9 +211,14 @@ export interface AkouoAgentHandoff {
   recommended_command: AkouoCommandName;
 }
 
+export const AKOUO_BUDGETS = ["light", "standard", "deep"] as const;
+
+export type AkouoBudget = (typeof AKOUO_BUDGETS)[number];
+
 /**
- * AKOÚŌ v0.5 expanded routing plan for agent handoff: weighted mode
- * selection, evidence limits, claim permissions, and stop conditions.
+ * AKOÚŌ v0.6 expanded routing plan for agent handoff: weighted mode
+ * selection, evidence limits, claim permissions, stop conditions, and
+ * optional budget and preset id.
  */
 export interface AkouoRoutingPlan {
   object_listened_to: string;
@@ -198,6 +229,8 @@ export interface AkouoRoutingPlan {
   claim_permissions: AkouoClaimPermissions;
   agent_handoff: AkouoAgentHandoff;
   stop_conditions: string[];
+  budget?: AkouoBudget;
+  preset_id?: string;
 }
 
 /**
@@ -248,6 +281,44 @@ export interface AkouoRouterOutput {
   recommended_next_mode: AkouoListeningMode;
 }
 
+export const AKOUO_SUBSTRATES = [
+  "human_ear",
+  "asr_cascade",
+  "audio_token_model",
+  "speech_native_model",
+  "dsp_toolchain",
+  "hybrid_agent_stack",
+  "text_only_agent",
+  "unknown",
+  "other",
+] as const;
+
+export type AkouoSubstrate = (typeof AKOUO_SUBSTRATES)[number];
+
+/** AKOÚŌ v0.6 apparatus declaration: the listening substrate and its structural blind spots. */
+export interface AkouoApparatus {
+  substrate: AkouoSubstrate;
+  perception_sources?: string[];
+  model_ids?: string[];
+  sample_rate_hz?: number | null;
+  channels?: number | null;
+  bandwidth_limit_hz?: number | null;
+  known_blind_spots: string[];
+  capture_notes?: string[];
+}
+
+export interface AkouoListener {
+  type: "human" | "agent" | "hybrid";
+  process?: string;
+}
+
+/** AKOÚŌ v0.6 links to stored sound-memory (akousma) records. */
+export interface AkouoMemoryLinks {
+  akousma_id?: string | null;
+  akousmata_refs?: string[];
+  lineage_note?: string | null;
+}
+
 export interface AkouoListeningOutput {
   object_listened_to: string;
   input_type: AkouoInputType;
@@ -260,6 +331,10 @@ export interface AkouoListeningOutput {
   main_reading: string;
   alternative_reading: string;
   recommended_next_mode: AkouoListeningMode | "none" | "undetermined";
+  akouo_version?: string;
+  apparatus?: AkouoApparatus;
+  listener?: AkouoListener;
+  memory?: AkouoMemoryLinks;
 }
 
 export const LISTENING_MODE_LABELS: Record<AkouoListeningMode, string> = {
@@ -276,4 +351,5 @@ export const LISTENING_MODE_LABELS: Record<AkouoListeningMode, string> = {
   "voice-speech-listening": "Voice Speech",
   "accessibility-normative-listening": "Accessibility Normative",
   "material-event-listening": "Material Event",
+  "memory-lineage-listening": "Memory Lineage",
 };

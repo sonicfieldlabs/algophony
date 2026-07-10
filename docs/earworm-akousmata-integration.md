@@ -115,3 +115,15 @@ The `akousma` reference package is an **optional** dependency
 (`pip install -e <sonic-field>/earworm/packages/py-akousma`); without it the module
 raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
 `scripts/test_akousmata_source.py` (skips when the package is absent).
+
+## Spec v1.1 update (Earworm v0.2, 2026-07-10)
+
+The shared store now speaks akousma spec v1.1: records carry a skimmable
+`summary`, listening entries use the contract-pinned envelope
+(`{contract, created_at, summary, payload}` — oída pins `akouo/v0.6`), and
+`lineage.relations` holds typed kinship links distinct from causal
+parenthood. Algophony's batch surface (`workers/akousmata_source.py`) reads
+both eras natively, writes `compares_with` links across evaluation batches,
+looks up recurrences by content hash before evaluating the "same" sound
+twice, and runs `verify_store()` integrity reports where dangling links and
+missing audio are named rather than silently skipped.

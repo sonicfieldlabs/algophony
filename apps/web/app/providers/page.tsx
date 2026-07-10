@@ -102,7 +102,7 @@ export default async function ProvidersPage() {
                       <span className={`badge badge-provider-${provider.status}`}>{provider.status.replace(/_/g, " ")}</span>
                       <div className="table-note">{provider.status_reason}</div>
                     </td>
-                    <td><span className="badge badge-control">{provider.runtime}</span></td>
+                    <td><span className="badge badge-control">{provider.runtime}</span>{provider.openness && <div className="table-note">{provider.openness.replace(/_/g, " ")}</div>}</td>
                     <td className="mono-cell">{provider.version}</td>
                     <td>
                       {DEFAULT_CHAIN.includes(provider.provider_id) && <span className="badge badge-loop">default chain</span>}

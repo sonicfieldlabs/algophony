@@ -65,17 +65,17 @@ See `docs/architecture.md` for the integrated model, data flow, and publication 
 
 Technophony is the sound of machines in the world. Algophony is the soundscape as produced, mediated, or re-heard by computational systems.
 
-## AKOÚŌ v0.5 Listening Contract
+## AKOÚŌ v0.6 Listening Contract
 
-Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system, in its v0.5 contract:
+Listening reports follow AKOÚŌ, the Sonic Field Labs agentic listening system, in its v0.6 contract:
 
-- 15 portable skills: `akouo-router`, 13 listening modes, and `reference-layer`.
-- 16 commands, from `/listen` to `/route`.
-- Six-category claim taxonomy: `heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined`.
-- Evidence ladder: every pass declares its evidence level (`prompt_only`, `metadata_only`, `measured_signal`, `mixed`, and others), which determines claim permissions — claims can never be stronger than evidence.
-- Routing plans: reports may carry an `akouo_routing_plan` (weighted mode chain, claim permissions, forbidden assumptions, stop conditions) and an `akouo_reference_map` (concepts, methods, traditions, research routes).
+- 16 portable skills: `akouo-router`, 14 listening modes (including `memory-lineage-listening`, the sound-memory ear), and `reference-layer`.
+- 17 commands, from `/listen` to `/route`, plus `/remember` for sound-memory stores.
+- Six-category claim taxonomy: `heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined` — with optional per-claim `source` (dsp, model, memory, …) and `time_range` anchors so evidence streams never blur.
+- Evidence ladder: every pass declares its evidence level (`prompt_only`, `metadata_only`, `measured_signal`, `mixed`, and others), which determines claim permissions — claims can never be stronger than evidence. Command overrides apply after the ladder (`/forensic` suppresses interpretation; `/fiction` grants declared speculation).
+- Routing plans: reports may carry an `akouo_routing_plan` (weighted mode chain, claim permissions, forbidden assumptions, stop conditions, optional budget and preset id) and an `akouo_reference_map` (concepts, methods, traditions, research routes). Mode outputs may declare their `apparatus` (listening substrate and known blind spots), `listener`, and `memory` links; reports pin `akouo_contract_version`.
 
-The consumption loop is route → check stop conditions → listen → map → merge → hand off. The contract shape is copied into `schemas/listening-report.schema.json` and `apps/web/app/lib/listening-contract.ts`; the canonical source is the adjacent AKOÚŌ repository. Integration details: `ROADMAP.md`.
+The consumption loop is route → check stop conditions → listen → map → merge → hand off. `workers/listening_plan.py` implements the route step deterministically (no LLM): artifact availability derives the evidence level, and `enforce_claim_permissions` moves blocked claims into `undetermined` instead of dropping them. The contract shape is copied into `schemas/listening-report.schema.json` and `apps/web/app/lib/listening-contract.ts`, and `scripts/test_listening_plan.py` drift-checks both against the machine-readable `../akouo/akouo.manifest.json`. Integration details: `ROADMAP.md`.
 
 ## Earworm and Akousmata Traceability
 
@@ -248,7 +248,7 @@ elsewhere.
 
 ## Related Projects
 
-- AKOÚŌ — agentic listening system: 15 portable skills, six-category claim taxonomy, evidence ladder, routing plans, and reference layer (v0.5).
+- AKOÚŌ — agentic listening system: 16 portable skills, six-category claim taxonomy, evidence ladder, routing plans, presets, machine-readable manifest, and reference layer (v0.6).
 - Earworm and Akousmata — persistent listening and memory operations for traceable signal/context chains.
 - The Listening Stack — companion paper describing AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos as one agentic sonic-computation stack.
 - Agentic Listening Benchmark — benchmark structure and scoring conventions.

@@ -116,6 +116,81 @@ class AkousmataSourceTests(unittest.TestCase):
         with self.assertRaises(KeyError):
             akousmata_source.write_eval("akm_missing", {"score": 0}, store=self.store)
 
+    def test_reads_v11_enveloped_listening_and_summary(self):
+        record = akousma.new_akousma(
+            audio={"asset_id": "cap_2"},
+            originating_app="oida",
+            summary="harbor at dusk, machinery keynote",
+            listening={
+                "oida.signal": {
+                    "contract": None,
+                    "created_at": "2026-07-10T00:00:00Z",
+                    "payload": {"caption": "low machinery tone with sparse calls"},
+                }
+            },
+        )
+        # top-level summary wins
+        rec = akousmata_source.akousma_to_prompt_record(record)
+        self.assertEqual(rec["prompt_text"], "harbor at dusk, machinery keynote")
+        self.assertEqual(rec["summary"], "harbor at dusk, machinery keynote")
+        # without the summary, the enveloped payload caption is unwrapped
+        record.pop("summary")
+        record["listening"]["oida.signal"].pop("contract")
+        rec = akousmata_source.akousma_to_prompt_record(record)
+        self.assertEqual(rec["prompt_text"], "low machinery tone with sparse calls")
+
+    def test_relations_surface(self):
+        sibling = akousma.new_akousma(
+            audio={"asset_id": "cap_3", "content_hash": "sha256:samehash"},
+            originating_app="oida",
+            relations=[akousma.relation("series_with", self.parent["akousma_id"], "later take")],
+        )
+        self.store.put(sibling)
+        rec = akousmata_source.akousma_to_prompt_record(sibling)
+        self.assertEqual(rec["relations"], [
+            {"type": "series_with", "target_akousma_id": self.parent["akousma_id"], "note": "later take"}
+        ])
+        incoming = akousmata_source.related(self.parent["akousma_id"], store=self.store)
+        self.assertEqual(incoming, [
+            {"type": "series_with", "akousma_id": sibling["akousma_id"], "direction": "incoming"}
+        ])
+
+    def test_add_relation_compares_with(self):
+        akousmata_source.add_relation(
+            self.child["akousma_id"], "compares_with", self.parent["akousma_id"],
+            note="evaluation batch pairing", store=self.store,
+        )
+        stored = self.store.get(self.child["akousma_id"])
+        relations = stored["lineage"]["relations"]
+        self.assertEqual(relations[0]["type"], "compares_with")
+        # idempotent: adding the same link twice keeps one edge
+        akousmata_source.add_relation(
+            self.child["akousma_id"], "compares_with", self.parent["akousma_id"], store=self.store,
+        )
+        self.assertEqual(len(self.store.get(self.child["akousma_id"])["lineage"]["relations"]), 1)
+
+    def test_find_by_hash_and_verify(self):
+        first = akousma.new_akousma(
+            audio={"asset_id": "h1", "content_hash": "sha256:dupe"}, originating_app="oida",
+        )
+        second = akousma.new_akousma(
+            audio={"asset_id": "h2", "content_hash": "sha256:dupe"}, originating_app="germ",
+        )
+        self.store.put(first)
+        self.store.put(second)
+        found = akousmata_source.find_by_hash("sha256:dupe", store=self.store)
+        self.assertEqual({r["akousma_id"] for r in found}, {first["akousma_id"], second["akousma_id"]})
+        report = akousmata_source.verify_store(store=self.store)
+        self.assertIn("dangling_parents", report)
+
+    def test_query_filters_v02(self):
+        tagged = akousma.new_akousma(
+            audio={"asset_id": "t1"}, originating_app="algophony", tags=["eval-batch"],
+        )
+        self.store.put(tagged)
+        found = akousmata_source.load_akousmata(tag="eval-batch", store=self.store)
+        self.assertEqual([r["akousma_id"] for r in found], [tagged["akousma_id"]])
+
 
 if __name__ == "__main__":
     unittest.main()

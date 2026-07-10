@@ -34,7 +34,7 @@ A structured mode of listening performed by an AI agent operating under the AKO�
 
 ## Evidence Ladder
 
-The AKOÚŌ v0.5 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
+The AKOÚŌ v0.6 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
 
 ## Claim Permissions
 
@@ -42,7 +42,7 @@ The set of claim categories a listening pass is allowed to emit, derived from it
 
 ## Routing Plan
 
-The AKOÚŌ v0.5 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, and stop conditions. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
+The AKOÚŌ v0.6 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, stop conditions, and optionally a listening budget and preset id. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
 
 ## Reference Layer
 
@@ -131,3 +131,19 @@ The rights named by *Algophonya framework*: voice, silence, opacity, accent and 
 ## Planetary Ear
 
 Listening extended through sensors, archives, models, and data centers to places no unaided ear can reach: oceans, rainforests, border zones, server farms, the electromagnetic field. The planetary ear makes the sonosphere more graspable and more mediated at once, and ties every act of machine listening and generation to planetary infrastructure.
+
+## Memory-Lineage Listening
+
+The AKOÚŌ v0.6 listening mode that listens with stored sound-memories: recurrence, kinship, lineage, and change over time across an akousmata store. Memory is its own evidence stream (`source: "memory"`) and never proof about the present sound; absence from the store is not novelty in the world. The `/remember` command runs this mode and registers the listening into the store.
+
+## Apparatus Declaration
+
+The AKOÚŌ v0.6 block through which a listening output names its substrate (human ear, ASR cascade, audio-token model, speech-native model, DSP toolchain, hybrid stack), its perception sources, and its structural blind spots. Claim limits derive from the declared apparatus: a mono-input model cannot make stereo claims, and model perception is never `measured`.
+
+## Akousma Relations
+
+Typed kinship links between akousma records (Earworm spec v1.1): `variant_of`, `response_to`, `same_source_as`, `recurrence_of`, `series_with`, `compares_with`, `replaces`. Distinct from causal parenthood (`parent_akousma_ids`): parents mean "made from", relations mean "belongs with". Algophony writes `compares_with` links across evaluation batches and reads recurrence links before scoring the "same" sound twice.
+
+## Provider Openness
+
+The literacy-or-capture axis made operational: every provider carries an `openness` profile — `open_source_internal` (procedural controls), `open_weights_local` (pinned, reproducible local models), `open_code_hosted` (open code or weights behind a hosted endpoint), or `closed_api` (closed commercial service). A score earned inside a closed API describes a service at a moment in time; a score earned by a pinned local model describes a reproducible system.

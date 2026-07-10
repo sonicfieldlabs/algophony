@@ -345,6 +345,41 @@ def _path_env_exists(name: str) -> bool:
     return bool(value and Path(value).expanduser().exists())
 
 
+PROVIDER_OPENNESS_VALUES = {
+    "open_source_internal",
+    "open_weights_local",
+    "open_code_hosted",
+    "closed_api",
+}
+
+
+def provider_openness(spec: ProviderSpec) -> str:
+    """framework literacy-or-capture axis, derived from provider conventions:
+    a score earned by a pinned local model describes a reproducible system; a
+    score earned inside a closed API describes a service at a moment in time."""
+    if spec.type in ("procedural_control", "spatial_procedural"):
+        return "open_source_internal"
+    if spec.runtime == "local":
+        return "open_weights_local"
+    if spec.provider_id.endswith("_hf_endpoint"):
+        return "open_code_hosted"
+    return "closed_api"
+
+
+def compute_provenance_for(provider_id: str) -> dict[str, Any]:
+    """Schema-conformant ``compute_provenance`` record for a generation run,
+    stamped from the registry at generation time (never guessed afterwards)."""
+    spec = PROVIDER_REGISTRY[canonical_provider_id(provider_id)]
+    if spec.runtime == "local":
+        return {
+            "runtime_locality": "local",
+            "hardware": f"{platform.system()} {platform.machine()}",
+        }
+    if spec.provider_id.endswith("_hf_endpoint"):
+        return {"runtime_locality": "hosted_endpoint"}
+    return {"runtime_locality": "cloud_api"}
+
+
 def provider_status(provider_id: str) -> dict[str, Any]:
     key = canonical_provider_id(provider_id)
     if key not in PROVIDER_REGISTRY:
@@ -352,6 +387,7 @@ def provider_status(provider_id: str) -> dict[str, Any]:
 
     spec = PROVIDER_REGISTRY[key]
     record = asdict(spec)
+    record["openness"] = provider_openness(spec)
     record["status"] = "available"
     record["status_reason"] = "ready"
 

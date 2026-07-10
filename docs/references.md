@@ -41,7 +41,7 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## AKOÚŌ and Agentic Listening
 
-- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.5: 15 portable skills, evidence ladder, routing plans, claim permissions, and reference layer. See `https://github.com/sonicfieldlabs/akouo` and the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
+- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.6: 16 portable skills (including memory-lineage listening), evidence ladder, routing plans with budgets and presets, claim permissions, apparatus declarations, machine-readable manifest, and reference layer. See `https://github.com/sonicfieldlabs/akouo` and the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
 - Sonic Field Labs. Earworm: persistent listening protocol for agentic signal chains. v0.1 protocol implementation, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm` and the adjacent repository's `README.md`.
 - Sonic Field Labs. Akousmata: memory-operations surface over Earworm chains: remember, list, search, similarity, export, and forget.
 - Sonic Field Labs. Agentic Listening Benchmark.
@@ -53,6 +53,6 @@ Working references are grouped by research area. Publication metadata should be 
 - Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos.
 - Sonic Field Labs (2026). *germ* companion paper on generative cultivation and lineage-bearing sound.
 - `docs/benchmark-methodology.md` — framework definition and evaluation levels.
-- `docs/benchmark-methodology.md` — score axes, AKOÚŌ v0.5 listening chain, and Earworm/Akousmata trace layer.
+- `docs/benchmark-methodology.md` — score axes, AKOÚŌ v0.6 listening chain, and Earworm/Akousmata trace layer.
 - `docs/earworm-akousmata-integration.md` — local trace contract for persistent listening routes and attached context.
 - `ROADMAP.md` — framework, AKOÚŌ v0.5, and Listening Stack integration architecture.

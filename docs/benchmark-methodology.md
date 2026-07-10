@@ -98,12 +98,14 @@ Every score axis must declare:
 
 Scores are separated into `signal_scores`, `agent_scores`, `human_scores`, and `final_scores`. Current summaries use `final_scores`.
 
-## AKOÚŌ v0.5 Listening Chain
+## AKOÚŌ v0.6 Listening Chain
 
-Reports may carry the full AKOÚŌ v0.5 contract: router output, expanded
-routing plan, per-mode outputs, and reference map. The routing plan grades the
-available evidence and converts it into claim permissions before any listening
-mode runs.
+Reports may carry the full AKOÚŌ v0.6 contract: router output, expanded
+routing plan (optionally budgeted and preset-derived), per-mode outputs with
+apparatus/listener/memory declarations, and reference map. The routing plan
+grades the available evidence and converts it into claim permissions before
+any listening mode runs; `workers/listening_plan.py` builds it
+deterministically from artifact availability.
 
 Evidence ladder for Algophony report types:
 
@@ -114,14 +116,39 @@ Evidence ladder for Algophony report types:
 | `measured_signal` | `analyze_audio.py` features available | `measured` claims allowed with stated method |
 | `mixed` | Audio, signal analysis, prompt, and metadata together | Full taxonomy, each claim tied to its basis |
 
-Recommended mode chain for generated soundscapes: signal-inspection,
-acoulogical-object, transductive-media, ecological-posthuman, with
-critical-political as corrective. Add voice-speech listening when prompts
-imply speech or vocal presence, material-event listening for resonance and
+The deterministic pipeline chain (implemented in `workers/listening_plan.py`)
+routes generated soundscapes through acoulogical-object (primary: describe the
+auditum before source claims), ecological-posthuman (secondary: layered
+habitat and infrastructure relations), and transductive-media (corrective:
+the object is a model output, and that mediation must stay audible), adding
+symbolic-fictional listening for declared impossible or ritual categories and
+musical-aesthetic listening for club or music categories. Fuller manual
+chains may add signal-inspection grounding, voice-speech listening when
+prompts imply vocal presence, material-event listening for resonance and
 machine categories, audiovisual-scenic listening when the prompt frames a
-scene or media context, and symbolic-fictional listening only for declared
-possible-world or impossible-ecology prompts. When stop conditions are unmet,
-stop or gather evidence instead of listening to imagined input.
+scene, and critical-political listening as an additional corrective. Add
+memory-lineage listening (with `/remember`) when a generation should be
+compared against, or registered into, the shared akousmata store. When stop
+conditions are unmet, stop or gather evidence instead of listening to
+imagined input.
+
+## The Nine Questions as Review Protocol
+
+Human and hybrid report review applies the framework's standing questions as
+a checklist mapped to existing fields; suites and axes version, the protocol
+persists:
+
+| Question | Where it lands |
+| --- | --- |
+| What was rendered as noise and discarded? | `sources.absent_expected`, forbidden/erased source lists |
+| Whose ecology or voice is simulated? | `cultural_cliche_index`, `voice_consent_risk` |
+| Who profits, who is captured? | provider `openness` profile (open weights vs closed API) |
+| Is the synthetic origin exposed? | `disclosure_integrity`, false-field-recording risk |
+| Where did the computation run, at what cost? | `compute_provenance` (stamped at generation time) |
+| What does the store remember, and with what consent? | `earworm_trace` retention policy, akousma `consent_status` |
+| What recurs across the corpus? | akousmata relations (`series_with`, `recurrence_of`, `compares_with`) |
+| What stayed undetermined? | `claim_taxonomy.undetermined` — required, never empty when evidence is missing |
+| What would regeneration change? | `regeneration_recommendation`, `suggested_prompt_revision` |
 
 ## Earworm and Akousmata Trace Layer
 

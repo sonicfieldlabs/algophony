@@ -17,6 +17,7 @@ from workers.adapters.base import GenerationError
 from workers.provider_registry import (
     PROVIDER_REGISTRY,
     canonical_provider_id,
+    compute_provenance_for,
     list_provider_statuses,
     provider_status,
     select_default_provider,
@@ -135,6 +136,10 @@ def run_pipeline(
                     if reserve_report_ids:
                         meta["akouo_report_id"] = report_ids[report_cursor]
                         report_cursor += 1
+                    # Material footprint stamped from the registry at generation
+                    # time; never guessed after the fact (framework: compute
+                    # provenance is part of the sound's body).
+                    meta.setdefault("compute_provenance", compute_provenance_for(provider_id))
                     results["successes"].append(aid)
                     results["metadata_records"].append(meta)
 
