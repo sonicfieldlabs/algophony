@@ -127,3 +127,15 @@ both eras natively, writes `compares_with` links across evaluation batches,
 looks up recurrences by content hash before evaluating the "same" sound
 twice, and runs `verify_store()` integrity reports where dangling links and
 missing audio are named rather than silently skipped.
+
+## The akousmata navigator (v0.3.1, 2026-07-10)
+
+The shared store now has its own app: the **akousmata listening navigator**
+(`github.com/sonicfieldlabs/akousmata`), a local-first library over the same
+records this batch surface reads — filtering, tagging, manual human
+listening events, graph navigation of lineage and kinship, a maintained wiki
+layer, and research sessions. Evaluations Algophony stamps back
+(`extensions["algophony.eval"]`) render on each record's wiki page, and the
+`compares_with` links written across evaluation batches are navigable there
+as kinship edges. Nothing changes in this repo's surface; the navigator is
+where humans walk what the batches touched.
