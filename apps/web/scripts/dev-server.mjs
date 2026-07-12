@@ -45,7 +45,7 @@ function start() {
   }
 
   const logFd = openSync(logFile, "a");
-  const child = spawn(process.execPath, [nextBin, "dev", "--hostname", host, "--port", port], {
+  const child = spawn(process.execPath, [nextBin, "dev", "--webpack", "--hostname", host, "--port", port], {
     cwd: root,
     detached: true,
     env: {

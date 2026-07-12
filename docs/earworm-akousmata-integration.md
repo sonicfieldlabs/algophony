@@ -116,6 +116,25 @@ The `akousma` reference package is an **optional** dependency
 raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
 `scripts/test_akousmata_source.py` (skips when the package is absent).
 
+## Spec v1.2 update (Earworm v0.3, 2026-07-11)
+
+Akousma records may now carry two optional consent-scoped blocks and are open
+at the top level (unknown fields are preserved, never rejected):
+
+- **`location`** — where the sound was heard (`lat`/`lon`, `accuracy_m`,
+  `altitude_m`, `label`, `source`, `captured_at`). Feeds the navigator's new
+  listening map; the navigator strips it from every open-research export.
+- **`capture`** — how the listening was triggered: `direction`
+  (`past` = ring-buffer seconds before the trigger, `future` = the window
+  after it, `live` = open-ended), `seconds`, `trigger`, `armed_at`,
+  `triggered_at`.
+
+Algophony's batch surface carries both blocks through
+`akousma_to_prompt_record(...)` (as `location`, `capture`, and the
+convenience `capture_direction`), so evaluation runs can group by place or by
+temporal direction. Consent discipline: `location` is for local
+organization/evaluation only — sanitized exports never include it.
+
 ## Spec v1.1 update (Earworm v0.2, 2026-07-10)
 
 The shared store now speaks akousma spec v1.1: records carry a skimmable

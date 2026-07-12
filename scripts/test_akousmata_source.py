@@ -29,6 +29,44 @@ except ModuleNotFoundError:
 from workers import akousmata_source
 
 
+class PromptRecordShapeTests(unittest.TestCase):
+    """Pure-dict conversion tests: run even without the akousma package."""
+
+    def test_spec_v12_location_and_capture_are_carried(self):
+        record = {
+            "akousma_id": "akm_test1",
+            "summary": "river under the bridge",
+            "tags": ["river"],
+            "audio": {"asset_id": "a1", "duration_seconds": 30.0},
+            "provenance": {"originating_app": "oida", "origin": "live-input"},
+            "lineage": {"parent_akousma_ids": []},
+            "location": {"lat": 6.2442, "lon": -75.5812, "label": "río Medellín", "source": "gps"},
+            "capture": {"direction": "past", "seconds": 30, "trigger": "remote-ear"},
+            "weather": "light rain",  # spec v1.2 open record: unknown fields exist
+        }
+        prompt = akousmata_source.akousma_to_prompt_record(record)
+        self.assertEqual(prompt["location"]["lat"], 6.2442)
+        self.assertEqual(prompt["location"]["label"], "río Medellín")
+        self.assertEqual(prompt["capture"]["seconds"], 30)
+        self.assertEqual(prompt["capture_direction"], "past")
+
+    def test_records_without_v12_blocks_read_as_before(self):
+        record = {
+            "akousma_id": "akm_test2",
+            "audio": {"asset_id": "a2"},
+            "provenance": {"originating_app": "germ"},
+            "lineage": {"parent_akousma_ids": []},
+        }
+        prompt = akousmata_source.akousma_to_prompt_record(record)
+        self.assertNotIn("location", prompt)
+        self.assertNotIn("capture", prompt)
+        self.assertNotIn("capture_direction", prompt)
+
+    def test_non_akousma_record_raises_clearly(self):
+        with self.assertRaises(KeyError):
+            akousmata_source.akousma_to_prompt_record({"audio": {"asset_id": "x"}})
+
+
 @unittest.skipUnless(HAVE_AKOUSMA, "akousma package not available")
 class AkousmataSourceTests(unittest.TestCase):
     def setUp(self):

@@ -42,8 +42,10 @@ What does not exist yet:
 See `docs/release-notes-v0.2.md` for the public-code platform changes since
 v0.1.1, `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
 release, and `docs/release-notes-v0.2.2.md` for the Studio and Bench
-integration release. The current `v0.3.2` integration notes describe the
-provider-neutral Oída gateway adapter without changing the frozen corpus.
+integration release. The current `v0.4.0` notes (`docs/release-notes-v0.4.0.md`)
+cover akousma spec v1.2 — geolocated listening (`location`), past/future
+capture direction (`capture`), open records — plus the worker unit tests and
+drift guards now running in CI; none of it changes the frozen corpus.
 
 ## System Layers
 

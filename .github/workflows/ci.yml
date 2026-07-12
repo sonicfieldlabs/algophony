@@ -23,6 +23,24 @@ jobs:
       - run: python3 scripts/validate_schemas.py
       - run: python3 scripts/run_scenario_tests.py
 
+  worker-unit-tests:
+    name: Worker unit tests (contracts + drift guards)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python3 -m pip install -r requirements.txt
+      # Cross-repo drift tests self-skip when the sibling akouo/py-akousma
+      # checkouts are absent (as here); the contract and schema assertions
+      # still run. Locally, run these with the siblings present.
+      - run: python3 scripts/test_provider_contracts.py
+      - run: python3 scripts/test_oida_gateway.py
+      - run: python3 scripts/test_listening_plan.py
+      - run: python3 scripts/test_akousmata_source.py
+
   web-build:
     name: Web app type-check + build
     runs-on: ubuntu-latest

@@ -8,9 +8,11 @@ surface over that store:
 - ``load_akousmata(...)``            — query records for evaluation/organization runs
   (spec v1.1 stores add tag/text/since/until filters)
 - ``akousma_to_prompt_record(...)``  — convert a record into an Algophony prompt/eval
-  input, carrying summary, relations, consent, pipeline effects, and a
-  schema-conformant ``earworm_trace`` bridge; reads both raw (v1.0) and
-  enveloped (v1.1 ``{contract, created_at, summary, payload}``) listening entries
+  input, carrying summary, relations, consent, pipeline effects, spec v1.2
+  ``location`` (where the sound was heard) and ``capture`` (past/future
+  direction + window seconds), and a schema-conformant ``earworm_trace``
+  bridge; reads both raw (v1.0) and enveloped (v1.1
+  ``{contract, created_at, summary, payload}``) listening entries
 - ``write_eval(...)``                — stamp results back as ``extensions["algophony.eval"]``
 - ``ancestry(...)``                  — what's behind a sound (causal lineage ids)
 - ``related(...)`` / ``add_relation(...)`` — typed kinship links (variants,
@@ -160,11 +162,19 @@ def build_earworm_trace(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def akousma_to_prompt_record(record: dict[str, Any]) -> dict[str, Any]:
-    """Convert one akousma into an Algophony prompt/eval input record."""
+    """Convert one akousma into an Algophony prompt/eval input record.
+
+    Raises ``KeyError`` on a record without ``akousma_id`` — such a record is
+    not an akousma at all, and skipping it silently would hide store damage.
+    """
+    if "akousma_id" not in record:
+        raise KeyError("record has no akousma_id — not an akousma record")
     audio = record.get("audio") or {}
     provenance = record.get("provenance") or {}
     lineage = record.get("lineage") or {}
-    return {
+    location = record.get("location") if isinstance(record.get("location"), dict) else None
+    capture = record.get("capture") if isinstance(record.get("capture"), dict) else None
+    out = {
         "prompt_id": record["akousma_id"],
         "prompt_text": _listening_text(record),
         "summary": record.get("summary"),
@@ -181,6 +191,16 @@ def akousma_to_prompt_record(record: dict[str, Any]) -> dict[str, Any]:
         "generation_model": lineage.get("model"),
         "earworm_trace": build_earworm_trace(record),
     }
+    # Spec v1.2 optional blocks, carried when present. location is
+    # consent-scoped — it feeds local organization/evaluation only and is
+    # stripped by the navigator's open-research exports, never shipped.
+    if location is not None:
+        out["location"] = dict(location)
+    if capture is not None:
+        out["capture"] = dict(capture)
+        if capture.get("direction"):
+            out["capture_direction"] = capture.get("direction")
+    return out
 
 
 def ancestry(akousma_id: str, *, store=None) -> list[str]:
