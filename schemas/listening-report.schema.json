@@ -464,7 +464,8 @@
         "voice-speech-listening",
         "accessibility-normative-listening",
         "material-event-listening",
-        "memory-lineage-listening"
+        "memory-lineage-listening",
+        "sovereign-listening"
       ]
     },
     "akouo_command": {
@@ -486,7 +487,8 @@
         "/field",
         "/method",
         "/route",
-        "/remember"
+        "/remember",
+        "/covenant"
       ]
     },
     "akouo_evidence_level": {

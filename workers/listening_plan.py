@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-AKOUO_CONTRACT_VERSION = "akouo/v0.6"
+AKOUO_CONTRACT_VERSION = "akouo/v0.7"
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 

@@ -66,6 +66,25 @@ class PromptRecordShapeTests(unittest.TestCase):
         with self.assertRaises(KeyError):
             akousmata_source.akousma_to_prompt_record({"audio": {"asset_id": "x"}})
 
+    def test_spec_v13_covenant_is_carried_not_reconstructed(self):
+        record = {
+            "akousma_id": "akm_test3",
+            "audio": {"asset_id": "a3"},
+            "provenance": {"originating_app": "oida"},
+            "lineage": {"parent_akousma_ids": []},
+            "covenant": {
+                "id": "river-covenant/2",
+                "contract": "akouo/v0.7",
+                "withheld": [{"rule": "do_not_reveal", "subject": "transcript", "count": 1}],
+                "commitments": 1,
+            },
+        }
+        prompt = akousmata_source.akousma_to_prompt_record(record)
+        self.assertEqual(prompt["covenant_id"], "river-covenant/2")
+        self.assertEqual(prompt["covenant"]["withheld"][0]["subject"], "transcript")
+        # withheld content never exists anywhere in the prompt record
+        self.assertNotIn("hello", str(prompt))
+
 
 @unittest.skipUnless(HAVE_AKOUSMA, "akousma package not available")
 class AkousmataSourceTests(unittest.TestCase):

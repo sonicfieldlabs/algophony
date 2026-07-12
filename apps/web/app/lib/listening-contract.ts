@@ -99,11 +99,12 @@ export const AKOUO_LISTENING_MODES = [
   "accessibility-normative-listening",
   "material-event-listening",
   "memory-lineage-listening",
+  "sovereign-listening",
 ] as const;
 
 export type AkouoListeningMode = (typeof AKOUO_LISTENING_MODES)[number];
 
-/** All 16 portable AKOÚŌ v0.6 skills: meta-skills plus listening modes. */
+/** All 17 portable AKOÚŌ v0.7 skills: meta-skills plus listening modes. */
 export const AKOUO_SKILLS = [
   "akouo-router",
   "reference-layer",
@@ -147,6 +148,7 @@ export const AKOUO_COMMAND_NAMES = [
   "/method",
   "/route",
   "/remember",
+  "/covenant",
 ] as const;
 
 export type AkouoCommandName = (typeof AKOUO_COMMAND_NAMES)[number];
@@ -352,4 +354,5 @@ export const LISTENING_MODE_LABELS: Record<AkouoListeningMode, string> = {
   "accessibility-normative-listening": "Accessibility Normative",
   "material-event-listening": "Material Event",
   "memory-lineage-listening": "Memory Lineage",
+  "sovereign-listening": "Sovereign",
 };

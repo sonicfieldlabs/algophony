@@ -42,10 +42,14 @@ What does not exist yet:
 See `docs/release-notes-v0.2.md` for the public-code platform changes since
 v0.1.1, `docs/release-notes-v0.2.1.md` for the Listening Stack alignment
 release, and `docs/release-notes-v0.2.2.md` for the Studio and Bench
-integration release. The current `v0.4.0` notes (`docs/release-notes-v0.4.0.md`)
-cover akousma spec v1.2 — geolocated listening (`location`), past/future
-capture direction (`capture`), open records — plus the worker unit tests and
-drift guards now running in CI; none of it changes the frozen corpus.
+integration release. The current `v0.5.0` notes (`docs/release-notes-v0.5.0.md`)
+cover the sovereignty layer: the AKOÚŌ pin moves to `akouo/v0.7`
+(`sovereign-listening` + `/covenant` in every enum and drift guard) and the
+batch surface carries akousma spec v1.3 `covenant` blocks — with the
+evaluation discipline that withheld material is attributed absence, never
+scored or reconstructed. `v0.4.0` added spec v1.2 (location, capture
+direction, open records) and CI-run worker tests; none of it changes the
+frozen corpus.
 
 ## System Layers
 

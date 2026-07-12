@@ -148,6 +148,10 @@ Typed kinship links between akousma records (Earworm spec v1.1): `variant_of`, `
 
 The two optional spec v1.2 blocks (Earworm v0.3). `location` says where a sound was heard (lat/lon + accuracy + human label; consent-scoped, stripped from open-research exports; plotted by the akousmata navigator's listening map). `capture` says how the listening was triggered: `direction` `past` (ring-buffer seconds before the trigger), `future` (the window after it), or `live`, plus window `seconds` and the `trigger` surface. Algophony's batch surface carries both through `akousma_to_prompt_record`, so runs can group by place or temporal direction.
 
+## Akousma Covenant
+
+The optional spec v1.3 block (Earworm v0.4): under which ethics a sound was listened. Carries the listening covenant's identity and lineage (AKOÚŌ v0.7's `sovereign-listening` mode) plus honest absence — what was withheld, counted and attributed to its rule, never described. Algophony carries it through `akousma_to_prompt_record` (`covenant`, `covenant_id`) and treats withheld material as out-of-universe for every metric: never scored, never reconstructed, never guessed at.
+
 ## Provider Openness
 
 The literacy-or-capture axis made operational: every provider carries an `openness` profile — `open_source_internal` (procedural controls), `open_weights_local` (pinned, reproducible local models), `open_code_hosted` (open code or weights behind a hosted endpoint), or `closed_api` (closed commercial service). A score earned inside a closed API describes a service at a moment in time; a score earned by a pinned local model describes a reproducible system.

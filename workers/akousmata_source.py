@@ -200,6 +200,14 @@ def akousma_to_prompt_record(record: dict[str, Any]) -> dict[str, Any]:
         out["capture"] = dict(capture)
         if capture.get("direction"):
             out["capture_direction"] = capture.get("direction")
+    # Spec v1.3: under which ethics the record was listened. Identity and
+    # attributed absence only — evaluation must never reconstruct or score
+    # what a covenant withheld.
+    covenant = record.get("covenant") if isinstance(record.get("covenant"), dict) else None
+    if covenant is not None:
+        out["covenant"] = dict(covenant)
+        if covenant.get("id"):
+            out["covenant_id"] = covenant.get("id")
     return out
 
 
