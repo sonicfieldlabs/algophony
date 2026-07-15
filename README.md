@@ -1,6 +1,6 @@
 # Algophony
 
-Algophony is the Sonic Field Labs system for studying, generating, organizing, and evaluating algorithmic soundscapes. It combines a research framework, a benchmark dashboard, and a local-first sound workspace:
+Algophony is a system for studying, generating, organizing, and evaluating algorithmic soundscapes. It combines a research framework, a benchmark dashboard, and a local-first sound workspace:
 
 - **Algophony Framework**: schemas, Atlas prompts, generation metadata, AKOÚŌ listening reports, score contracts, provider adapters, workers, and release hygiene.
 - **Algophony Bench Dashboard**: the Next.js benchmark interface in `apps/web/` for inspecting Atlas coverage, providers, reports, scores, observatory views, playground runs, and export state.
