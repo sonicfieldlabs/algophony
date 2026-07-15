@@ -49,10 +49,8 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## Algophony Framework Documents
 
-- Sonic Field Labs (2026). *Algophonya framework*. `docs/benchmark-methodology.md`. Founding statement: Algophonya, algorithmic acoulogy, the ladder of claims, rights of the audible, the planetary ear.
 - Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos.
 - Sonic Field Labs (2026). *germ* companion paper on generative cultivation and lineage-bearing sound.
-- `docs/benchmark-methodology.md` — framework definition and evaluation levels.
-- `docs/benchmark-methodology.md` — score axes, AKOÚŌ v0.6 listening chain, and Earworm/Akousmata trace layer.
+- `docs/benchmark-methodology.md` — framework definition, score axes, AKOÚŌ v0.6 listening chain, and Earworm/Akousmata trace layer.
 - `docs/earworm-akousmata-integration.md` — local trace contract for persistent listening routes and attached context.
-- `ROADMAP.md` — framework, AKOÚŌ v0.5, and Listening Stack integration architecture.
+- `ROADMAP.md` — release milestones and integration history.

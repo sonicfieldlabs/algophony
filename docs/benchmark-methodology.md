@@ -47,8 +47,8 @@ Measures what the model or generator assumes:
 
 ### Level 5: Provenance, Consent, and Disclosure
 
-Measures the generation as a published object inside the algophonic condition
-(see `benchmark-methodology.md`), not only as a constructed world:
+Measures the generation as a published object inside the algophonic condition,
+not only as a constructed world:
 
 - Synthetic origin is legible: generator, operator, version, intended use.
 - Voice-like material carries consent and provenance status.
@@ -75,7 +75,7 @@ reviewing pass.
 | `generic_naturalism_index` | 0-5 | Lower is better |
 | `cultural_cliche_index` | 0-5 | Lower is better |
 
-framework axes (schema-landed in v0.2, nullable until scored):
+Provenance and consent axes (schema-landed in v0.2, nullable until scored):
 
 | Axis | Range | Direction |
 | --- | --- | --- |
@@ -134,7 +134,7 @@ imagined input.
 
 ## The Nine Questions as Review Protocol
 
-Human and hybrid report review applies the framework's standing questions as
+Human and hybrid report review applies standing questions as
 a checklist mapped to existing fields; suites and axes version, the protocol
 persists:
 

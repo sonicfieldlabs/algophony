@@ -354,7 +354,7 @@ PROVIDER_OPENNESS_VALUES = {
 
 
 def provider_openness(spec: ProviderSpec) -> str:
-    """framework literacy-or-capture axis, derived from provider conventions:
+    """Provider literacy-or-capture axis, derived from provider conventions:
     a score earned by a pinned local model describes a reproducible system; a
     score earned inside a closed API describes a service at a moment in time."""
     if spec.type in ("procedural_control", "spatial_procedural"):

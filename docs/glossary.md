@@ -10,11 +10,13 @@ The Sonic Field Labs evaluation layer for Algophonya: Atlas prompts, generation 
 
 ## Algophonic Condition
 
-The situation named by *Algophonya framework*: algorithmic systems take part in making, hearing, classifying, and judging sound. This term is retained for continuity, but new project text should prefer **Algophonya** for the condition and **Algophony Framework** for the software.
+The condition in which algorithmic systems take part in making, hearing,
+classifying, and judging sound. Use **Algophonya** for the condition and
+**Algophony Framework** for the software.
 
 ## Artificial Audio Intelligence (AAI)
 
-The combined capacity of machine systems to generate speech, music, and soundscapes and to hear, transcribe, classify, and decode sound at scale. AAI gives the machine both a mouth and an ear; the framework's premise is that both are political.
+The combined capacity of machine systems to generate speech, music, and soundscapes and to hear, transcribe, classify, and decode sound at scale. AAI gives the machine both a mouth and an ear; both operations carry technical and political consequences.
 
 ## Algorithmic Soundscape
 
@@ -26,7 +28,7 @@ The recognition that sound was never innocent of fabrication: a coconut becomes 
 
 ## Middle Matter
 
-The framework's description of sound as simultaneously material and immaterial: signal and sensation, pressure and imagination, trace and event. Generative audio is powerful because, as middle matter, it does not represent reality; it produces the conditions for reality to be believed, felt, remembered, obeyed, doubted, or shared.
+Sound understood as simultaneously material and immaterial: signal and sensation, pressure and imagination, trace and event. Generative audio is powerful because, as middle matter, it does not represent reality; it produces the conditions for reality to be believed, felt, remembered, obeyed, doubted, or shared.
 
 ## Agentic Listening
 
@@ -106,7 +108,7 @@ A diagnostic score (0–5) measuring the degree to which a generated soundscape 
 
 ## Homogenization Index
 
-A proposed diagnostic score (0–5) measuring the degree to which a generated output averages distinct ecologies, accents, voices, or places into a default rendering. Homogenization differs from cliché: a cliché is a wrong specific, homogenization is the erasure of the specific. The framework's formulation: homogenization is an old project with a new codec.
+A proposed diagnostic score (0–5) measuring the degree to which a generated output averages distinct ecologies, accents, voices, or places into a default rendering. Homogenization differs from cliché: a cliché is a wrong specific, homogenization is the erasure of the specific.
 
 ## Disclosure Integrity
 
@@ -118,7 +120,7 @@ A proposed diagnostic score (0–5) measuring the risk attached to voice-like ma
 
 ## Compute Provenance
 
-Generation metadata recording the material footprint of a run: whether it executed locally or through a cloud API or hosted endpoint, on what hardware, in what region, with any available energy notes. It operationalizes the framework's planetary claim that every generated sound has a body somewhere: electricity, water, lithium, heat, labor.
+Generation metadata recording the material footprint of a run: whether it executed locally or through a cloud API or hosted endpoint, on what hardware, in what region, with any available energy notes. Every generated sound has a material context: electricity, water, minerals, heat, and labor.
 
 ## Capture
 
@@ -126,7 +128,7 @@ The condition of audio systems whose weights, terms, training data, or outputs a
 
 ## Rights of the Audible
 
-The rights named by *Algophonya framework*: voice, silence, opacity, accent and listening difference, disclosure, consent/refusal/revocation/credit/payment, community protocols, contestability, redress, and the right to remake the tools.
+The framework tracks rights concerning voice, silence, opacity, accent and listening difference, disclosure, consent, refusal, revocation, credit, payment, community protocols, contestability, redress, and the ability to remake tools.
 
 ## Planetary Ear
 

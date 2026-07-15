@@ -10,13 +10,20 @@ Algophony studies how algorithms generate, imitate, distort, classify, and liste
 
 The central claim is simple: generative audio systems do not only produce sounds. They produce assumptions about worlds: what a forest is, what a city is, what a ritual is, what counts as background, what gets erased, and what becomes audible.
 
-The founding statement of the project is [*Algophonya framework*](docs/benchmark-methodology.md) (Sonic Field, 2026). Algophonya names the condition; Algophony Framework keeps the software/research-instrument name and translates the framework into evaluation levels, score axes, metadata disciplines, and traceable listening reports (see `docs/benchmark-methodology.md`).
+Algophonya names the condition; Algophony Framework keeps the software and
+research-instrument name and makes that condition operational through
+evaluation levels, score axes, metadata disciplines, and traceable listening
+reports. The repository's public conceptual reference is
+[`docs/benchmark-methodology.md`](docs/benchmark-methodology.md).
 
 ## Current System
 
 This repository is a local-mode Algophony system. It contains the framework contracts and two apps: the Bench Dashboard for benchmark inspection and Algophony Studio for local sonic-library work. It is not a full public ML leaderboard.
 
-The full local research tree can carry the v0.1.1 procedural pilot corpus. Public/code exports intentionally ship without private corpus records, generated audio, report corpora, uploads, secrets, private paths, or local git history.
+The full local research tree can carry the v0.1.1 procedural pilot corpus. The
+tracked public repository intentionally excludes private corpus records,
+generated audio, report corpora, uploads, secrets, private paths, and private
+notes.
 
 What exists:
 
@@ -30,7 +37,7 @@ What exists:
 - A standalone **Algophony Studio** app in `studio/` for local sound libraries, prompt cards, stacks, tags, comparisons, provider-key-controlled generation, and export workflows.
 - Optional Earworm/Akousmata trace fields for future append-only listening routes, non-audio context bundles, provenance, retention, and memory operations.
 - Optional real Oída v0.2 gateway passes, using either Oída-owned perception or an audio-capable host model, normalized into the same AKOÚŌ/Earworm report fields.
-- A sanitized public-export workflow that publishes code without local corpus data, generated audio, uploads, secrets, private paths, or private local git history.
+- An optional sanitized snapshot-export workflow for code-only archives without local corpus data, generated audio, uploads, secrets, private paths, or private notes.
 
 What does not exist yet:
 
@@ -250,8 +257,10 @@ The public-facing Algophony page is maintained in the private Sonic Field Labs
 website repository as a read-only curated showcase. Do not deploy the local
 playground or Studio as the public page.
 
-Use `scripts/prepare_public_export.py` for public publication. Do not push the
-current local git history directly to the public remote.
+This repository is the source of truth for v0.2+ code releases. Commit and push
+reviewed source changes directly according to branch controls. Use
+`scripts/prepare_public_export.py` only when a separate sanitized,
+fresh-history snapshot is useful.
 
 Local app deployment in this repository means local preview or internal review.
 The Bench Dashboard and Studio are not configured as public multi-user services

@@ -47,7 +47,7 @@
         { "type": "null" }
       ],
       "default": null,
-      "description": "Proposed v0.2 framework axis. How completely the generation discloses its synthetic origin: generator, operator, version, and intended use. 5 = fully disclosed and legible, 1 = opaque. Null when not yet scored."
+      "description": "Proposed v0.2 provenance axis. How completely the generation discloses its synthetic origin: generator, operator, version, and intended use. 5 = fully disclosed and legible, 1 = opaque. Null when not yet scored."
     },
     "homogenization_index": {
       "oneOf": [
@@ -55,7 +55,7 @@
         { "type": "null" }
       ],
       "default": null,
-      "description": "Proposed v0.2 framework axis. Degree to which the output averages distinct ecologies, accents, voices, or places into a default rendering. 0 = situated and specific, 5 = fully averaged. Lower is better. Null when not yet scored."
+      "description": "Proposed v0.2 homogenization axis. Degree to which the output averages distinct ecologies, accents, voices, or places into a default rendering. 0 = situated and specific, 5 = fully averaged. Lower is better. Null when not yet scored."
     },
     "voice_consent_risk": {
       "oneOf": [
@@ -63,7 +63,7 @@
         { "type": "null" }
       ],
       "default": null,
-      "description": "Proposed v0.2 framework axis. Risk attached to voice-like material whose provenance or consent status cannot be verified. 0 = no voice-like material or fully cleared, 5 = prominent voice-like material with unverifiable provenance. Lower is better. Null when no voice material or not yet scored."
+      "description": "Proposed v0.2 consent-risk axis. Risk attached to voice-like material whose provenance or consent status cannot be verified. 0 = no voice-like material or fully cleared, 5 = prominent voice-like material with unverifiable provenance. Lower is better. Null when no voice material or not yet scored."
     }
   },
   "$defs": {
