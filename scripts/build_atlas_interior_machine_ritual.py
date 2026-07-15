@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build interior, machine, ritual prompts (ALG-0031 to ALG-0060)."""
-import json, sys
+import json
+import sys
 
 prompts = [
 {"prompt_id":"ALG-0031","prompt_text":"Empty concrete stairwell in a large building, single footstep sequence ascending with long reverb tail, heavy fire door closing and echoing, distant HVAC drone, fluorescent tube buzz, no voice, no music.","category":"interior","subcategories":["anthrophony","technophony","reverb"],"intended_sources":["footstep echo","fire door echo","HVAC drone","fluorescent buzz"],"forbidden_sources":["voice","music"],"location_imaginary":"Empty concrete stairwell","listening_mode":"signal-inspection-listening","duration_target":30,"loop_required":False,"difficulty":"easy","evaluation_focus":["reverb_logic","spatial_coherence","source_accuracy"]},

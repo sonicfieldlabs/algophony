@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build forest, city, coast prompts (ALG-0001 to ALG-0030)."""
-import json, sys
+import json
+import sys
 
 prompts = [
 {"prompt_id":"ALG-0001","prompt_text":"A humid lowland forest before dawn, dense insect chorus in the background, occasional distant frogs, leaves dripping after rain, no river, no birds, no music, seamless 30-second loop.","category":"forest","subcategories":["biophony","geophony","temporal_specificity"],"intended_sources":["insect chorus","distant frogs","dripping leaves"],"forbidden_sources":["river","birds","music"],"location_imaginary":"Humid lowland forest before dawn","listening_mode":"ecological-posthuman-listening","duration_target":30,"loop_required":True,"difficulty":"medium","evaluation_focus":["ecological_plausibility","generic_naturalism_index","loopability","negative_adherence"]},

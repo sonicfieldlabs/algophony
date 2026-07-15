@@ -174,15 +174,43 @@ function compareValues(left: unknown, right: unknown): number {
   return String(left ?? "").localeCompare(String(right ?? ""));
 }
 
-function likePatternToRegExp(pattern: string): RegExp {
-  const unescaped = pattern.replace(/\\([%_\\])/g, "$1");
-  const escaped = unescaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = escaped.replace(/%/g, ".*").replace(/_/g, ".");
-  return new RegExp(`^${regex}$`, "i");
-}
-
 function matchesIlike(value: unknown, pattern: string): boolean {
-  return likePatternToRegExp(pattern).test(String(value ?? ""));
+  type Token = { kind: "many" } | { kind: "one" } | { kind: "literal"; value: string };
+  const tokens: Token[] = [];
+  const patternChars = Array.from(pattern.toLocaleLowerCase());
+  for (let index = 0; index < patternChars.length; index += 1) {
+    const char = patternChars[index];
+    if (char === "\\" && index + 1 < patternChars.length) {
+      tokens.push({ kind: "literal", value: patternChars[index + 1] });
+      index += 1;
+    } else if (char === "%") {
+      tokens.push({ kind: "many" });
+    } else if (char === "_") {
+      tokens.push({ kind: "one" });
+    } else {
+      tokens.push({ kind: "literal", value: char });
+    }
+  }
+
+  const text = Array.from(String(value ?? "").toLocaleLowerCase());
+  let previous = new Array<boolean>(text.length + 1).fill(false);
+  previous[0] = true;
+  for (const token of tokens) {
+    const current = new Array<boolean>(text.length + 1).fill(false);
+    if (token.kind === "many") {
+      current[0] = previous[0];
+      for (let index = 1; index <= text.length; index += 1) {
+        current[index] = previous[index] || current[index - 1];
+      }
+    } else {
+      for (let index = 1; index <= text.length; index += 1) {
+        current[index] = previous[index - 1]
+          && (token.kind === "one" || token.value === text[index - 1]);
+      }
+    }
+    previous = current;
+  }
+  return previous[text.length];
 }
 
 function parseLiteral(value: string): unknown {

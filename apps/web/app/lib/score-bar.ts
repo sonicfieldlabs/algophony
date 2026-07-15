@@ -31,10 +31,6 @@ export const SCORE_AXES = [
 
 const RISK_AXES_SET = new Set<string>(RISK_AXES);
 
-export function axisDirection(axis: string): "positive" | "risk" {
-  return RISK_AXES_SET.has(axis) ? "risk" : "positive";
-}
-
 export type ScoreLevel = "low" | "mid" | "high" | "empty";
 
 export function scoreLevel(value: number | null | undefined, axis: string): ScoreLevel {

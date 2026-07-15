@@ -15,7 +15,6 @@ const REPO_ROOT = join(process.cwd(), "../..");
 const PROVIDER_LIMITS: Record<string, number> = {
   synth_baseline: 120,
   spectral_fm: 120,
-  spatialscaper: 120,
   el_sfx: 30,
   stable_audio_3_stability_api: 360,
   stable_audio_25_stability_api: 190,

@@ -124,7 +124,7 @@ export function buildSonicPalette(
   const promptTemplates = generatePromptTemplates(vocabulary, references);
 
   // Exclusion constraints
-  const exclusionConstraints = buildExclusions(vocabulary, dontList);
+  const exclusionConstraints = buildExclusions(dontList);
 
   // Variation strategies
   const variationStrategies = buildVariationStrategies(references, vocabulary);
@@ -241,7 +241,7 @@ function generatePromptTemplates(vocab: PaletteVocabulary, refs: PaletteReferenc
   return templates;
 }
 
-function buildExclusions(vocab: PaletteVocabulary, dontList: string[]): string[] {
+function buildExclusions(dontList: string[]): string[] {
   const exclusions: string[] = [];
   for (const dont of dontList) {
     if (dont.includes("no music") || dont.includes("No melody")) exclusions.push("no music", "no melody", "no tonal progression");

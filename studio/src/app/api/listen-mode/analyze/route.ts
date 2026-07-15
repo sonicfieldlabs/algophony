@@ -46,13 +46,6 @@ export async function POST(request: NextRequest) {
     const detectedEvents: Array<{ tag: string }> = analysis?.detected_events ?? [];
     const filename = ref.filename ?? "";
 
-    // Load project context
-    let _projectContext: Record<string, unknown> = {};
-    if (projectId) {
-      const { data: proj } = await service.from("projects").select("*").eq("id", projectId).eq("user_id", profile.id).single();
-      if (proj) _projectContext = proj.sonic_brief ?? {};
-    }
-
     // Rules-based interpretation
     const allSignals = [
       ...detectedEvents.map((e) => e.tag),

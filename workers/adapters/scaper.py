@@ -9,13 +9,12 @@ This replaces Scaper for MVP since Scaper requires a sample library.
 """
 
 import hashlib
-import os
 from pathlib import Path
 
 import numpy as np
 import soundfile as sf
 
-from .base import GenerationAdapter, GenerationError
+from .base import GenerationAdapter
 
 
 class SyntheticBaselineAdapter(GenerationAdapter):

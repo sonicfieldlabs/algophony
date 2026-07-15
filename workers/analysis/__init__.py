@@ -1,3 +1,0 @@
-"""
-Algophony audio analysis modules.
-"""

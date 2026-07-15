@@ -38,27 +38,6 @@
     "status_reason": "ready"
   },
   {
-    "provider_id": "spatialscaper",
-    "name": "SpatialScaper",
-    "type": "spatial_procedural",
-    "runtime": "local",
-    "module": "workers.adapters.spatialscaper",
-    "class_name": "SpatialScaperAdapter",
-    "version": "spatialscaper-local-unconfigured",
-    "license_status": "SpatialScaper procedural output - verify sample/source licenses.",
-    "install_hint": "Install SpatialScaper and configure source event folders.",
-    "env_requirements": [],
-    "optional_dependencies": [
-      "spatialscaper"
-    ],
-    "max_duration_seconds": null,
-    "supports_loop": false,
-    "supports_seed": false,
-    "default_parameters": {},
-    "status": "not_installed",
-    "status_reason": "Missing optional package(s): spatialscaper"
-  },
-  {
     "provider_id": "el_sfx",
     "name": "ElevenLabs Sound Effects",
     "type": "ml_model",
@@ -111,7 +90,7 @@
     "class_name": "MOSSSoundEffectLocalAdapter",
     "version": "OpenMOSS-Team/MOSS-SoundEffect",
     "license_status": "OpenMOSS SoundEffect generated output - Apache-2.0 model; verify upstream terms",
-    "install_hint": "Install requirements-local-audio.txt and set ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE=true.",
+    "install_hint": "Install requirements-local-audio.txt, opt into remote code, and pin ALGOPHONY_MOSS_SFX_REVISION to a 40-character commit SHA.",
     "env_requirements": [
       "ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE"
     ],

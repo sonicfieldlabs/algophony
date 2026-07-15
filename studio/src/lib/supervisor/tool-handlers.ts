@@ -722,7 +722,7 @@ async function handleCreateGameManifest(
 }
 
 async function handleGetUsageSummary(
-  input: Record<string, unknown>,
+  _input: Record<string, unknown>,
   ctx: ToolCallContext,
 ): Promise<ToolCallResult> {
   const database = await createServerLocalClient();

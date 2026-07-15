@@ -103,7 +103,7 @@ function applySecurityHeaders(response: NextResponse, nonce?: string) {
     csp,
   );
 
-  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Frame-Options", "DENY"); // nosemgrep: javascript.express.security.x-frame-options-misconfiguration.x-frame-options-misconfiguration -- constant deny policy
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");

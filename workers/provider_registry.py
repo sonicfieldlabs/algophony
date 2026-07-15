@@ -12,6 +12,7 @@ from dataclasses import asdict, dataclass, field
 import importlib.util
 import os
 import platform
+import re
 from pathlib import Path
 from typing import Any
 
@@ -83,18 +84,6 @@ PROVIDER_REGISTRY: dict[str, ProviderSpec] = {
         supports_loop=True,
         supports_seed=True,
     ),
-    "spatialscaper": ProviderSpec(
-        provider_id="spatialscaper",
-        name="SpatialScaper",
-        type="spatial_procedural",
-        runtime="local",
-        module="workers.adapters.spatialscaper",
-        class_name="SpatialScaperAdapter",
-        version="spatialscaper-local-unconfigured",
-        license_status="SpatialScaper procedural output - verify sample/source licenses.",
-        install_hint="Install SpatialScaper and configure source event folders.",
-        optional_dependencies=["spatialscaper"],
-    ),
     "el_sfx": ProviderSpec(
         provider_id="el_sfx",
         name="ElevenLabs Sound Effects",
@@ -132,7 +121,7 @@ PROVIDER_REGISTRY: dict[str, ProviderSpec] = {
         class_name="MOSSSoundEffectLocalAdapter",
         version="OpenMOSS-Team/MOSS-SoundEffect",
         license_status="OpenMOSS SoundEffect generated output - Apache-2.0 model; verify upstream terms",
-        install_hint="Install requirements-local-audio.txt and set ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE=true.",
+        install_hint="Install requirements-local-audio.txt, opt into remote code, and pin ALGOPHONY_MOSS_SFX_REVISION to a 40-character commit SHA.",
         env_requirements=["ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE"],
         optional_dependencies=["transformers", "torch", "huggingface_hub"],
         max_duration_seconds=30,
@@ -391,14 +380,7 @@ def provider_status(provider_id: str) -> dict[str, Any]:
     record["status"] = "available"
     record["status_reason"] = "ready"
 
-    if spec.type in ("procedural_control", "spatial_procedural") and key != "spatialscaper":
-        return record
-
-    if key == "spatialscaper":
-        ok, missing = _has_all_packages(spec.optional_dependencies)
-        if not ok:
-            record["status"] = "not_installed"
-            record["status_reason"] = f"Missing optional package(s): {', '.join(missing)}"
+    if spec.type == "procedural_control":
         return record
 
     env_ok, missing_env = _has_all_env(spec.env_requirements)
@@ -411,6 +393,18 @@ def provider_status(provider_id: str) -> dict[str, Any]:
         record["status"] = "configured_missing_key"
         record["status_reason"] = "Set ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE=true to permit MOSS custom code loading."
         return record
+
+    if key == "moss_sfx_local":
+        model_path = os.getenv("ALGOPHONY_MOSS_SFX_MODEL_PATH", "").strip()
+        revision = os.getenv("ALGOPHONY_MOSS_SFX_REVISION", "").strip()
+        if model_path and not Path(model_path).expanduser().exists():
+            record["status"] = "configured_missing_key"
+            record["status_reason"] = "The configured local MOSS model path does not exist."
+            return record
+        if not model_path and re.fullmatch(r"[0-9a-fA-F]{40}", revision) is None:
+            record["status"] = "configured_missing_key"
+            record["status_reason"] = "Set ALGOPHONY_MOSS_SFX_REVISION to the immutable 40-character Hugging Face commit SHA."
+            return record
 
     if key == "moss_sfx_mlx":
         if platform.system() != "Darwin" or platform.machine() != "arm64":

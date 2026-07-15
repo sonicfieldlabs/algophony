@@ -61,7 +61,7 @@ export function buildFoleyPrompt(config: FoleyPromptConfig): string {
       prompt = buildPropPrompt(performer, material, recording, categoryFields.fields as PropFields);
       break;
     case "doors":
-      prompt = buildDoorPrompt(performer, material, recording, categoryFields.fields as DoorFields);
+      prompt = buildDoorPrompt(performer, recording, categoryFields.fields as DoorFields);
       break;
     default:
       prompt = buildGenericFoleyPrompt(category, performer, material, recording);
@@ -150,7 +150,7 @@ function buildPropPrompt(
 }
 
 function buildDoorPrompt(
-  p: PerformerSettings, m: MaterialSettings, r: RecordingSettings, f: DoorFields
+  p: PerformerSettings, r: RecordingSettings, f: DoorFields
 ): string {
   const mic = MIC_PERSPECTIVE_LABELS[r.micPerspective];
   const realism = REALISM_LABELS[p.realism];

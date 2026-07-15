@@ -24,7 +24,7 @@ function timingSafeEqual(a: string, b: string): boolean {
   return result === 0;
 }
 
-export function studioEnabled(): boolean {
+function studioEnabled(): boolean {
   return process.env.ALGOPHONY_ENABLE_PLAYGROUND === "true";
 }
 

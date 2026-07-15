@@ -12,6 +12,8 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from workers.adapters.elevenlabs_sfx import ElevenLabsSFXAdapter
+from workers.adapters.base import GenerationError
+from workers.adapters.moss_sound_effect_local import MOSSSoundEffectLocalAdapter
 from workers.adapters.stable_audio_25_stability import (
     StableAudio25StabilityAdapter,
     StableAudio3StabilityAdapter,
@@ -39,6 +41,26 @@ class MockResponse:
 
 
 class ProviderContractTests(unittest.TestCase):
+    def test_remote_moss_custom_code_requires_immutable_revision(self) -> None:
+        env = {
+            "ALGOPHONY_MOSS_SFX_MODEL_ID": "OpenMOSS-Team/MOSS-SoundEffect",
+            "ALGOPHONY_MOSS_SFX_MODEL_PATH": "",
+            "ALGOPHONY_MOSS_SFX_REVISION": "main",
+            "ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE": "true",
+        }
+        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", env, clear=False):
+            with self.assertRaisesRegex(GenerationError, "40-character"):
+                MOSSSoundEffectLocalAdapter(storage_dir=tmp)
+
+    def test_local_moss_model_path_must_exist(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(
+            "os.environ",
+            {"ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE": "true"},
+            clear=False,
+        ):
+            with self.assertRaisesRegex(GenerationError, "does not exist"):
+                MOSSSoundEffectLocalAdapter(model_path=str(Path(tmp) / "missing"), storage_dir=tmp)
+
     def test_elevenlabs_sound_generation_payload_and_metadata(self) -> None:
         calls = []
 

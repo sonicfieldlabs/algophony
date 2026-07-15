@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build archive, club_exterior, ruin, impossible_ecology prompts (ALG-0061 to ALG-0100)."""
-import json, sys
+import json
+import sys
 
 prompts = [
 {"prompt_id":"ALG-0061","prompt_text":"Deteriorated audio cassette playback, wow and flutter distorting the speed, persistent tape hiss, intermittent dropouts creating silence holes, muffled original content unrecognizable, transport mechanism squeaking, no clean audio.","category":"archive","subcategories":["technophony","decay","analog"],"intended_sources":["wow and flutter","tape hiss","dropouts","muffled content","mechanism squeak"],"forbidden_sources":["clean audio"],"location_imaginary":"Deteriorated cassette playback","listening_mode":"forensic-archival-listening","duration_target":30,"loop_required":False,"difficulty":"medium","evaluation_focus":["documentary_ambiguity","source_accuracy","false_source_index"]},

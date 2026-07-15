@@ -8,9 +8,7 @@ import {
   type ProviderStatus,
   type Report,
   type ScoreRecord,
-  type ScoreSet,
   type SourceType,
-  type ListeningProcess,
 } from "./types";
 
 export type {
@@ -20,9 +18,7 @@ export type {
   ProviderStatus,
   Report,
   ScoreRecord,
-  ScoreSet,
   SourceType,
-  ListeningProcess,
 };
 
 const REPO_ROOT = process.env.ALGOPHONY_DATA_ROOT
@@ -35,7 +31,6 @@ const DATA_PATHS = {
   reports: path.join(REPO_ROOT, "reports", "json"),
   scores: path.join(REPO_ROOT, "benchmark", "scores", "scores-v0.1.jsonl"),
   suite: path.join(REPO_ROOT, "benchmark", "suites", "algophony-benchmark-lite-v0.1.json"),
-  comparison: path.join(REPO_ROOT, "benchmark", "exports", "model-comparison-v0.1.json"),
   providerStatus: path.join(REPO_ROOT, "benchmark", "exports", "provider-status.json"),
 };
 
@@ -43,7 +38,11 @@ function safeJsonParse<T>(line: string, context: string): T | null {
   try {
     return JSON.parse(line) as T;
   } catch (err) {
-    console.error(`[data] skipping malformed JSON in ${context}:`, err instanceof Error ? err.message : err);
+    console.error(
+      "[data] skipping malformed JSON in %s: %s",
+      context,
+      err instanceof Error ? err.message : err,
+    );
     return null;
   }
 }
@@ -114,9 +113,6 @@ const generationsMemo = memoize<Generation[]>(() => loadJsonlFile<Generation>(DA
 const reportsMemo = memoize<Report[]>(() => loadJsonDir<Report>(DATA_PATHS.reports));
 const scoresMemo = memoize<ScoreRecord[]>(() => loadJsonlFile<ScoreRecord>(DATA_PATHS.scores));
 const suiteMemo = memoize<BenchmarkSuite | null>(() => loadJsonFile<BenchmarkSuite>(DATA_PATHS.suite));
-const comparisonMemo = memoize<Record<string, unknown> | null>(() =>
-  loadJsonFile<Record<string, unknown>>(DATA_PATHS.comparison),
-);
 const providerStatusMemo = memoize<ProviderStatus[]>(
   () => loadJsonFile<ProviderStatus[]>(DATA_PATHS.providerStatus) || [],
 );
@@ -126,9 +122,6 @@ export const getGenerations = cache((): Generation[] => generationsMemo(mtimeKey
 export const getReports = cache((): Report[] => reportsMemo(dirMtimeKey(DATA_PATHS.reports)));
 export const getScores = cache((): ScoreRecord[] => scoresMemo(mtimeKey(DATA_PATHS.scores)));
 export const getSuite = cache((): BenchmarkSuite | null => suiteMemo(mtimeKey(DATA_PATHS.suite)));
-export const getComparison = cache((): Record<string, unknown> | null =>
-  comparisonMemo(mtimeKey(DATA_PATHS.comparison)),
-);
 export const getProviderStatuses = cache((): ProviderStatus[] =>
   providerStatusMemo(mtimeKey(DATA_PATHS.providerStatus)),
 );
@@ -155,27 +148,7 @@ export function getReportsForAudio(audioId: string): Report[] {
   return getReports().filter((report) => report.audio_id === audioId);
 }
 
-export function getGenerationsForPrompt(promptId: string): Generation[] {
-  return getGenerations().filter((generation) => generation.prompt_id === promptId);
-}
-
-export { POSITIVE_AXES, RISK_AXES, SCORE_AXES, axisDirection } from "./score-bar";
-
-export const SOURCE_TYPES: SourceType[] = [
-  "generated_procedural",
-  "generated_ml",
-  "field_recording",
-  "found_sound",
-  "hybrid",
-];
-
-export const LISTENING_PROCESSES: ListeningProcess[] = [
-  "agent_automated",
-  "agent_interactive",
-  "human_blind",
-  "human_informed",
-  "hybrid",
-];
+export { POSITIVE_AXES, RISK_AXES, SCORE_AXES } from "./score-bar";
 
 export const CATEGORIES = [
   "forest",
@@ -190,10 +163,6 @@ export const CATEGORIES = [
   "impossible_ecology",
 ] as const;
 
-export function isKnownCategory(value: string): boolean {
-  return (CATEGORIES as readonly string[]).includes(value);
-}
-
 export function modelTypeLabel(model: string): string {
   return model.includes("Baseline") ? "procedural control" : "ML model";
 }
@@ -207,15 +176,4 @@ export function sourceTypeLabel(st: SourceType): string {
     hybrid: "Hybrid",
   };
   return labels[st] || st;
-}
-
-export function listeningProcessLabel(lp: ListeningProcess): string {
-  const labels: Record<ListeningProcess, string> = {
-    agent_automated: "Agent (Automated)",
-    agent_interactive: "Agent (Interactive)",
-    human_blind: "Human (Blind)",
-    human_informed: "Human (Informed)",
-    hybrid: "Hybrid",
-  };
-  return labels[lp] || lp;
 }

@@ -15,7 +15,3 @@ export function tryAcquireStudioSlot(): boolean {
 export function releaseStudioSlot(): void {
   if (inFlight > 0) inFlight -= 1;
 }
-
-export function studioInFlightCount(): number {
-  return inFlight;
-}

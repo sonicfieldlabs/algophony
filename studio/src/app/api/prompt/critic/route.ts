@@ -5,8 +5,7 @@ import { requireProfile, AuthError, unauthorizedResponse } from "@/lib/auth/curr
 
 export async function POST(request: NextRequest) {
   try {
-    let _profile;
-    try { _profile = await requireProfile(); }
+    try { await requireProfile(); }
     catch (err) { if (err instanceof AuthError) return unauthorizedResponse(err.message); throw err; }
 
     const body = await request.json();

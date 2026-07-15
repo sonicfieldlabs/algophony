@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from workers.oida_gateway import algophony_patch  # noqa: E402
+from workers.oida_gateway import algophony_patch, server_url  # noqa: E402
 
 
 def fixture() -> dict:
@@ -114,6 +116,11 @@ class OidaGatewayTests(unittest.TestCase):
         result["contract"] = "oida/gateway/v0.1"
         with self.assertRaises(ValueError):
             algophony_patch(result)
+
+    def test_gateway_url_rejects_non_http_schemes(self):
+        with patch.dict(os.environ, {"ALGOPHONY_OIDA_URL": "file:///private/store"}):
+            with self.assertRaisesRegex(ValueError, "http"):
+                server_url()
 
 
 if __name__ == "__main__":

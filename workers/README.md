@@ -1,6 +1,6 @@
 # Workers
 
-Generation pipeline, provider registry, adapters, and audio analysis modules.
+Generation pipeline, provider registry, and production adapters.
 
 ## Structure
 
@@ -23,8 +23,6 @@ workers/
     tangoflux_local.py
     scaper.py
     spectral_fm.py
-    spatialscaper.py
-  analysis/
 ```
 
 ## Provider Model
@@ -55,6 +53,7 @@ Minimum cloud soundscape test keys:
 
 - `ALGOPHONY_ELEVENLABS_API_KEY` for ElevenLabs sound effects, max 30 seconds per generated clip.
 - `ALGOPHONY_STABILITY_API_KEY` for Stability Stable Audio 3.0/2.5. Stable Audio 3.0 is registered as `stable_audio_3_stability_api` and is capped at 360 seconds.
+- Remote MOSS custom code also requires `ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE=true` and an immutable 40-character commit SHA in `ALGOPHONY_MOSS_SFX_REVISION`; a local model path does not need a remote revision.
 
 Stability requests default to multipart form fields. Set `ALGOPHONY_STABILITY_PAYLOAD_MODE=json` only if a configured endpoint expects JSON.
 

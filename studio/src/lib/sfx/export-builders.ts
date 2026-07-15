@@ -202,7 +202,12 @@ export function generateFileName(
   }
 
   // Clean up consecutive separators
-  name = name.replace(new RegExp(`${escapeRegex(template.separator)}{2,}`, "g"), template.separator);
+  if (template.separator) {
+    const doubledSeparator = template.separator + template.separator;
+    while (name.includes(doubledSeparator)) {
+      name = name.split(doubledSeparator).join(template.separator);
+    }
+  }
   name = name.replace(/^[_-]+|[_-]+$/g, "");
 
   return `${name}.${ext}`;
@@ -219,10 +224,6 @@ function applyCase(str: string, style: NamingTemplate["caseStyle"]): string {
     }
     default: return str;
   }
-}
-
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /* ── Cue Sheet ───────────────────────────────────────────────── */

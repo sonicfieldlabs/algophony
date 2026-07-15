@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import re
+from pathlib import Path
 
 from .base import GenerationAdapter, GenerationError
 
@@ -14,13 +16,29 @@ class MOSSSoundEffectLocalAdapter(GenerationAdapter):
     model_version = "OpenMOSS-Team/MOSS-SoundEffect"
     license_status = "OpenMOSS SoundEffect generated output - Apache-2.0 model; verify upstream terms"
     max_duration_seconds = 30
+    _COMMIT_REVISION = re.compile(r"[0-9a-fA-F]{40}")
 
     def __init__(self, model_path: str | None = None, storage_dir: str = "generations/audio", **kwargs):
         super().__init__(storage_dir=storage_dir, **kwargs)
-        self.model_id = model_path or os.getenv("ALGOPHONY_MOSS_SFX_MODEL_PATH") or os.getenv("ALGOPHONY_MOSS_SFX_MODEL_ID", self.model_version)
+        configured_path = model_path or os.getenv("ALGOPHONY_MOSS_SFX_MODEL_PATH", "").strip()
+        if configured_path:
+            local_path = Path(configured_path).expanduser()
+            if not local_path.exists():
+                raise GenerationError("config_error", "The configured local MOSS model path does not exist.")
+            self.model_id = str(local_path)
+            is_local_model = True
+        else:
+            self.model_id = os.getenv("ALGOPHONY_MOSS_SFX_MODEL_ID", self.model_version)
+            is_local_model = False
         self.device = os.getenv("ALGOPHONY_MOSS_SFX_DEVICE", "auto")
         self.max_duration_seconds = int(os.getenv("ALGOPHONY_MOSS_SFX_MAX_DURATION", str(self.max_duration_seconds)))
-        self.model_version = self.model_id
+        self.revision = None if is_local_model else os.getenv("ALGOPHONY_MOSS_SFX_REVISION", "").strip()
+        if not is_local_model and not self._COMMIT_REVISION.fullmatch(self.revision):
+            raise GenerationError(
+                "config_error",
+                "Set ALGOPHONY_MOSS_SFX_REVISION to the 40-character Hugging Face commit SHA before loading remote MOSS custom code.",
+            )
+        self.model_version = "local-model" if is_local_model else f"{self.model_id}@{self.revision}"
         if os.getenv("ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE", "").lower() != "true":
             raise GenerationError("config_error", "Set ALGOPHONY_MOSS_SFX_TRUST_REMOTE_CODE=true before loading MOSS custom code.")
         self._model = None
@@ -35,8 +53,16 @@ class MOSSSoundEffectLocalAdapter(GenerationAdapter):
         except ImportError as e:
             raise GenerationError("not_installed", "MOSS local requires torch and transformers. Install requirements-local-audio.txt.") from e
         try:
-            self._processor = AutoProcessor.from_pretrained(self.model_id, trust_remote_code=True)
-            self._model = AutoModel.from_pretrained(self.model_id, trust_remote_code=True)
+            self._processor = AutoProcessor.from_pretrained(
+                self.model_id,
+                revision=self.revision,
+                trust_remote_code=True,
+            )
+            self._model = AutoModel.from_pretrained(
+                self.model_id,
+                revision=self.revision,
+                trust_remote_code=True,
+            )
             if self.device != "auto":
                 self._model = self._model.to(self.device)
             elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
@@ -94,7 +120,12 @@ class MOSSSoundEffectLocalAdapter(GenerationAdapter):
             variant=variant,
             duration=duration,
             storage_uri=self.relative_storage_uri(audio_id, "wav"),
-            parameters={"model_id": self.model_id, "duration_seconds": duration, "trust_remote_code": True},
+            parameters={
+                "model_id": self.model_id,
+                "model_revision": self.revision,
+                "duration_seconds": duration,
+                "trust_remote_code": True,
+            },
             seed=generation_params.get("seed"),
             sha256=sha256,
             file_format="wav",

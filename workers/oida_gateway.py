@@ -7,12 +7,17 @@ import os
 from pathlib import Path
 from typing import Any
 from urllib import request
+from urllib.parse import urlparse
 
 OIDA_GATEWAY_CONTRACT = "oida/gateway/v0.2"
 
 
 def server_url() -> str:
-    return os.getenv("ALGOPHONY_OIDA_URL", os.getenv("OIDA_SERVER_URL", "http://127.0.0.1:8765")).rstrip("/")
+    value = os.getenv("ALGOPHONY_OIDA_URL", os.getenv("OIDA_SERVER_URL", "http://127.0.0.1:8765")).rstrip("/")
+    parsed = urlparse(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        raise ValueError("Oída gateway URL must be an http:// or https:// URL")
+    return value
 
 
 def listen_audio(
@@ -216,7 +221,8 @@ def _post(endpoint: str, payload: dict[str, Any], *, timeout: int = 600) -> dict
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-    with request.urlopen(req, timeout=timeout) as response:
+    # server_url() rejects every scheme except HTTP(S) before this request is built.
+    with request.urlopen(req, timeout=timeout) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
         value = json.loads(response.read().decode("utf-8"))
     if not isinstance(value, dict):
         raise RuntimeError("Oída gateway returned a non-object response")

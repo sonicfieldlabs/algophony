@@ -149,12 +149,12 @@ export function generateSoundBrief(
   const uniqueAssets = Array.from(new Map(detectedAssets.map((a) => [a.name, a])).values());
 
   // Build layer map
-  const layerMap = buildLayerMap(inputType, inputText, uniqueAssets);
+  const layerMap = buildLayerMap(uniqueAssets);
 
   // Sonic style summary
   const sonicStyle = styleWords.length > 0
     ? styleWords.join(", ")
-    : inferStyleFromInput(inputType, lower);
+    : inferStyleFromInput(inputType);
 
   // Palette
   const palette = [...styleWords.slice(0, 5)];
@@ -185,7 +185,7 @@ export function generateSoundBrief(
   };
 }
 
-function inferStyleFromInput(type: BriefInputType, _text: string): string {
+function inferStyleFromInput(type: BriefInputType): string {
   switch (type) {
     case "script_excerpt": return "cinematic, detailed, immersive";
     case "game_design_doc": return "responsive, variation-friendly, low-fatigue";
@@ -209,7 +209,7 @@ function inferExportTarget(type: BriefInputType): string {
   }
 }
 
-function buildLayerMap(type: BriefInputType, text: string, assets: BriefAsset[]): BriefLayerMap[] {
+function buildLayerMap(assets: BriefAsset[]): BriefLayerMap[] {
   // Group assets by category for a basic layer map
   const categories = [...new Set(assets.map((a) => a.category))];
   return categories.slice(0, 5).map((cat) => ({
