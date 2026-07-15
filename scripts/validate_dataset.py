@@ -315,8 +315,6 @@ def check_strict_quality(project_root: Path, suite: dict, generations: list[dict
         for path in files:
             if path.is_dir():
                 continue
-            if path.name == "DEVELOPMENT_PLAN.md":
-                continue
             text = path.read_text(errors="ignore")
             if "needs verification" in text:
                 errors.append(f"Unresolved placeholder in {path.relative_to(project_root)}")

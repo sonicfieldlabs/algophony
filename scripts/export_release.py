@@ -93,7 +93,7 @@ def check_private_paths(project_root: Path) -> list[str]:
             continue
         if any(skip in path.parts for skip in skip_dirs):
             continue
-        if path.suffix not in text_suffixes and path.name not in {"AGENTS.md", "README.md", "PUBLICATION_POLICY.md"}:
+        if path.suffix not in text_suffixes and path.name != "README.md":
             continue
         try:
             content = path.read_text(errors="ignore")
@@ -177,7 +177,8 @@ def check_required_files(project_root: Path) -> list[str]:
         ".env.example",
         "docs/dataset-card-v0.1.md",
         "docs/benchmark-methodology.md",
-        "docs/release-checklist.md",
+        "docs/architecture.md",
+        "CHANGELOG.md",
         "apps/web/README.md",
         "benchmark/exports/provider-status.json",
     ]

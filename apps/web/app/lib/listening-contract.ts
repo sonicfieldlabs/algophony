@@ -5,8 +5,8 @@
  * This file intentionally copies the public contract shape needed by
  * Algophony instead of importing from an adjacent local repository.
  *
- * Aligned with AKOÚŌ v0.6: 14 listening modes plus router and reference
- * layer (16 portable skills), 17 commands, evidence ladder, claim
+ * Aligned with AKOÚŌ v0.7: 15 listening modes plus router and reference
+ * layer (17 portable skills), 18 commands, evidence ladder, claim
  * permissions, routing plans (with optional budget and preset id),
  * reference maps, and the v0.6 instrumentation fields (per-claim source
  * and time anchors; apparatus, listener, and memory blocks on outputs).
@@ -218,7 +218,7 @@ export const AKOUO_BUDGETS = ["light", "standard", "deep"] as const;
 export type AkouoBudget = (typeof AKOUO_BUDGETS)[number];
 
 /**
- * AKOÚŌ v0.6 expanded routing plan for agent handoff: weighted mode
+ * AKOÚŌ v0.7 expanded routing plan for agent handoff: weighted mode
  * selection, evidence limits, claim permissions, stop conditions, and
  * optional budget and preset id.
  */
@@ -297,7 +297,7 @@ export const AKOUO_SUBSTRATES = [
 
 export type AkouoSubstrate = (typeof AKOUO_SUBSTRATES)[number];
 
-/** AKOÚŌ v0.6 apparatus declaration: the listening substrate and its structural blind spots. */
+/** AKOÚŌ v0.7 apparatus declaration: the listening substrate and its structural blind spots. */
 export interface AkouoApparatus {
   substrate: AkouoSubstrate;
   perception_sources?: string[];
@@ -314,7 +314,7 @@ export interface AkouoListener {
   process?: string;
 }
 
-/** AKOÚŌ v0.6 links to stored sound-memory (akousma) records. */
+/** AKOÚŌ v0.7 links to stored sound-memory (akousma) records. */
 export interface AkouoMemoryLinks {
   akousma_id?: string | null;
   akousmata_refs?: string[];

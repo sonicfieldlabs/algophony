@@ -23,11 +23,11 @@ surface over that store:
 The ``akousma`` reference package lives in the earworm repo
 (``earworm/packages/py-akousma``); install with::
 
-    pip install -e <sonic-field>/earworm/packages/py-akousma
+    pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.4.0#subdirectory=packages/py-akousma"
 
 The dependency is optional: without it, calls raise ``AkousmataUnavailable`` and the
-rest of Algophony is unaffected. The store location defaults to
-``~/workspace/akousmata`` and honors ``$AKOUSMATA_PATH``.
+rest of Algophony is unaffected. The store uses the platform application-data
+directory by default and honors ``$AKOUSMATA_PATH``.
 """
 
 from __future__ import annotations
@@ -49,7 +49,7 @@ def _akousma():
     except ModuleNotFoundError as exc:  # pragma: no cover - environment-dependent
         raise AkousmataUnavailable(
             "the 'akousma' package is not installed; "
-            "pip install -e <sonic-field>/earworm/packages/py-akousma"
+            "install it from the earworm repository's packages/py-akousma directory"
         ) from exc
     return akousma
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic AKOÚŌ v0.6 routing plans for the Algophony report pipeline.
+"""Deterministic AKOÚŌ v0.7 routing plans for the Algophony report pipeline.
 
 Implements step 1 of the AKOÚŌ agentic integration contract without any LLM:
 artifact availability maps to an evidence level, the evidence level (plus

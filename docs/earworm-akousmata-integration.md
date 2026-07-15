@@ -100,8 +100,8 @@ For the v0.1.1 procedural corpus, null is the correct value.
 
 ## Batch access to the shared akousmata store (added 2026-07-04)
 
-The shared store shipped (earworm `akousma_spec_v1.md`; default location
-`~/workspace/akousmata`, `$AKOUSMATA_PATH` override). Algophony's batch surface is
+The shared store shipped (earworm `akousma_spec_v1.md`; platform application-data
+directory by default, with an `$AKOUSMATA_PATH` override). Algophony's batch surface is
 `workers/akousmata_source.py`:
 
 - `load_akousmata(originating_app=..., origin=..., limit=...)` — query records for a run.
@@ -112,7 +112,7 @@ The shared store shipped (earworm `akousma_spec_v1.md`; default location
 - CLI: `python -m workers.akousmata_source --app germ --prompt-records`.
 
 The `akousma` reference package is an **optional** dependency
-(`pip install -e <sonic-field>/earworm/packages/py-akousma`); without it the module
+(`pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.4.0#subdirectory=packages/py-akousma"`); without it the module
 raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
 `scripts/test_akousmata_source.py` (skips when the package is absent).
 
@@ -139,7 +139,7 @@ organization/evaluation only — sanitized exports never include it.
 
 The shared store now speaks akousma spec v1.1: records carry a skimmable
 `summary`, listening entries use the contract-pinned envelope
-(`{contract, created_at, summary, payload}` — oída pins `akouo/v0.6`), and
+(`{contract, created_at, summary, payload}` — OÍDA pins `akouo/v0.7`), and
 `lineage.relations` holds typed kinship links distinct from causal
 parenthood. Algophony's batch surface (`workers/akousmata_source.py`) reads
 both eras natively, writes `compares_with` links across evaluation batches,

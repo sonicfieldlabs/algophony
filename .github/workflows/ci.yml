@@ -21,6 +21,7 @@ jobs:
           cache: pip
       - run: python3 -m pip install -r requirements.txt
       - run: python3 scripts/validate_schemas.py
+      - run: python3 scripts/validate_dataset.py
       - run: python3 scripts/run_scenario_tests.py
 
   worker-unit-tests:
@@ -57,3 +58,19 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run build
+
+  studio-verify:
+    name: Studio lint + typecheck + tests + build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+      - run: npm ci
+      - run: npm run verify

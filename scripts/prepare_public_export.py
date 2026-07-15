@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create a sanitized fresh-history Algophony public export.
+Create a sanitized code-only Algophony snapshot.
 
 The public repository contains full local-mode code and empty data directories,
 but excludes the local benchmark corpus, generated metadata, reports, audio,
@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -32,12 +33,9 @@ INCLUDE_ROOTS = [
 INCLUDE_FILES = [
     ".env.example",
     ".gitignore",
-    "AGENTS.md",
-    "DEVELOPMENT_PLAN.md",
+    "CHANGELOG.md",
     "LICENSE",
-    "PUBLICATION_POLICY.md",
     "README.md",
-    "ROADMAP.md",
     "requirements.txt",
     "requirements-cloud.txt",
     "requirements-local-audio.txt",
@@ -152,12 +150,7 @@ def sanitize_text_files(out_dir: Path, dry_run: bool) -> list[str]:
         except Exception:
             continue
         updated = text
-        user_root = "/" + "Users" + "/" + "na" + "vi"
-        updated = updated.replace(f"{user_root}/workspace/algophony", "$SFL_ROOT/algophony")
-        updated = updated.replace(f"{user_root}/workspace/akouo", "$SFL_ROOT/akouo")
-        updated = updated.replace(f"{user_root}/workspace/bench", "$SFL_ROOT/bench")
-        updated = updated.replace(f"{user_root}/workspace/sonic field labs", "$SFL_ROOT/sonic-field-labs")
-        updated = updated.replace(f"{user_root}/", "$HOME/")
+        updated = re.sub(r"/U[s]ers/[^/\s]+/", "$HOME/", updated)
         if updated != text:
             changed.append(path.relative_to(out_dir).as_posix())
             if not dry_run:

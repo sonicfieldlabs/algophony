@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for the deterministic AKOÚŌ v0.6 routing-plan layer.
+"""Tests for the deterministic AKOÚŌ v0.7 routing-plan layer.
 
 Covers evidence derivation from artifact availability, claim permissions with
 command overrides, claim-permission enforcement, schema conformance of built

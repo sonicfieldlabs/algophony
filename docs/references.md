@@ -41,16 +41,26 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## AKOÚŌ and Agentic Listening
 
-- Sonic Field Labs. AKOÚŌ: Agentic listening framework. v0.6: 16 portable skills (including memory-lineage listening), evidence ladder, routing plans with budgets and presets, claim permissions, apparatus declarations, machine-readable manifest, and reference layer. See `https://github.com/sonicfieldlabs/akouo` and the adjacent repository's `SYSTEM_GUIDE.md` and `SKILL_INDEX.md`.
-- Sonic Field Labs. Earworm: persistent listening protocol for agentic signal chains. v0.1 protocol implementation, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm` and the adjacent repository's `README.md`.
-- Sonic Field Labs. Akousmata: memory-operations surface over Earworm chains: remember, list, search, similarity, export, and forget.
+- Sonic Field Labs. AKOÚŌ: agentic listening framework. v0.7: 15
+  listening modes plus router and reference layer (17 portable skills), 18
+  commands, evidence ladder, routing plans, claim permissions, apparatus
+  declarations, covenants, presets, and a machine-readable manifest. See
+  `https://github.com/sonicfieldlabs/akouo`.
+- Sonic Field Labs. Earworm: persistent listening and akousma memory protocol,
+  v0.4, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm`.
+- Sonic Field Labs. Akousmata: local-first navigator over the shared akousma
+  store, v0.4. See `https://github.com/sonicfieldlabs/akousmata`.
+- Sonic Field Labs. OÍDA: unified listening agent and
+  `oida/gateway/v0.2`, release 0.6.0. See
+  `https://github.com/sonicfieldlabs/oida`.
 - Sonic Field Labs. Agentic Listening Benchmark.
 - Sonic Field Labs. https://labs.sonicfield.org
 
 ## Algophony Framework Documents
 
-- Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Akousmata/Earworm, Algophony Framework, hmm, germ, and Oidote/Oiditos.
+- Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Earworm, Akousmata, Algophony, OÍDA, and GERM.
 - Sonic Field Labs (2026). *germ* companion paper on generative cultivation and lineage-bearing sound.
-- `docs/benchmark-methodology.md` — framework definition, score axes, AKOÚŌ v0.6 listening chain, and Earworm/Akousmata trace layer.
+- `docs/benchmark-methodology.md` — framework definition, score axes, AKOÚŌ
+  v0.7 listening chain, and Earworm/Akousmata trace layer.
 - `docs/earworm-akousmata-integration.md` — local trace contract for persistent listening routes and attached context.
-- `ROADMAP.md` — release milestones and integration history.
+- `CHANGELOG.md` — release and integration history.

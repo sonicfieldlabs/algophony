@@ -23,7 +23,11 @@ The three layers share a conceptual system but keep different responsibilities. 
 3. **AKOÚŌ listening creates reports.** Reports preserve claim categories (`heard`, `measured`, `inferred`, `interpreted`, `speculative`, `undetermined`) and evidence permissions. A report may include routing plans, reference maps, mode outputs, and optional Earworm/Akousmata traces.
 4. **Scores link back to evidence.** Every scored record links to `prompt_id`, `audio_id`, and `report_id`. Score axes are diagnostic, not documentary proof.
 5. **Bench audits the current state.** The dashboard reads the records, highlights missing corpus state in public checkouts, separates procedural controls from ML providers, and exposes exports.
-6. **Public publication is sanitized.** `scripts/prepare_public_export.py` creates a clean code release that excludes local data, private paths, generated audio, uploads, secrets, build artifacts, and private local git history.
+6. **Public publication is sanitized.** The repository itself is the public
+   code source of truth. Ignore rules and validation keep local data, absolute
+   paths, generated audio, uploads, secrets, and build artifacts out of every
+   commit. `scripts/prepare_public_export.py` can create a separate code-only
+   snapshot when one is useful.
 
 ## App Runtime Model
 
@@ -38,10 +42,13 @@ The default `npm run dev` commands still work for foreground development. The da
 
 ## Publication and Deployment
 
-This repository has two publication modes:
+This repository has two operating modes:
 
 - **Local/internal review:** run Bench and Studio locally with the daemon commands above. This is the working mode for private corpus data, provider keys, uploads, generated files, and research notes.
-- **Public code release:** run `scripts/prepare_public_export.py` and publish the sanitized export. Do not push the private local history directly to `https://github.com/sonicfieldlabs/algophony`.
+- **Public code release:** commit reviewed source directly to
+  `https://github.com/sonicfieldlabs/algophony`. Run the schema, scenario,
+  path, secret, and tracked-binary checks first. A separate sanitized snapshot
+  is optional, not the canonical history.
 
 The public-facing Algophony website or showcase belongs in the private Sonic Field Labs website repository. Bench and Studio are not configured here as public multi-user services. Any hosted deployment must first make an explicit data, auth, provider-key, upload, and provenance decision.
 
