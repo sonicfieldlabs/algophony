@@ -5,8 +5,8 @@
  * This file intentionally copies the public contract shape needed by
  * Algophony instead of importing from an adjacent local repository.
  *
- * Aligned with AKOÚŌ v0.7: 15 listening modes plus router and reference
- * layer (17 portable skills), 18 commands, evidence ladder, claim
+ * Aligned with AKOÚŌ v0.9: 16 listening modes plus router and reference
+ * layer (18 portable skills), 19 commands, evidence ladder, claim
  * permissions, routing plans (with optional budget and preset id),
  * reference maps, and the v0.6 instrumentation fields (per-claim source
  * and time anchors; apparatus, listener, and memory blocks on outputs).
@@ -67,7 +67,7 @@ export const CLAIM_LABELS: Record<ClaimCategory, string> = {
 };
 
 export const CLAIM_DESCRIPTIONS: Record<ClaimCategory, string> = {
-  heard: "Directly present in the audio, prompt, transcript, or provided description",
+  heard: "Directly present in audio that was actually decoded and listened to",
   measured: "Produced by file, signal, waveform, spectrogram, or metadata inspection",
   inferred: "Plausible logical deductions (not theory or culture)",
   interpreted: "Cultural, theoretical, affective, or contextual reading",
@@ -89,6 +89,7 @@ export const AKOUO_LISTENING_MODES = [
   "acoulogical-object-listening",
   "embodied-affective-listening",
   "transductive-media-listening",
+  "corpus-listening",
   "forensic-archival-listening",
   "ecological-posthuman-listening",
   "critical-political-listening",
@@ -104,7 +105,7 @@ export const AKOUO_LISTENING_MODES = [
 
 export type AkouoListeningMode = (typeof AKOUO_LISTENING_MODES)[number];
 
-/** All 17 portable AKOÚŌ v0.7 skills: meta-skills plus listening modes. */
+/** All 18 portable AKOÚŌ v0.9 skills: meta-skills plus listening modes. */
 export const AKOUO_SKILLS = [
   "akouo-router",
   "reference-layer",
@@ -149,6 +150,7 @@ export const AKOUO_COMMAND_NAMES = [
   "/route",
   "/remember",
   "/covenant",
+  "/corpus",
 ] as const;
 
 export type AkouoCommandName = (typeof AKOUO_COMMAND_NAMES)[number];
@@ -218,7 +220,7 @@ export const AKOUO_BUDGETS = ["light", "standard", "deep"] as const;
 export type AkouoBudget = (typeof AKOUO_BUDGETS)[number];
 
 /**
- * AKOÚŌ v0.7 expanded routing plan for agent handoff: weighted mode
+ * AKOÚŌ v0.9 expanded routing plan for agent handoff: weighted mode
  * selection, evidence limits, claim permissions, stop conditions, and
  * optional budget and preset id.
  */
@@ -297,7 +299,7 @@ export const AKOUO_SUBSTRATES = [
 
 export type AkouoSubstrate = (typeof AKOUO_SUBSTRATES)[number];
 
-/** AKOÚŌ v0.7 apparatus declaration: the listening substrate and its structural blind spots. */
+/** AKOÚŌ v0.9 apparatus declaration: the listening substrate and its structural blind spots. */
 export interface AkouoApparatus {
   substrate: AkouoSubstrate;
   perception_sources?: string[];
@@ -314,7 +316,7 @@ export interface AkouoListener {
   process?: string;
 }
 
-/** AKOÚŌ v0.7 links to stored sound-memory (akousma) records. */
+/** AKOÚŌ v0.9 links to stored sound-memory (akousma) records. */
 export interface AkouoMemoryLinks {
   akousma_id?: string | null;
   akousmata_refs?: string[];
@@ -344,6 +346,7 @@ export const LISTENING_MODE_LABELS: Record<AkouoListeningMode, string> = {
   "acoulogical-object-listening": "Acoulogical Object",
   "embodied-affective-listening": "Embodied Affective",
   "transductive-media-listening": "Transductive Media",
+  "corpus-listening": "Corpus",
   "forensic-archival-listening": "Forensic Archival",
   "ecological-posthuman-listening": "Ecological Posthuman",
   "critical-political-listening": "Critical Political",

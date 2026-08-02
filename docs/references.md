@@ -41,17 +41,17 @@ Working references are grouped by research area. Publication metadata should be 
 
 ## AKOÚŌ and Agentic Listening
 
-- Sonic Field Labs. AKOÚŌ: agentic listening framework. v0.7: 15
-  listening modes plus router and reference layer (17 portable skills), 18
+- Sonic Field Labs. AKOÚŌ: agentic listening framework. v0.9: 16
+  listening modes plus router and reference layer (18 portable skills), 19
   commands, evidence ladder, routing plans, claim permissions, apparatus
   declarations, covenants, presets, and a machine-readable manifest. See
   `https://github.com/sonicfieldlabs/akouo`.
 - Sonic Field Labs. Earworm: persistent listening and akousma memory protocol,
-  v0.4, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm`.
+  v0.6, MPL-2.0. See `https://github.com/sonicfieldlabs/earworm`.
 - Sonic Field Labs. Akousmata: local-first navigator over the shared akousma
-  store, v0.4. See `https://github.com/sonicfieldlabs/akousmata`.
+  store, v0.6. See `https://github.com/sonicfieldlabs/akousmata`.
 - Sonic Field Labs. OÍDA: unified listening agent and
-  `oida/gateway/v0.2`, release 0.6.0. See
+  `oida/gateway/v0.5`, release 0.9.0. See
   `https://github.com/sonicfieldlabs/oida`.
 - Sonic Field Labs. Agentic Listening Benchmark.
 - Sonic Field Labs. https://labs.sonicfield.org
@@ -61,6 +61,6 @@ Working references are grouped by research area. Publication metadata should be 
 - Sonic Field Labs (2026). *The Listening Stack: Agentic Sonic Computation for Hybrid Listening Ecologies*. Companion paper connecting AKOÚŌ, Earworm, Akousmata, Algophony, OÍDA, and GERM.
 - Sonic Field Labs (2026). *germ* companion paper on generative cultivation and lineage-bearing sound.
 - `docs/benchmark-methodology.md` — framework definition, score axes, AKOÚŌ
-  v0.7 listening chain, and Earworm/Akousmata trace layer.
+  v0.9 listening chain, and Earworm/Akousmata trace layer.
 - `docs/earworm-akousmata-integration.md` — local trace contract for persistent listening routes and attached context.
 - `CHANGELOG.md` — release and integration history.

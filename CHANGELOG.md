@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 — Contract and dependency alignment
+
+- Aligned the listening contract with AKOÚŌ 0.9, Earworm 0.6, Akousmata 0.6,
+  Oída gateway 0.5, and GERM 0.3.
+- Updated the evidence ladder so prompt, transcript, and contextual text never
+  count as heard audio, and added corpus listening to the portable vocabulary.
+- Updated Next.js and vulnerable transitive dependencies to patched releases.
+
 ## 0.5.0 — Sovereignty-aware evaluation
 
 - Pinned listening reports to `akouo/v0.7`, including

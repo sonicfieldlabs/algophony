@@ -1,4 +1,4 @@
-"""Oída v0.2 gateway adapter for Algophony listening and evaluation."""
+"""Oída v0.5 gateway adapter for Algophony listening and evaluation."""
 from __future__ import annotations
 
 import copy
@@ -9,7 +9,7 @@ from typing import Any
 from urllib import request
 from urllib.parse import urlparse
 
-OIDA_GATEWAY_CONTRACT = "oida/gateway/v0.2"
+OIDA_GATEWAY_CONTRACT = "oida/gateway/v0.5"
 
 
 def server_url() -> str:
@@ -81,7 +81,7 @@ def algophony_patch(result: dict[str, Any]) -> dict[str, Any]:
         "claim_taxonomy": copy.deepcopy(command.get("claim_summary") or _empty_claims()),
         "akouo_routing_plan": copy.deepcopy(command.get("routing_plan")),
         "akouo_mode_outputs": copy.deepcopy(outputs),
-        "akouo_contract_version": f"akouo/v{command.get('akouo_version') or '0.6'}",
+        "akouo_contract_version": f"akouo/v{command.get('akouo_version') or '0.9'}",
         "earworm_trace": _compact_earworm(earworm, remembered=trace is not None, event=event),
         "oida_gateway": {
             "contract": OIDA_GATEWAY_CONTRACT,

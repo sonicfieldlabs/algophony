@@ -98,9 +98,9 @@ Every score axis must declare:
 
 Scores are separated into `signal_scores`, `agent_scores`, `human_scores`, and `final_scores`. Current summaries use `final_scores`.
 
-## AKOÚŌ v0.7 Listening Chain
+## AKOÚŌ v0.9 Listening Chain
 
-Reports may carry the full AKOÚŌ v0.7 contract: router output, expanded
+Reports may carry the full AKOÚŌ v0.9 contract: router output, expanded
 routing plan (optionally budgeted and preset-derived), per-mode outputs with
 apparatus/listener/memory declarations, and reference map. The routing plan
 grades the available evidence and converts it into claim permissions before

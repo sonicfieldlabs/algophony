@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Contract tests for Algophony's Oída v0.2 gateway adapter."""
+"""Contract tests for Algophony's Oída v0.5 gateway adapter."""
 from __future__ import annotations
 
 import json
@@ -20,7 +20,7 @@ def fixture() -> dict:
     session_id = "earworm_session_algophony"
     provenance_id = "prov_algophony"
     return {
-        "contract": "oida/gateway/v0.2",
+        "contract": "oida/gateway/v0.5",
         "perception_path": "oida_owned",
         "listening_event": {
             "id": event_id,
@@ -31,7 +31,7 @@ def fixture() -> dict:
         },
         "perception_report": {"apparatus": {"substrate": "hybrid_agent_stack", "known_blind_spots": []}},
         "command_output": {
-            "akouo_version": "0.6",
+            "akouo_version": "0.9",
             "claim_summary": {
                 "heard": [{"statement": "A low hum is audible.", "confidence": "medium", "basis": "model", "source": "model"}],
                 "measured": [],
@@ -45,7 +45,7 @@ def fixture() -> dict:
         },
         "earworm": {
             "protocol": "earworm",
-            "version": "0.2.2",
+            "version": "0.6.0",
             "persistence": "session_only",
             "session": {
                 "session_id": session_id,
