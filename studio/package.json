@@ -24,7 +24,7 @@
     "@google/genai": "^2.4.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.16.0",
-    "next": "16.2.6",
+    "next": "16.2.11",
     "papaparse": "^5.5.3",
     "pino": "^10.3.1",
     "pino-pretty": "^13.1.3",
