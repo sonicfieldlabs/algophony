@@ -139,7 +139,7 @@ organization/evaluation only — sanitized exports never include it.
 
 The shared store now speaks akousma spec v1.1: records carry a skimmable
 `summary`, listening entries use the contract-pinned envelope
-(`{contract, created_at, summary, payload}` — OÍDA pins `akouo/v0.7`), and
+(`{contract, created_at, summary, payload}` — current OÍDA pins `akouo/v0.9`), and
 `lineage.relations` holds typed kinship links distinct from causal
 parenthood. Algophony's batch surface (`workers/akousmata_source.py`) reads
 both eras natively, writes `compares_with` links across evaluation batches,

@@ -14,7 +14,7 @@
     "apparatus"
   ],
   "properties": {
-    "contract": {"const": "oida/gateway/v0.2"},
+    "contract": {"const": "oida/gateway/v0.5"},
     "perception_path": {"enum": ["oida_owned", "host_supplied"]},
     "listening_event_id": {"type": "string", "minLength": 1},
     "route_preset": {"type": "string", "minLength": 1},

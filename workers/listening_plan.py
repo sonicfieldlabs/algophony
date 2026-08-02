@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic AKOÚŌ v0.7 routing plans for the Algophony report pipeline.
+"""Deterministic AKOÚŌ v0.9 routing plans for the Algophony report pipeline.
 
 Implements step 1 of the AKOÚŌ agentic integration contract without any LLM:
 artifact availability maps to an evidence level, the evidence level (plus
@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-AKOUO_CONTRACT_VERSION = "akouo/v0.7"
+AKOUO_CONTRACT_VERSION = "akouo/v0.9"
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -40,12 +40,12 @@ EVIDENCE_LEVELS = [
 # level -> (heard, measured, inferred, interpreted)
 _LADDER: dict[str, tuple[bool, bool, bool, bool]] = {
     "none": (False, False, False, False),
-    "prompt_only": (True, False, True, True),
+    "prompt_only": (False, False, True, True),
     "metadata_only": (False, True, True, True),
     "decoded_audio_metadata": (True, True, True, True),
     "measured_signal": (True, True, True, True),
-    "transcript_or_caption": (True, False, True, True),
-    "contextual_note": (True, False, True, True),
+    "transcript_or_caption": (False, False, True, True),
+    "contextual_note": (False, False, True, True),
     "mixed": (True, True, True, True),
 }
 
@@ -170,7 +170,7 @@ def build_routing_plan(
     budget: str | None = None,
     audio_available: bool | None = None,
 ) -> dict[str, Any]:
-    """Deterministic v0.6 routing plan from artifact availability. No LLM."""
+    """Deterministic v0.9 routing plan from artifact availability. No LLM."""
     evidence_level = derive_evidence_level(prompt, generation, analysis, audio_available=audio_available)
     audio_id = (generation or {}).get("audio_id") or (analysis or {}).get("audio_id")
     prompt_id = (prompt or {}).get("prompt_id") or (generation or {}).get("prompt_id")

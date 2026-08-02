@@ -182,7 +182,7 @@
         }
       ],
       "default": null,
-      "description": "Optional AKOÚŌ v0.6 expanded routing plan: evidence level, claim permissions, weighted mode chain, optional budget and preset id, agent handoff, and stop conditions."
+      "description": "Optional AKOÚŌ v0.9 expanded routing plan: evidence level, claim permissions, weighted mode chain, optional budget and preset id, agent handoff, and stop conditions."
     },
     "akouo_reference_map": {
       "oneOf": [
@@ -455,6 +455,7 @@
         "acoulogical-object-listening",
         "embodied-affective-listening",
         "transductive-media-listening",
+        "corpus-listening",
         "forensic-archival-listening",
         "ecological-posthuman-listening",
         "critical-political-listening",
@@ -488,7 +489,8 @@
         "/method",
         "/route",
         "/remember",
-        "/covenant"
+        "/covenant",
+        "/corpus"
       ]
     },
     "akouo_evidence_level": {

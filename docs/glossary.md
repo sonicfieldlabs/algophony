@@ -36,7 +36,7 @@ A structured mode of listening performed by an AI agent operating under the AKO�
 
 ## Evidence Ladder
 
-The AKOÚŌ v0.7 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
+The AKOÚŌ v0.9 contract that grades the evidence available to a listening pass: none, prompt only, metadata only, decoded audio metadata, measured signal, transcript or caption, contextual note, or mixed. The evidence level determines claim permissions, so that the strength of claims can never exceed the strength of evidence.
 
 ## Claim Permissions
 
@@ -44,7 +44,7 @@ The set of claim categories a listening pass is allowed to emit, derived from it
 
 ## Routing Plan
 
-The AKOÚŌ v0.7 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, stop conditions, and optionally a listening budget and preset id. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
+The AKOÚŌ v0.9 handoff artifact produced before listening: object, input type, evidence level, route confidence, a weighted mode chain (primary, secondary, corrective, optional, deferred), claim permissions, forbidden assumptions, a recommended command, stop conditions, and optionally a listening budget and preset id. When stop conditions are unmet, the correct move is to stop or gather evidence, not to listen to imagined input.
 
 ## Reference Layer
 
@@ -136,11 +136,11 @@ Listening extended through sensors, archives, models, and data centers to places
 
 ## Memory-Lineage Listening
 
-The AKOÚŌ v0.7 listening mode that listens with stored sound-memories: recurrence, kinship, lineage, and change over time across an akousmata store. Memory is its own evidence stream (`source: "memory"`) and never proof about the present sound; absence from the store is not novelty in the world. The `/remember` command runs this mode and registers the listening into the store.
+The AKOÚŌ v0.9 listening mode that listens with stored sound-memories: recurrence, kinship, lineage, and change over time across an akousmata store. Memory is its own evidence stream (`source: "memory"`) and never proof about the present sound; absence from the store is not novelty in the world. The `/remember` command runs this mode and registers the listening into the store.
 
 ## Apparatus Declaration
 
-The AKOÚŌ v0.7 block through which a listening output names its substrate (human ear, ASR cascade, audio-token model, speech-native model, DSP toolchain, hybrid stack), its perception sources, and its structural blind spots. Claim limits derive from the declared apparatus: a mono-input model cannot make stereo claims, and model perception is never `measured`.
+The AKOÚŌ v0.9 block through which a listening output names its substrate (human ear, ASR cascade, audio-token model, speech-native model, DSP toolchain, hybrid stack), its perception sources, and its structural blind spots. Claim limits derive from the declared apparatus: a mono-input model cannot make stereo claims, and model perception is never `measured`.
 
 ## Akousma Relations
 
@@ -152,7 +152,7 @@ The two optional spec v1.2 blocks (Earworm v0.3). `location` says where a sound 
 
 ## Akousma Covenant
 
-The optional spec v1.3 block (Earworm v0.4): under which ethics a sound was listened. Carries the listening covenant's identity and lineage (AKOÚŌ v0.7's `sovereign-listening` mode) plus honest absence — what was withheld, counted and attributed to its rule, never described. Algophony carries it through `akousma_to_prompt_record` (`covenant`, `covenant_id`) and treats withheld material as out-of-universe for every metric: never scored, never reconstructed, never guessed at.
+The optional spec v1.3 block (Earworm v0.4): under which ethics a sound was listened. Carries the listening covenant's identity and lineage (AKOÚŌ v0.9's `sovereign-listening` mode) plus honest absence — what was withheld, counted and attributed to its rule, never described. Algophony carries it through `akousma_to_prompt_record` (`covenant`, `covenant_id`) and treats withheld material as out-of-universe for every metric: never scored, never reconstructed, never guessed at.
 
 ## Provider Openness
 

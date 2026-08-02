@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for the deterministic AKOÚŌ v0.7 routing-plan layer.
+"""Tests for the deterministic AKOÚŌ v0.9 routing-plan layer.
 
 Covers evidence derivation from artifact availability, claim permissions with
 command overrides, claim-permission enforcement, schema conformance of built
@@ -43,9 +43,11 @@ class EvidenceDerivationTests(unittest.TestCase):
 
     def test_permissions_follow_ladder(self):
         prompt_only = claim_permissions_for("prompt_only")
-        self.assertTrue(prompt_only["heard_allowed"])
+        self.assertFalse(prompt_only["heard_allowed"])
         self.assertFalse(prompt_only["measured_allowed"])
         self.assertTrue(prompt_only["must_include_undetermined"])
+        self.assertFalse(claim_permissions_for("transcript_or_caption")["heard_allowed"])
+        self.assertFalse(claim_permissions_for("contextual_note")["heard_allowed"])
         none_level = claim_permissions_for("none")
         self.assertFalse(any(none_level[k] for k in ("heard_allowed", "measured_allowed", "inferred_allowed", "interpreted_allowed")))
 
