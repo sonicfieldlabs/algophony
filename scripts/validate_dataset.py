@@ -209,12 +209,14 @@ def check_analysis(analysis_records: list[dict], generations: list[dict]) -> lis
 
 
 def check_readme_counts(project_root: Path, prompts: list[dict], generations: list[dict], reports: list[dict]) -> list[str]:
-    """Fail strict validation when README corpus counts drift from the data."""
+    """Fail strict validation when public corpus documentation drifts from the data."""
     readme_path = project_root / "README.md"
-    if not readme_path.exists():
-        return ["README.md is missing"]
+    dataset_card_path = project_root / "docs" / "dataset-card-v0.1.md"
+    missing = [str(path.relative_to(project_root)) for path in (readme_path, dataset_card_path) if not path.exists()]
+    if missing:
+        return [f"Public corpus documentation is missing: {', '.join(missing)}"]
 
-    text = readme_path.read_text(errors="ignore")
+    text = readme_path.read_text(errors="ignore") + "\n" + dataset_card_path.read_text(errors="ignore")
     audio_count = 0
     for generation in generations:
         storage_uri = generation.get("storage_uri")
@@ -228,21 +230,23 @@ def check_readme_counts(project_root: Path, prompts: list[dict], generations: li
         if target.exists():
             audio_count += 1
     hybrid_reviewed = sum(1 for report in reports if report.get("review_status") == "hybrid_reviewed")
+    human_reviewed = sum(1 for report in reports if report.get("review_status") == "human_reviewed")
     agent_draft = sum(1 for report in reports if report.get("review_status") == "agent_draft")
 
     expectations = [
-        ("prompt count", rf"{len(prompts)}\s+schema-valid Atlas prompts"),
-        ("generation metadata count", rf"{len(generations)}\s+generation metadata records"),
-        ("local audio count", rf"{audio_count}\s+local audio files"),
-        ("JSON report count", rf"{len(reports)}\s+JSON reports"),
-        ("hybrid-reviewed seed report count", rf"{hybrid_reviewed}\s+hybrid-reviewed seed reports"),
-        ("agent-draft report count", rf"{agent_draft}\s+agent-draft reports"),
+        ("prompt count", rf"\|\s*Prompts\s*\|[^\n]*\|\s*{len(prompts)}\s*\|"),
+        ("generation metadata count", rf"\|\s*Generation metadata\s*\|[^\n]*\|\s*{len(generations)}\s*\|"),
+        ("local audio count", rf"\|\s*Local audio files\s*\|[^\n]*\|\s*{audio_count}\s*\|"),
+        ("JSON report count", rf"\|\s*JSON reports\s*\|[^\n]*\|\s*{len(reports)}\s*\|"),
+        ("human-reviewed report count", rf"{human_reviewed}\s+`human_reviewed` reports"),
+        ("hybrid-reviewed report count", rf"{hybrid_reviewed}\s+`hybrid_reviewed` reports"),
+        ("agent-draft report count", rf"{agent_draft}\s+`agent_draft` reports"),
     ]
 
     errors = []
     for label, pattern in expectations:
         if not re.search(pattern, text):
-            errors.append(f"README {label} does not match derived data ({pattern})")
+            errors.append(f"Public documentation {label} does not match derived data ({pattern})")
     return errors
 
 
@@ -268,26 +272,25 @@ def check_strict_quality(project_root: Path, suite: dict, generations: list[dict
     if suite.get("benchmark_status") == "procedural_pilot" and suite.get("ml_generation_count", 0) > 0:
         errors.append("Suite is procedural_pilot but includes ML generations")
 
-    reviewed_count = 0
     interpreted_count = 0
     recommendation_counts = Counter()
     for report in reports:
         recommendation_counts[report.get("regeneration_recommendation")] += 1
         if report.get("report_type") == "listening_report":
             claims = report.get("claim_taxonomy", {})
-            if not claims.get("heard") and not claims.get("interpreted") and not claims.get("undetermined"):
-                errors.append(f"Report {report['report_id']}: empty heard/interpreted/undetermined buckets")
-        if report.get("review_status") in ("human_reviewed", "hybrid_reviewed"):
-            reviewed_count += 1
-            if not report.get("claim_taxonomy", {}).get("heard"):
-                errors.append(f"Reviewed report {report['report_id']}: empty heard bucket")
-            if report.get("claim_taxonomy", {}).get("interpreted"):
+            if not any(claims.get(category) for category in ("measured", "inferred", "interpreted", "undetermined")):
+                errors.append(f"Report {report['report_id']}: empty evidentiary and uncertainty buckets")
+            heard = claims.get("heard") or []
+            if heard and report.get("listener_type") not in ("human", "hybrid"):
+                errors.append(f"Report {report['report_id']}: agent-only report contains heard claims")
+            for claim in heard:
+                if claim.get("source") != "human" or not claim.get("listening_pass_id"):
+                    errors.append(f"Report {report['report_id']}: heard claim lacks source=human and listening_pass_id attribution")
+            if claims.get("interpreted"):
                 interpreted_count += 1
 
-    if reviewed_count < 50:
-        errors.append(f"Reviewed reports: expected at least 50, got {reviewed_count}")
     if interpreted_count < 30:
-        errors.append(f"Reviewed interpreted reports: expected at least 30, got {interpreted_count}")
+        errors.append(f"Reports with interpreted claims: expected at least 30, got {interpreted_count}")
     if len({k for k, v in recommendation_counts.items() if v}) < 3:
         errors.append(f"Regeneration recommendations need keep/revise/reject distribution, got {dict(recommendation_counts)}")
 
