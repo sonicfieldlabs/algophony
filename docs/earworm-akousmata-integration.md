@@ -112,7 +112,7 @@ directory by default, with an `$AKOUSMATA_PATH` override). Algophony's batch sur
 - CLI: `python -m workers.akousmata_source --app germ --prompt-records`.
 
 The `akousma` reference package is an **optional** dependency
-(`pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.4.0#subdirectory=packages/py-akousma"`); without it the module
+(`pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.6.0#subdirectory=packages/py-akousma"`); without it the module
 raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
 `scripts/test_akousmata_source.py` (skips when the package is absent).
 

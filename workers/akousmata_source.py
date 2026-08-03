@@ -23,7 +23,7 @@ surface over that store:
 The ``akousma`` reference package lives in the earworm repo
 (``earworm/packages/py-akousma``); install with::
 
-    pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.4.0#subdirectory=packages/py-akousma"
+    pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.6.0#subdirectory=packages/py-akousma"
 
 The dependency is optional: without it, calls raise ``AkousmataUnavailable`` and the
 rest of Algophony is unaffected. The store uses the platform application-data
