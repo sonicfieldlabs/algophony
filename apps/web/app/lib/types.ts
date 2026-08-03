@@ -167,6 +167,7 @@ export interface Claim {
   confidence: "high" | "medium" | "low" | "undetermined";
   basis: string;
   source?: "audio" | "dsp" | "metadata" | "model" | "transcript" | "context" | "memory" | "human" | "other";
+  listening_pass_id?: string | null;
   time_range?: { start_s: number; end_s: number };
 }
 

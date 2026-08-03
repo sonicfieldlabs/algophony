@@ -26,6 +26,7 @@ from workers.listening_plan import (  # noqa: E402
     enforce_claim_permissions,
     load_akouo_manifest,
 )
+from scripts.generate_reports import build_claims  # noqa: E402
 
 PROMPT = {"prompt_id": "ALG-0001", "category": "forest", "prompt_text": "a forest at dawn"}
 GENERATION = {"audio_id": "ALG-0001-SYNTH-A", "prompt_id": "ALG-0001", "model": "synth_baseline"}
@@ -48,6 +49,9 @@ class EvidenceDerivationTests(unittest.TestCase):
         self.assertTrue(prompt_only["must_include_undetermined"])
         self.assertFalse(claim_permissions_for("transcript_or_caption")["heard_allowed"])
         self.assertFalse(claim_permissions_for("contextual_note")["heard_allowed"])
+        self.assertFalse(claim_permissions_for("decoded_audio_metadata")["heard_allowed"])
+        self.assertFalse(claim_permissions_for("measured_signal")["heard_allowed"])
+        self.assertFalse(claim_permissions_for("mixed")["heard_allowed"])
         none_level = claim_permissions_for("none")
         self.assertFalse(any(none_level[k] for k in ("heard_allowed", "measured_allowed", "inferred_allowed", "interpreted_allowed")))
 
@@ -57,6 +61,20 @@ class EvidenceDerivationTests(unittest.TestCase):
         self.assertFalse(forensic["speculative_allowed"])
         fiction = claim_permissions_for("mixed", "/fiction")
         self.assertTrue(fiction["speculative_allowed"])
+
+    def test_automated_report_never_populates_heard(self):
+        analysis = {
+            "duration": 30.0,
+            "sample_rate": 48000,
+            "rms": 0.1,
+            "peak_level": 0.5,
+            "spectral_centroid_hz": 1200.0,
+            "spectral_bandwidth_hz": 800.0,
+            "event_density_per_sec": 1.5,
+        }
+        claims = build_claims(PROMPT, GENERATION, analysis, "agent_draft")
+        self.assertEqual(claims["heard"], [])
+        self.assertTrue(claims["inferred"])
 
 
 class RoutingPlanTests(unittest.TestCase):

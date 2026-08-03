@@ -18,6 +18,7 @@ Prompts are in English.
 | --- | --- | ---: |
 | Prompts | `atlas/prompts/algophony-atlas-v0.1.jsonl` | 100 |
 | Generation metadata | `generations/metadata/generations-v0.1.jsonl` | 200 |
+| Local audio files | `generations/audio/` | 200 |
 | Audio analysis | `generations/metadata/audio-analysis-v0.1.jsonl` | 200 |
 | JSON reports | `reports/json/AK-*.json` | 200 |
 | Markdown reports | `reports/markdown/AK-*.md` | 200 |
@@ -64,12 +65,13 @@ Reports use the AKOÚŌ claim taxonomy:
 - `speculative`
 - `undetermined`
 
-Current report status:
+Current generated report status:
 
-- 100 `hybrid_reviewed` seed reports.
-- 100 `agent_draft` reports.
+- 200 `agent_draft` reports.
+- 0 `human_reviewed` reports.
+- 0 `hybrid_reviewed` reports.
 
-The reviewed seed set is designed to populate critical listening buckets and exercise validation gates. It is not a substitute for a formal independent human annotation study.
+The deterministic seed set populates critical listening buckets and exercises validation gates, but it is not human review. A later human listening pass must remain separately attributable before a report can carry `heard` claims or a human-review status.
 
 ## Scores
 

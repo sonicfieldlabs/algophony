@@ -384,6 +384,11 @@
           "$ref": "#/$defs/akouo_claim_source",
           "description": "Optional AKOÚŌ v0.6 field naming which apparatus or evidence stream produced this claim."
         },
+        "listening_pass_id": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "description": "Attributable listening pass for a heard claim; strict validation requires it together with source=human."
+        },
         "time_range": {
           "$ref": "#/$defs/akouo_time_range",
           "description": "Optional AKOÚŌ v0.6 anchor to a time window in the audio; a claim without one is a claim about the whole object."
@@ -410,7 +415,8 @@
       ],
       "properties": {
         "heard": {
-          "$ref": "#/$defs/claim_list"
+          "$ref": "#/$defs/claim_list",
+          "description": "Reports from a separately attributable embodied human listening pass. Automated reports leave this array empty."
         },
         "measured": {
           "$ref": "#/$defs/claim_list"

@@ -52,6 +52,7 @@ export interface AkouoClaim {
   confidence: ClaimConfidence;
   basis: string;
   source?: AkouoClaimSource;
+  listening_pass_id?: string | null;
   time_range?: AkouoTimeRange;
 }
 
@@ -67,7 +68,7 @@ export const CLAIM_LABELS: Record<ClaimCategory, string> = {
 };
 
 export const CLAIM_DESCRIPTIONS: Record<ClaimCategory, string> = {
-  heard: "Directly present in audio that was actually decoded and listened to",
+  heard: "Attributable human report from an embodied listening pass",
   measured: "Produced by file, signal, waveform, spectrogram, or metadata inspection",
   inferred: "Plausible logical deductions (not theory or culture)",
   interpreted: "Cultural, theoretical, affective, or contextual reading",

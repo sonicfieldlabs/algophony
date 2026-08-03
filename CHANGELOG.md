@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.2 — Attributable listening review
+
+- Reserved `heard` for separately attributable human reports. Automated
+  generation metadata and model observations now remain inferred, while
+  signal analysis remains measured.
+- Removed deterministic `hybrid_reviewed` labeling from agent-generated QA
+  seeds and made strict validation reject agent-only or unattributed heard
+  claims.
+- Aligned routing permissions and public stack references with AKOÚŌ 0.9.1,
+  Earworm/Akousma 0.6.1, Oída 0.9.2, and GERM 0.3.3.
+
 ## 0.5.1 — Contract and dependency alignment
 
 - Aligned the listening contract with AKOÚŌ 0.9, Earworm 0.6, Akousmata 0.6,

@@ -5,7 +5,7 @@ listening to, and evaluating algorithmic soundscapes. It combines public data
 contracts and workers with two working interfaces: a benchmark dashboard and a
 sound-production studio.
 
-Current release: `0.5.0`.
+Current release: `0.5.2`.
 
 ## What ships
 
@@ -46,17 +46,20 @@ complete model benchmark or independently reviewed human panel is included.
 
 | Component | Contract used here | Integration |
 | --- | --- | --- |
-| [AKOÚŌ](https://github.com/sonicfieldlabs/akouo) | `akouo/v0.9` | 16 listening modes, router, reference layer, 19 commands, evidence ladder, covenants, corpus disclosure, and claim taxonomy. |
-| [Earworm](https://github.com/sonicfieldlabs/earworm) | `earworm/v0.6` / akousma spec v1.5 | Session provenance, optional context traces, lineage, kinship, and covenant-aware memory records. |
+| [AKOÚŌ](https://github.com/sonicfieldlabs/akouo) | `akouo-contract 0.9.1` / `akouo/v0.9` | 16 listening modes, embodied heard boundary, router, reference layer, 19 commands, evidence ladder, covenants, corpus disclosure, and claim taxonomy. |
+| [Earworm](https://github.com/sonicfieldlabs/earworm) | `akousma 0.6.1` / akousma spec v1.5 | Session provenance, optional context traces, lineage, kinship, attributable disagreement resolution, and additive revisions. |
 | [Akousmata](https://github.com/sonicfieldlabs/akousmata) | `akousmata/v0.6` | Shared accountable-memory library and navigator used by batch-source and evaluation-stamp workers. |
-| [OÍDA](https://github.com/sonicfieldlabs/oida) | `oida/gateway/v0.5` (OÍDA 0.9.1) | Provider-neutral, decision-first listening gateway; durable memory remains explicit. |
-| [GERM](https://github.com/sonicfieldlabs/germ) | GERM 0.3.2 | Downstream cultivation can use remembered sounds, prompts, lineage, and accountable listening outcomes produced by the stack. |
+| [OÍDA](https://github.com/sonicfieldlabs/oida) | `oida/gateway/v0.5` (OÍDA 0.9.2) | Provider-neutral, decision-first listening gateway; model observations remain inferred and durable memory remains explicit. |
+| [GERM](https://github.com/sonicfieldlabs/germ) | GERM 0.3.3 | Downstream cultivation can use remembered sounds, prompts, lineage, and accountable listening outcomes produced by the stack. |
 | [ORAM](https://github.com/sonicfieldlabs/oram) | ORAM 0.4.1 | Exported ORAM audio can enter Algophony datasets and listening workflows; there is no direct runtime dependency. |
 
 Every listening report separates `heard`, `measured`, `inferred`,
 `interpreted`, `speculative`, and `undetermined` claims. A report may
 also pin its listening apparatus, listener, evidence level, routing plan,
 reference map, memory links, and listening covenant.
+Automated reports leave `heard` empty: generated metadata and model output are
+inferred, signal analysis is measured, and a heard claim requires a separately
+attributable human listener.
 
 ## Quick start
 

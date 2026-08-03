@@ -42,11 +42,11 @@ _LADDER: dict[str, tuple[bool, bool, bool, bool]] = {
     "none": (False, False, False, False),
     "prompt_only": (False, False, True, True),
     "metadata_only": (False, True, True, True),
-    "decoded_audio_metadata": (True, True, True, True),
-    "measured_signal": (True, True, True, True),
+    "decoded_audio_metadata": (False, True, True, True),
+    "measured_signal": (False, True, True, True),
     "transcript_or_caption": (False, False, True, True),
     "contextual_note": (False, False, True, True),
-    "mixed": (True, True, True, True),
+    "mixed": (False, True, True, True),
 }
 
 # Command permission overrides fallback (mirrors `command_permission_overrides`).

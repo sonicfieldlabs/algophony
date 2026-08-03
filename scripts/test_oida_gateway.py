@@ -33,9 +33,9 @@ def fixture() -> dict:
         "command_output": {
             "akouo_version": "0.9",
             "claim_summary": {
-                "heard": [{"statement": "A low hum is audible.", "confidence": "medium", "basis": "model", "source": "model"}],
+                "heard": [],
                 "measured": [],
-                "inferred": [],
+                "inferred": [{"statement": "The model reports a low hum.", "confidence": "medium", "basis": "model", "source": "model"}],
                 "interpreted": [],
                 "speculative": [],
                 "undetermined": [],
@@ -45,7 +45,7 @@ def fixture() -> dict:
         },
         "earworm": {
             "protocol": "earworm",
-            "version": "0.6.0",
+            "version": "0.6.1",
             "persistence": "session_only",
             "session": {
                 "session_id": session_id,
