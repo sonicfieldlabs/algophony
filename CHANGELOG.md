@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.3: Workspace access and isolated report runs
+
+- Guard every Studio API and dashboard path; validate access again before returning the workspace profile or entitlements. Local launch commands bind to loopback; remote access requires an explicitly configured origin and bearer token.
+- Generate complete report runs in new private output directories. Filtering, limits, empty selections, and failures preserve prior reports and benchmark scores; report identity follows audio identity.
+- Bundle Studio fonts with their licenses so builds do not fetch Google Fonts. Update Next.js, sharp, Vitest, and vulnerable transitive dependencies in both web apps.
+
 ## 0.5.2 — Attributable listening review
 
 - Reserved `heard` for separately attributable human reports. Automated

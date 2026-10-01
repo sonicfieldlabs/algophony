@@ -1,22 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-
-export function isLoopbackHost(hostValue: string | null | undefined): boolean {
-  if (!hostValue) return false;
-  const host = hostValue.split(",")[0]?.trim().toLowerCase() ?? "";
-  if (!host) return false;
-  if (host.startsWith("[")) return host.startsWith("[::1]");
-  const hostname = host.split(":")[0] ?? "";
-  return hostname === "localhost" || hostname.endsWith(".localhost") || hostname === "127.0.0.1" || hostname === "::1";
-}
+import { authorizeWorkspaceRequest } from "@/lib/auth/request-policy";
+export { isLoopbackHost } from "@/lib/auth/request-policy";
 
 export function isLocalRequest(request: NextRequest): boolean {
-  return isLoopbackHost(request.headers.get("host")) || isLoopbackHost(request.headers.get("x-forwarded-host"));
+  return authorizeWorkspaceRequest(request.headers).allowed;
 }
 
 export function localOnly(request: NextRequest): NextResponse | null {
-  if (isLocalRequest(request)) return null;
-  return NextResponse.json(
-    { error: "Local workspace APIs are only available from localhost." },
-    { status: 403 }
-  );
+  const decision = authorizeWorkspaceRequest(request.headers);
+  if (decision.allowed) return null;
+  return NextResponse.json({ error: decision.error }, { status: decision.status });
 }

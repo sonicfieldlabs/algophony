@@ -10,12 +10,18 @@ separately attributable human listening pass.
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
+import tempfile
+import uuid
 import json
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from workers.report_identity import report_id_for_audio
 
 from workers.listening_plan import (  # noqa: E402
     AKOUO_CONTRACT_VERSION,
@@ -325,8 +331,8 @@ def provenance_for(score_sets: dict, review_status: str) -> list[dict]:
     return provenance
 
 
-def build_report(prompt: dict, generation: dict, analysis: dict, report_num: int) -> dict:
-    report_id = f"AK-{report_num:04d}"
+def build_report(prompt: dict, generation: dict, analysis: dict, report_num: int | str) -> dict:
+    report_id = report_num if isinstance(report_num, str) else f"AK-{report_num:04d}"
     category = prompt.get("category", "unknown")
     review_status = "agent_draft"
     score_sets = derive_score_sets(prompt, generation, analysis)
@@ -526,81 +532,93 @@ def build_markdown(report: dict, prompt: dict, analysis: dict) -> str:
     return "\n".join(lines)
 
 
+def generate_run(root: Path, prompts_path: Path, generations_path: Path, analysis_path: Path,
+                 *, prompt_ids: set[str] | None = None, limit: int | None = None,
+                 output_dir: Path | None = None) -> Path | None:
+    """Publish one complete, immutable report run. Existing runs are never replaced."""
+    if limit is not None and limit < 0:
+        raise ValueError("limit must be non-negative")
+    prompts = index_by(load_jsonl(prompts_path), "prompt_id")
+    generations = index_by(load_jsonl(generations_path), "audio_id")
+    analyses = index_by(load_jsonl(analysis_path), "audio_id")
+    items = [(audio_id, generation) for audio_id, generation in sorted(generations.items())
+             if prompt_ids is None or generation.get("prompt_id") in prompt_ids]
+    # Missing evidence cannot consume a limit intended for complete reports.
+    items = [(audio_id, generation) for audio_id, generation in items
+             if generation.get("prompt_id") in prompts and audio_id in analyses]
+    if limit is not None:
+        items = items[:limit]
+    if not items:
+        print("No complete reports selected; existing outputs are unchanged.")
+        return None
+    output_dir = output_dir or root / ".algophony" / "reports" / (
+        datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:12])
+    output_dir = Path(os.path.abspath(output_dir))
+    if output_dir.exists() or output_dir.is_symlink():
+        raise FileExistsError("Choose a new report output directory; existing runs cannot be overwritten.")
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    stage = Path(tempfile.mkdtemp(prefix=".report-stage-", dir=output_dir.parent))
+    try:
+        (stage / "json").mkdir()
+        (stage / "markdown").mkdir()
+        scores = []
+        for audio_id, generation in items:
+            prompt_id = generation["prompt_id"]
+            prompt, analysis = prompts[prompt_id], analyses[audio_id]
+            report_id = report_id_for_audio(audio_id, generation.get("akouo_report_id"))
+            if any(score["report_id"] == report_id for score in scores):
+                raise ValueError("Selected generations contain duplicate report identities")
+            report = build_report(prompt, generation, analysis, report_id)
+            (stage / "json" / f"{report_id}.json").write_text(
+                json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+            (stage / "markdown" / f"{report_id}.md").write_text(
+                build_markdown(report, prompt, analysis), encoding="utf-8")
+            scores.append({
+                "suite_id": "algophony-benchmark-lite-v0.1", "prompt_id": prompt_id,
+                "audio_id": audio_id, "report_id": report_id,
+                "model": {"provider": generation["model"],
+                          "version": generation.get("model_version", "unknown"),
+                          "type": model_type(generation["model"])},
+                "score_sets": report["score_sets"], "score_provenance": report["score_provenance"],
+                "final_scores": report["scores"], "date": report["listening_date"],
+            })
+        (stage / "scores.jsonl").write_text(
+            "".join(json.dumps(score, ensure_ascii=False) + "\n" for score in scores), encoding="utf-8")
+        (stage / "manifest.json").write_text(json.dumps({
+            "format": "algophony-report-run@1", "report_count": len(scores),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "report_ids": [score["report_id"] for score in scores],
+        }, indent=2) + "\n", encoding="utf-8")
+        # Rename only after every report and score is written. Reserve the destination
+        # to avoid silently replacing an empty directory created by another process.
+        output_dir.mkdir()
+        try:
+            os.replace(stage, output_dir)
+        except BaseException:
+            output_dir.rmdir()
+            raise
+    finally:
+        if stage.exists():
+            shutil.rmtree(stage)
+    print(f"Generated {len(scores)} reports and score records in {output_dir}.")
+    return output_dir
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate Algophony listening reports.")
+    parser = argparse.ArgumentParser(description="Generate an isolated Algophony listening report run.")
     parser.add_argument("--prompts", default="atlas/prompts/algophony-atlas-v0.1.jsonl")
     parser.add_argument("--generations", default="generations/metadata/generations-v0.1.jsonl")
     parser.add_argument("--analysis", default="generations/metadata/audio-analysis-v0.1.jsonl")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--prompt-ids", default=None)
+    parser.add_argument("--output-dir", type=Path, help="New directory for json/, markdown/ and scores.jsonl.")
     args = parser.parse_args()
-
+    if args.limit is not None and args.limit < 0:
+        parser.error("--limit must be non-negative")
     root = Path(__file__).resolve().parent.parent
-    prompts = index_by(load_jsonl(root / args.prompts), "prompt_id")
-    generations = index_by(load_jsonl(root / args.generations), "audio_id")
-    analyses = index_by(load_jsonl(root / args.analysis), "audio_id")
-    target_ids = set(args.prompt_ids.split(",")) if args.prompt_ids else None
-
-    json_dir = root / "reports" / "json"
-    md_dir = root / "reports" / "markdown"
-    json_dir.mkdir(parents=True, exist_ok=True)
-    md_dir.mkdir(parents=True, exist_ok=True)
-    scores_path = root / "benchmark" / "scores" / "scores-v0.1.jsonl"
-
-    reports = []
-    scores = []
-    report_num = 0
-    items = sorted(generations.items())
-    if args.limit:
-        items = items[:args.limit]
-
-    for audio_id, generation in items:
-        prompt_id = generation["prompt_id"]
-        if target_ids and prompt_id not in target_ids:
-            continue
-        prompt = prompts.get(prompt_id)
-        analysis = analyses.get(audio_id)
-        if not prompt or not analysis:
-            print(f"Skipping {audio_id}: missing prompt or analysis")
-            continue
-
-        report_num += 1
-        report = build_report(prompt, generation, analysis, report_num)
-        reports.append(report)
-        scores.append({
-            "suite_id": "algophony-benchmark-lite-v0.1",
-            "prompt_id": prompt_id,
-            "audio_id": audio_id,
-            "report_id": report["report_id"],
-            "model": {
-                "provider": generation["model"],
-                "version": generation.get("model_version", "unknown"),
-                "type": model_type(generation["model"]),
-            },
-            "score_sets": report["score_sets"],
-            "score_provenance": report["score_provenance"],
-            "final_scores": report["scores"],
-            "date": report["listening_date"],
-        })
-
-    for old in json_dir.glob("AK-*.json"):
-        old.unlink()
-    for old in md_dir.glob("AK-*.md"):
-        old.unlink()
-
-    for report in reports:
-        prompt = prompts[report["prompt_id"]]
-        analysis = analyses[report["audio_id"]]
-        (json_dir / f"{report['report_id']}.json").write_text(
-            json.dumps(report, indent=2, ensure_ascii=False) + "\n"
-        )
-        (md_dir / f"{report['report_id']}.md").write_text(build_markdown(report, prompt, analysis))
-
-    with open(scores_path, "w") as f:
-        for score in scores:
-            f.write(json.dumps(score, ensure_ascii=False) + "\n")
-
-    print(f"Generated {len(reports)} reports and {len(scores)} score records.")
+    target_ids = {value.strip() for value in args.prompt_ids.split(",") if value.strip()} if args.prompt_ids is not None else None
+    generate_run(root, root / args.prompts, root / args.generations, root / args.analysis,
+                 prompt_ids=target_ids, limit=args.limit, output_dir=args.output_dir)
 
 
 if __name__ == "__main__":

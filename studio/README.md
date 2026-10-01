@@ -27,7 +27,7 @@ The emphasis is local organization and sonic multiplication, with optional model
 
 ```bash
 cp .env.example .env.local
-npm install
+npm ci
 npm run dev:daemon
 ```
 
@@ -101,3 +101,28 @@ npm run typecheck
 npm run test
 npm run build
 ```
+
+## Workspace access
+
+`npm run dev`, `npm run start`, and their local variants select local access mode and bind to
+`127.0.0.1`. The daemon launcher also requires a loopback bind. All dashboard and API routes,
+including provider-backed generation, check the workspace boundary. Forwarded hosts cannot grant
+access, and cross-origin browser requests are rejected. Direct Next.js launches fail closed unless
+an access mode is configured; set local mode only with a loopback listener.
+
+Remote service use requires `ALGOPHONY_STUDIO_ACCESS_MODE=remote`, an exact
+`ALGOPHONY_STUDIO_ORIGIN` such as `https://studio.example`, and an operator-generated
+`ALGOPHONY_STUDIO_ACCESS_TOKEN` of at least 32 characters. Every protected request must carry
+`Authorization: Bearer <token>`; a spoofed localhost Host does not bypass remote mode. Keep tokens
+in private environment settings and terminate remote traffic with HTTPS. A browser remote session
+requires an operator-configured authenticated client; Studio does not expose a token in public JS
+or provide a multi-user login flow.
+
+Inter and JetBrains Mono Latin variable fonts are bundled under their SIL Open Font Licenses in
+`src/app/fonts/`. The Studio build does not download fonts.
+
+## Toolchain and local access
+
+Use Node.js 22.19 or newer and npm 11.19.1 or newer. `npm ci` consumes the committed lockfile.
+The local launch commands bind to loopback and set local access mode. Manual or remote launches
+must configure the access boundary explicitly; forwarding headers do not grant provider access.

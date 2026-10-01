@@ -23,20 +23,7 @@ from workers.provider_registry import (
     select_default_provider,
 )
 
-
-def _next_report_ids(project_root: Path, count: int) -> list[str]:
-    """Reserve next AK report IDs from existing JSON/Markdown reports."""
-    existing = set()
-    for root in (project_root / "reports" / "json", project_root / "reports" / "markdown"):
-        if not root.exists():
-            continue
-        for path in root.glob("AK-*.*"):
-            try:
-                existing.add(int(path.stem.replace("AK-", "")))
-            except ValueError:
-                continue
-    start = (max(existing) + 1) if existing else 1
-    return [f"AK-{i:04d}" for i in range(start, start + count)]
+from workers.report_identity import report_id_for_audio
 
 
 def get_adapter(provider_id: str, **kwargs: Any):
@@ -92,9 +79,6 @@ def run_pipeline(
     metadata_file.parent.mkdir(parents=True, exist_ok=True)
     failure_file.parent.mkdir(parents=True, exist_ok=True)
 
-    project = Path(project_root) if project_root else Path.cwd()
-    report_ids = _next_report_ids(project, len(prompts) * len(providers) * variants) if reserve_report_ids else []
-    report_cursor = 0
     params_from_cli = provider_params or {}
 
     for requested_provider in providers:
@@ -134,8 +118,7 @@ def run_pipeline(
                     }
                     meta = adapter.generate(prompt, params)
                     if reserve_report_ids:
-                        meta["akouo_report_id"] = report_ids[report_cursor]
-                        report_cursor += 1
+                        meta["akouo_report_id"] = report_id_for_audio(meta["audio_id"], meta.get("akouo_report_id"))
                     # Material footprint stamped from the registry at generation
                     # time; never guessed after the fact (compute
                     # provenance is part of the sound's body).

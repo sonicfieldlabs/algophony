@@ -13,8 +13,11 @@ jobs:
   schema-validation:
     name: Validate schemas + dataset
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
@@ -27,8 +30,11 @@ jobs:
   worker-unit-tests:
     name: Worker unit tests (contracts + drift guards)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
@@ -40,37 +46,48 @@ jobs:
       - run: python3 scripts/test_provider_contracts.py
       - run: python3 scripts/test_oida_gateway.py
       - run: python3 scripts/test_listening_plan.py
+      - run: python3 -m pip install pytest
+      - run: python3 -m pytest scripts/test_generate_reports.py
       - run: python3 scripts/test_akousmata_source.py
 
   web-build:
     name: Web app type-check + build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: apps/web
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
+      - run: npm install --global npm@11.19.1
       - run: npm ci
       - run: npx tsc --noEmit
+      - run: npm test
       - run: npm run build
 
   studio-verify:
     name: Studio lint + typecheck + tests + build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: studio
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: studio/package-lock.json
+      - run: npm install --global npm@11.19.1
       - run: npm ci
       - run: npm run verify
