@@ -36,7 +36,7 @@
   "properties": {
     "report_id": {
       "type": "string",
-      "pattern": "^AK-[0-9]{4}$"
+      "pattern": "^AK-(?:[0-9]{4}|[0-9a-f]{64})$"
     },
     "report_type": {
       "type": "string",
@@ -210,8 +210,12 @@
     },
     "oida_gateway": {
       "oneOf": [
-        {"$ref": "oida-gateway.schema.json"},
-        {"type": "null"}
+        {
+          "$ref": "oida-gateway.schema.json"
+        },
+        {
+          "type": "null"
+        }
       ],
       "default": null,
       "description": "Optional reference to an actual Oída v0.2 gateway pass. Never backfill without running the gateway."
@@ -385,7 +389,10 @@
           "description": "Optional AKOÚŌ v0.6 field naming which apparatus or evidence stream produced this claim."
         },
         "listening_pass_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "minLength": 1,
           "description": "Attributable listening pass for a heard claim; strict validation requires it together with source=human."
         },

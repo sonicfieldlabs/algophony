@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
 
-const root = new URL("..", import.meta.url).pathname;
+const root = fileURLToPath(new URL("..", import.meta.url));
 const stateDir = join(root, ".algophony-studio");
 const pidFile = join(stateDir, "dev-server.pid");
 const logFile = join(root, "dev_server.log");
@@ -31,6 +32,9 @@ function isRunning(pid) {
 }
 
 function start() {
+  if (!["127.0.0.1", "localhost", "::1"].includes(host)) {
+    throw new Error("The local daemon must bind to loopback. Use an explicitly authenticated remote launch for other interfaces.");
+  }
   mkdirSync(stateDir, { recursive: true });
   const existingPid = readPid();
   if (isRunning(existingPid)) {
@@ -53,6 +57,7 @@ function start() {
       detached: true,
       env: {
         ...process.env,
+        ALGOPHONY_STUDIO_ACCESS_MODE: "local",
         NODE_OPTIONS: [process.env.NODE_OPTIONS, "--max-old-space-size=4096"].filter(Boolean).join(" "),
       },
       stdio: ["ignore", logFd, logFd],

@@ -5,7 +5,7 @@ listening to, and evaluating algorithmic soundscapes. It combines public data
 contracts and workers with two working interfaces: a benchmark dashboard and a
 sound-production studio.
 
-Current release: `0.5.2`.
+Current release: `0.5.3`.
 
 ## What ships
 
@@ -63,7 +63,7 @@ attributable human listener.
 
 ## Quick start
 
-Requirements: Python 3.11+, Node.js 20+, and npm 10+.
+Requirements: Python 3.11+, Node.js 22.19+, and npm 11.19.1+.
 
 ```bash
 python3 -m pip install -r requirements.txt

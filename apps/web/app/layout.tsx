@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import Sidebar from "./components/Sidebar";
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/inter.woff2",
+  weight: "100 900",
   variable: "--font-sans",
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
+const jetbrains = localFont({
+  src: "./fonts/jetbrains-mono.woff2",
+  weight: "100 800",
   variable: "--font-mono",
   display: "swap",
 });

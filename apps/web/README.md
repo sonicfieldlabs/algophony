@@ -6,13 +6,13 @@ The dashboard is the inspection surface for Algophony benchmark records. It does
 
 ## Requirements
 
-- Node.js compatible with Next.js 16.
+- Node.js 22.19 or newer and npm 11.19.1 or newer.
 - The repository data files in the project root.
 
 ## Commands
 
 ```bash
-npm install
+npm ci
 npm run dev
 npm run dev:daemon
 npm run dev:stop
@@ -96,3 +96,14 @@ python3 scripts/generate_matrix.py --list-providers --json > benchmark/exports/p
 
 The app is included in sanitized public exports. Runtime state, build output,
 logs, `node_modules`, and local preview PID files are excluded.
+
+## Toolchain and local access
+
+Use Node.js 22.19 or newer and npm 11.19.1 or newer. `npm ci` consumes the committed lockfile.
+The local launch commands bind to loopback and set local access mode. Manual or remote launches
+must configure the access boundary explicitly; forwarding headers do not grant provider access.
+
+Playground remains disabled unless `ALGOPHONY_ENABLE_PLAYGROUND=true`. Local launch mode accepts
+same-origin loopback requests. A configured `ALGOPHONY_PLAYGROUND_TOKEN` must be at least 32
+characters and supplied as `x-playground-token`, including from localhost. Remote service use
+requires that token and HTTPS at the operator's ingress. Bench fonts are bundled with licenses.

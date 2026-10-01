@@ -16,6 +16,10 @@ import sys
 from pathlib import Path
 
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from workers.report_identity import report_id_for_audio
+
 def load_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         return []
@@ -27,19 +31,6 @@ def write_jsonl(path: Path, records: list[dict], append: bool = True) -> None:
     with path.open(mode) as f:
         for record in records:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
-
-
-def next_report_ids(project_root: Path, count: int) -> list[str]:
-    existing = set()
-    for root in (project_root / "reports" / "json", project_root / "reports" / "markdown"):
-        if root.exists():
-            for path in root.glob("AK-*.*"):
-                try:
-                    existing.add(int(path.stem.replace("AK-", "")))
-                except ValueError:
-                    pass
-    start = max(existing) + 1 if existing else 1
-    return [f"AK-{i:04d}" for i in range(start, start + count)]
 
 
 def validate_record(project_root: Path, record: dict) -> list[str]:
@@ -83,9 +74,8 @@ def main() -> None:
         return
 
     if args.reserve_report_ids:
-        ids = next_report_ids(project_root, len(incoming))
-        for record, report_id in zip(incoming, ids, strict=True):
-            record["akouo_report_id"] = record.get("akouo_report_id") or report_id
+        for record in incoming:
+            record["akouo_report_id"] = report_id_for_audio(record["audio_id"], record.get("akouo_report_id"))
 
     all_errors = []
     for record in incoming:
