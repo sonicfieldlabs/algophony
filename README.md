@@ -5,7 +5,7 @@ listening to, and evaluating algorithmic soundscapes. It combines public data
 contracts and workers with two working interfaces: a benchmark dashboard and a
 sound-production studio.
 
-Current release: `0.5.2`.
+Current release: `0.5.3`.
 
 ## What ships
 
@@ -46,12 +46,16 @@ complete model benchmark or independently reviewed human panel is included.
 
 | Component | Contract used here | Integration |
 | --- | --- | --- |
-| [AKOÚŌ](https://github.com/sonicfieldlabs/akouo) | `akouo-contract 0.9.1` / `akouo/v0.9` | 16 listening modes, embodied heard boundary, router, reference layer, 19 commands, evidence ladder, covenants, corpus disclosure, and claim taxonomy. |
-| [Earworm](https://github.com/sonicfieldlabs/earworm) | `akousma 0.6.1` / akousma spec v1.5 | Session provenance, optional context traces, lineage, kinship, attributable disagreement resolution, and additive revisions. |
-| [Akousmata](https://github.com/sonicfieldlabs/akousmata) | `akousmata/v0.6` | Shared accountable-memory library and navigator used by batch-source and evaluation-stamp workers. |
-| [OÍDA](https://github.com/sonicfieldlabs/oida) | `oida/gateway/v0.5` (OÍDA 0.9.2) | Provider-neutral, decision-first listening gateway; model observations remain inferred and durable memory remains explicit. |
-| [GERM](https://github.com/sonicfieldlabs/germ) | GERM 0.3.3 | Downstream cultivation can use remembered sounds, prompts, lineage, and accountable listening outcomes produced by the stack. |
-| [ORAM](https://github.com/sonicfieldlabs/oram) | ORAM 0.4.1 | Exported ORAM audio can enter Algophony datasets and listening workflows; there is no direct runtime dependency. |
+| [AKOÚŌ](https://github.com/sonicfieldlabs/akouo) | Current `akouo/v0.10` deterministic planner and historical Oída `akouo/v0.9` host profile; `akouo-contract 0.12.1` | Preserve the report's actual producer contract; package versions do not renumber it. |
+| [Earworm](https://github.com/sonicfieldlabs/earworm) | Compact trace bridge; `akousma 0.10.1` | Session provenance and references. This bridge is not a complete canonical record or automatic adoption. |
+| [Akousmata](https://github.com/sonicfieldlabs/akousmata) | Akousmata 0.9.1 | Independent canonical memory owner; batch-source reads and evaluation stamps remain explicit. |
+| [Oída](https://github.com/sonicfieldlabs/oida) | Explicit `oida/gateway/v0.5` and `oida/gateway/v0.6` projections; Oída 0.13.2 and 0.14.0 | Preserve the received contract and attributed claims. Refusals and absent events cannot become listening traces; unknown gateway contracts fail. |
+| [GERM](https://github.com/sonicfieldlabs/germ) | GERM 0.7.0 | Independent downstream generation owner; no engine or checkpoint is selected here. |
+| [ORAM](https://github.com/sonicfieldlabs/oram) | ORAM 0.4.1 | Exported audio can enter datasets and listening workflows; there is no direct runtime dependency. |
+
+These are GitHub releases of 14 and 21 October 2026; none is on PyPI. Naming
+them does not upgrade an active owner or qualify a model. Earlier reports and corpus releases retain their original
+bytes and producer contracts.
 
 Every listening report separates `heard`, `measured`, `inferred`,
 `interpreted`, `speculative`, and `undetermined` claims. A report may
