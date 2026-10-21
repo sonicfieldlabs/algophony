@@ -5,6 +5,9 @@
  * while routes use local workspace records.
  */
 
+import { headers } from "next/headers";
+import { authorizeWorkspaceRequest } from "@/lib/auth/request-policy";
+
 import type { EntitlementKey } from "@/lib/sfx/entitlements";
 
 const LOCAL_USER_ID = process.env.ALGOPHONY_STUDIO_LOCAL_USER_ID ?? "local-workspace";
@@ -67,22 +70,28 @@ const LOCAL_ENTITLEMENTS: EntitlementKey[] = [
 ];
 
 export async function getCurrentUser(): Promise<LocalUser> {
+  await requireWorkspaceAccess();
   return LOCAL_USER;
 }
 
 export async function requireUser(): Promise<LocalUser> {
+  await requireWorkspaceAccess();
   return LOCAL_USER;
 }
 
 export async function getCurrentProfile(): Promise<UserProfile> {
+  await requireWorkspaceAccess();
   return LOCAL_PROFILE;
 }
 
 export async function requireProfile(): Promise<UserProfile> {
+  await requireWorkspaceAccess();
   return LOCAL_PROFILE;
 }
 
 export async function getUserEntitlements(_userId: string): Promise<string[]> {
+  await requireWorkspaceAccess();
+  if (_userId !== LOCAL_USER_ID) throw new AuthError("Unknown workspace identity", 403);
   return LOCAL_ENTITLEMENTS;
 }
 
@@ -98,4 +107,9 @@ export class AuthError extends Error {
 
 export function unauthorizedResponse(message = "Local session required") {
   return Response.json({ error: message }, { status: 401 });
+}
+
+async function requireWorkspaceAccess(): Promise<void> {
+  const decision = authorizeWorkspaceRequest(await headers());
+  if (!decision.allowed) throw new AuthError(decision.error, decision.status);
 }

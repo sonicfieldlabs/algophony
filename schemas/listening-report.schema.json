@@ -36,7 +36,7 @@
   "properties": {
     "report_id": {
       "type": "string",
-      "pattern": "^AK-[0-9]{4}$"
+      "pattern": "^AK-(?:[0-9]{4}|[0-9a-f]{64})$"
     },
     "report_type": {
       "type": "string",

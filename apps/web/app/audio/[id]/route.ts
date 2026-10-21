@@ -44,11 +44,12 @@ function isInside(parent: string, child: string): boolean {
 async function findAudioFile(id: string): Promise<{ filePath: string; size: number } | null> {
   for (const dir of SEARCH_DIRS) {
     for (const ext of EXTENSIONS) {
-      const candidate = path.join(dir, `${id}.${ext}`);
+      // Audio is supplied at runtime and must stay outside the compiled server bundle.
+      const candidate = path.join(/* turbopackIgnore: true */ dir, `${id}.${ext}`);
       // Defense in depth — candidate must remain inside its parent dir.
       if (!isInside(dir, candidate)) continue;
       try {
-        const s = await stat(candidate);
+        const s = await stat(/* turbopackIgnore: true */ candidate);
         if (s.isFile()) return { filePath: candidate, size: s.size };
       } catch {
         // Try next candidate.
@@ -102,7 +103,7 @@ export async function GET(
       });
     }
     const chunkSize = end - start + 1;
-    const stream = createReadStream(filePath, { start, end });
+    const stream = createReadStream(/* turbopackIgnore: true */ filePath, { start, end });
     return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
       status: 206,
       headers: {
@@ -113,7 +114,7 @@ export async function GET(
     });
   }
 
-  const stream = createReadStream(filePath);
+  const stream = createReadStream(/* turbopackIgnore: true */ filePath);
   return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
     status: 200,
     headers: { ...baseHeaders, "Content-Length": String(fileSize) },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Zap, Play, Pause, Loader2, ArrowRight, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -46,6 +47,7 @@ export function InfluenceSweepPanel({
   creditsRemaining,
   onCreditsUpdated,
 }: InfluenceSweepPanelProps) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<InfluencePresetId>("round_robin");
   const [customValues, setCustomValues] = useState("0.2, 0.5, 0.8");
@@ -311,7 +313,7 @@ export function InfluenceSweepPanel({
                   mode: "influence_sweep",
                   preset: selectedPreset,
                 });
-                window.location.href = `/dashboard/variation-lab?${params}`;
+                router.push(`/dashboard/variation-lab?${params}`);
               }}
             >
               <Layers className="h-3.5 w-3.5" />

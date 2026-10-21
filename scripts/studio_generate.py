@@ -42,6 +42,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+from workers.report_identity import report_id_for_audio
 from workers.pipeline import get_adapter
 from workers.provider_registry import canonical_provider_id
 
@@ -225,18 +226,7 @@ def build_playground_report(prompt: dict, generation: dict, analysis: dict) -> d
         sys.path.insert(0, scripts_dir)
     from generate_reports import build_report  # type: ignore
 
-    # Find next available report number
-    json_dir = PROJECT_ROOT / "reports" / "json"
-    existing = set()
-    if json_dir.exists():
-        for p in json_dir.glob("AK-*.json"):
-            try:
-                existing.add(int(p.stem.replace("AK-", "")))
-            except ValueError:
-                continue
-    report_num = (max(existing) + 1) if existing else 1
-
-    report = build_report(prompt, generation, analysis, report_num)
+    report = build_report(prompt, generation, analysis, report_id_for_audio(generation["audio_id"], generation.get("akouo_report_id")))
     # Override review status for playground
     report["review_status"] = "playground_draft"
     report["listener_type"] = "hybrid"
@@ -307,17 +297,7 @@ def build_playground_report_inline(prompt: dict, generation: dict, analysis: dic
         "regeneration_potential": "revise",
     }
 
-    # Find next report number
-    json_dir = PROJECT_ROOT / "reports" / "json"
-    existing = set()
-    if json_dir.exists():
-        for p in json_dir.glob("AK-*.json"):
-            try:
-                existing.add(int(p.stem.replace("AK-", "")))
-            except ValueError:
-                continue
-    report_num = (max(existing) + 1) if existing else 1
-    report_id = f"AK-{report_num:04d}"
+    report_id = report_id_for_audio(generation["audio_id"], generation.get("akouo_report_id"))
 
     route = akouo_route_for_prompt(prompt, has_audio=True)
     if is_procedural:

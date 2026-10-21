@@ -1,28 +1,41 @@
 {
   "name": "web",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "ALGOPHONY_STUDIO_ACCESS_MODE=local next dev --webpack --hostname 127.0.0.1",
     "dev:daemon": "node scripts/dev-server.mjs start",
     "dev:stop": "node scripts/dev-server.mjs stop",
     "build": "next build",
-    "start": "next start"
+    "start": "ALGOPHONY_STUDIO_ACCESS_MODE=local next start --hostname 127.0.0.1",
+    "test": "node --experimental-strip-types --test app/lib/studio-auth.test.ts"
   },
   "dependencies": {
-    "@next/env": "16.2.12",
-    "next": "16.2.12",
+    "@next/env": "16.3.8",
+    "next": "16.3.8",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "overrides": {
     "postcss": "8.5.25",
-    "sharp": "0.35.3"
+    "sharp": "0.35.4",
+    "brace-expansion@1": "1.1.21",
+    "brace-expansion@5": "5.0.12",
+    "browserslist": "4.28.7",
+    "js-yaml@4": "4.3.2",
+    "nanoid@3": "3.3.18",
+    "baseline-browser-mapping": "2.11.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "npm@11.19.1",
+  "engines": {
+    "node": ">=22.19.0",
+    "npm": ">=11.19.1"
+  },
+  "type": "module"
 }

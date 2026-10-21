@@ -1,9 +1,10 @@
+import { fileURLToPath } from "node:url";
 #!/usr/bin/env node
 import { existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
 
-const root = new URL("..", import.meta.url).pathname;
+const root = fileURLToPath(new URL("..", import.meta.url));
 const stateDir = join(root, ".algophony-bench");
 const pidFile = join(stateDir, "dev-server.pid");
 const logFile = join(root, "dev_server.log");
@@ -31,6 +32,7 @@ function isRunning(pid) {
 }
 
 function start() {
+  if (!["127.0.0.1", "localhost", "::1"].includes(host)) throw new Error("The local Bench daemon must bind to loopback.");
   mkdirSync(stateDir, { recursive: true });
   const existingPid = readPid();
   if (isRunning(existingPid)) {

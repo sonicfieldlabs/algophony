@@ -24,3 +24,11 @@ uploads/metadata/*
 *.flac
 *.aiff
 *.aif
+
+# Private report runs, provider state and generated evidence.
+.algophony/
+.algophony-studio/
+dev_server.log
+reports/json/
+reports/markdown/
+benchmark/scores/
