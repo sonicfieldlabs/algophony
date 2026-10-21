@@ -182,7 +182,7 @@
         }
       ],
       "default": null,
-      "description": "Optional AKOÚŌ v0.9 expanded routing plan: evidence level, claim permissions, weighted mode chain, optional budget and preset id, agent handoff, and stop conditions."
+      "description": "Optional AKOÚŌ expanded routing plan (historical v0.9 and current v0.10): evidence level, claim permissions, weighted mode chain, optional budget and preset id, agent handoff, and stop conditions."
     },
     "akouo_reference_map": {
       "oneOf": [
@@ -479,7 +479,8 @@
         "accessibility-normative-listening",
         "material-event-listening",
         "memory-lineage-listening",
-        "sovereign-listening"
+        "sovereign-listening",
+        "agent-native-listening"
       ]
     },
     "akouo_command": {
@@ -503,7 +504,8 @@
         "/route",
         "/remember",
         "/covenant",
-        "/corpus"
+        "/corpus",
+        "/orchestrate"
       ]
     },
     "akouo_evidence_level": {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Contract tests for Algophony's Oída v0.5 gateway adapter."""
+"""Contract tests for Algophony's explicit Oída gateway projections."""
 from __future__ import annotations
 
 import json
@@ -116,6 +116,50 @@ class OidaGatewayTests(unittest.TestCase):
         result["contract"] = "oida/gateway/v0.1"
         with self.assertRaises(ValueError):
             algophony_patch(result)
+
+    def test_modern_result_retains_actual_contract_and_original_claims(self):
+        import copy
+        result = fixture()
+        result["contract"] = "oida/gateway/v0.6"
+        before = copy.deepcopy(result)
+        projected = algophony_patch(result)
+        self.assertEqual(projected["oida_gateway"]["contract"], result["contract"])
+        self.assertEqual(projected["claim_taxonomy"], result["command_output"]["claim_summary"])
+        self.assertEqual(projected["akouo_contract_version"], "akouo/v0.9")
+        self.assertEqual(result, before)
+        import jsonschema
+        schema = json.loads((REPO_ROOT / "schemas/oida-gateway.schema.json").read_text())
+        jsonschema.validate(projected["oida_gateway"], schema)
+
+    def test_refusal_and_absent_event_never_become_a_listening_trace(self):
+        for event in [None, {}, {"id": ""}]:
+            result = fixture()
+            result.update(contract="oida/gateway/v0.6", outcome="refused", listening_event=event)
+            with self.assertRaisesRegex(ValueError, "no admitted listening event"):
+                algophony_patch(result)
+        result = fixture()
+        result["listening_event"] = None
+        with self.assertRaisesRegex(ValueError, "no admitted listening event"):
+            algophony_patch(result)
+
+    def test_lifecycle_event_references_survive_the_compact_projection(self):
+        import jsonschema
+        result = fixture()
+        result["contract"] = "oida/gateway/v0.6"
+        kinds = ["listening.disagreement.recorded", "listening.action.proposed",
+                 "listening.action.authorized", "listening.action.refused",
+                 "listening.action.executed", "listening.revision.created", "memory.forgotten"]
+        for index, kind in enumerate(kinds):
+            result["earworm"]["session"]["events"].append(dict(
+                event_id=f"fixture-lifecycle-{index}", type=kind,
+                source={"actor": "system"}, time={"wall_clock": "2026-10-21T00:00:00Z"}))
+        trace = algophony_patch(result)["earworm_trace"]
+        schema = json.loads((REPO_ROOT / "schemas/earworm-trace.schema.json").read_text())
+        jsonschema.validate(trace, schema)
+        self.assertEqual([event["type"] for event in trace["event_chain"]][-len(kinds):], kinds)
+        trace["event_chain"][-1]["type"] = "unknown.event"
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.validate(trace, schema)
 
     def test_gateway_url_rejects_non_http_schemes(self):
         with patch.dict(os.environ, {"ALGOPHONY_OIDA_URL": "file:///private/store"}):

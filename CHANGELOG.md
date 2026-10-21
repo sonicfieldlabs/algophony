@@ -1,10 +1,26 @@
 # Changelog
 
-## 0.5.3: Workspace access and isolated report runs
+## 0.5.4 — Workspace access and isolated report runs
 
 - Guard every Studio API and dashboard path; validate access again before returning the workspace profile or entitlements. Local launch commands bind to loopback; remote access requires an explicitly configured origin and bearer token.
 - Generate complete report runs in new private output directories. Filtering, limits, empty selections, and failures preserve prior reports and benchmark scores; report identity follows audio identity.
 - Bundle Studio fonts with their licenses so builds do not fetch Google Fonts. Update Next.js, sharp, Vitest, and vulnerable transitive dependencies in both web apps.
+- Prepared on 1 October as 0.5.3 and merged after the 0.5.3 release of 21 October, so it ships
+  as 0.5.4; the Studio takes the newer Next.js 16.4.2 from 0.5.3 with both releases' overrides.
+
+## 0.5.3 — Explicit gateway projections and released owner references
+
+- Accept Oída's two explicit gateway projections, `oida/gateway/v0.5` and
+  `oida/gateway/v0.6`, keeping the received contract and the original claims;
+  refused or missing listening events cannot become traces, and unknown gateway
+  contracts fail.
+- Admit the newer listening events (disagreement, proposed, authorized,
+  refused and executed actions, revisions, forgetting) in the Earworm trace
+  schema; describe the AKOÚŌ routing plan as historical v0.9 and current v0.10.
+- Name the owner releases of 14 October 2026 (AKOÚŌ contract 0.12.1, akousma
+  0.10.1, Akousmata 0.9.1, Oída 0.13.2, GERM 0.7.0) and Oída 0.14.0 of
+  21 October; none is on PyPI.
+- Update the Studio's patched dependencies.
 
 ## 0.5.2 — Attributable listening review
 

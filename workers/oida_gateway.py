@@ -1,4 +1,4 @@
-"""Oída v0.5 gateway adapter for Algophony listening and evaluation."""
+"""Explicit Oída v0.5/v0.6 gateway projection for listening and evaluation."""
 from __future__ import annotations
 
 import copy
@@ -10,6 +10,7 @@ from urllib import request
 from urllib.parse import urlparse
 
 OIDA_GATEWAY_CONTRACT = "oida/gateway/v0.5"
+SUPPORTED_GATEWAY_CONTRACTS = frozenset({OIDA_GATEWAY_CONTRACT, "oida/gateway/v0.6"})
 
 
 def server_url() -> str:
@@ -63,9 +64,11 @@ def harness_host(
 
 def algophony_patch(result: dict[str, Any]) -> dict[str, Any]:
     """Translate one gateway result into optional Algophony report fields."""
-    if result.get("contract") != OIDA_GATEWAY_CONTRACT:
+    if result.get("contract") not in SUPPORTED_GATEWAY_CONTRACTS:
         raise ValueError(f"unsupported Oída gateway contract: {result.get('contract')!r}")
     event = result.get("listening_event") if isinstance(result.get("listening_event"), dict) else {}
+    if result.get("outcome") == "refused" or not isinstance(event.get("id"), str) or not event["id"]:
+        raise ValueError("Oída returned no admitted listening event; retain the refusal separately")
     command = result.get("command_output") if isinstance(result.get("command_output"), dict) else {}
     perception = result.get("perception_report") if isinstance(result.get("perception_report"), dict) else {}
     earworm = result.get("earworm") if isinstance(result.get("earworm"), dict) else {}
@@ -84,7 +87,7 @@ def algophony_patch(result: dict[str, Any]) -> dict[str, Any]:
         "akouo_contract_version": f"akouo/v{command.get('akouo_version') or '0.9'}",
         "earworm_trace": _compact_earworm(earworm, remembered=trace is not None, event=event),
         "oida_gateway": {
-            "contract": OIDA_GATEWAY_CONTRACT,
+            "contract": result["contract"],
             "perception_path": str(result.get("perception_path") or "oida_owned"),
             "listening_event_id": str(event.get("id") or "unknown-event"),
             "route_preset": route_preset,
@@ -233,4 +236,4 @@ def _empty_claims() -> dict[str, list[Any]]:
     return {category: [] for category in ("heard", "measured", "inferred", "interpreted", "speculative", "undetermined")}
 
 
-__all__ = ["OIDA_GATEWAY_CONTRACT", "algophony_patch", "apply_to_report", "harness_host", "listen_audio", "server_url"]
+__all__ = ["OIDA_GATEWAY_CONTRACT", "SUPPORTED_GATEWAY_CONTRACTS", "algophony_patch", "apply_to_report", "harness_host", "listen_audio", "server_url"]

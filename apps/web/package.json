@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
   "scripts": {
     "dev": "ALGOPHONY_STUDIO_ACCESS_MODE=local next dev --webpack --hostname 127.0.0.1",
