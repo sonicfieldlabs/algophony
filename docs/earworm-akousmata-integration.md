@@ -1,5 +1,12 @@
 # Earworm and Akousmata Integration
 
+Reviewed on 21 October 2026 against Akousma 0.10.1, Akousmata 0.9.1, AKOÚŌ 0.12.1
+and Oída 0.13.2 by exact artifact identity. Algophony accepts the two explicit
+Oída gateway projections v0.5 and v0.6, preserves the received contract and
+claims, and rejects refused or missing listening events. The compact trace is
+not canonical memory admission and confers no source, model or research rights.
+The dated spec notes below describe historical interoperability.
+
 Status: contract surface landed, no legacy corpus backfill
 
 ## Purpose
@@ -112,11 +119,11 @@ directory by default, with an `$AKOUSMATA_PATH` override). Algophony's batch sur
 - CLI: `python -m workers.akousmata_source --app germ --prompt-records`.
 
 The `akousma` reference package is an **optional** dependency
-(`pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@v0.6.1#subdirectory=packages/py-akousma"`); without it the module
+(`pip install "akousma @ git+https://github.com/sonicfieldlabs/earworm.git@akousma-v0.10.1#subdirectory=packages/py-akousma"`; historical reports keep their original producer contract); without it the module
 raises `AkousmataUnavailable` and nothing else in Algophony is affected. Tests:
 `scripts/test_akousmata_source.py` (skips when the package is absent).
 
-## Spec v1.2 update (Earworm v0.3, 2026-07-11)
+## Historical spec v1.2 update (Earworm v0.3, 2026-07-11)
 
 Akousma records may now carry two optional consent-scoped blocks and are open
 at the top level (unknown fields are preserved, never rejected):

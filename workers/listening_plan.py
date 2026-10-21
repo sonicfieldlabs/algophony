@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic AKOÚŌ v0.9 routing plans for the Algophony report pipeline.
+"""Deterministic AKOÚŌ v0.10 routing plans for the Algophony report pipeline.
 
 Implements step 1 of the AKOÚŌ agentic integration contract without any LLM:
 artifact availability maps to an evidence level, the evidence level (plus
@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-AKOUO_CONTRACT_VERSION = "akouo/v0.9"
+AKOUO_CONTRACT_VERSION = "akouo/v0.10"
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
