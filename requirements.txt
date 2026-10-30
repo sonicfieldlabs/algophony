@@ -1,6 +1,6 @@
 jsonschema>=4.22
 referencing>=0.35
-python-dotenv>=1.0
+python-dotenv>=1.2.4
 requests>=2.31
 numpy>=1.26
 soundfile>=0.12
