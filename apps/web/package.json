@@ -11,14 +11,14 @@
     "test": "node --experimental-strip-types --test app/lib/studio-auth.test.ts"
   },
   "dependencies": {
-    "@next/env": "16.3.8",
-    "next": "16.3.8",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "@next/env": "16.4.3",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "overrides": {
     "postcss": "8.5.25",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "brace-expansion@1": "1.1.21",
     "brace-expansion@5": "5.0.12",
     "browserslist": "4.28.7",
@@ -27,7 +27,7 @@
     "baseline-browser-mapping": "2.11.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^26",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "typescript": "^5"
