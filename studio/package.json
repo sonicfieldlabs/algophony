@@ -21,9 +21,9 @@
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
-    "@google/genai": "^2.31.0",
+    "@google/genai": "^2.32.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.61.0",
+    "lucide-react": "^1.66.0",
     "next": "16.4.3",
     "papaparse": "^5.7.0",
     "pino": "^10.4.0",
