@@ -30,7 +30,7 @@
     "@types/node": "^26",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5"
+    "typescript": "^7"
   },
   "packageManager": "npm@11.19.1",
   "engines": {
