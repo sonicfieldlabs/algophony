@@ -2,6 +2,6 @@ jsonschema>=4.22
 referencing>=0.35
 python-dotenv>=1.2.4
 requests>=2.31
-numpy>=2.5.4
+numpy>=1.26
 soundfile>=0.14.0
 librosa>=0.10
