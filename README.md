@@ -51,9 +51,10 @@ complete model benchmark or independently reviewed human panel is included.
 | [Akousmata](https://github.com/sonicfieldlabs/akousmata) | Akousmata 0.9.1 | Independent canonical memory owner; batch-source reads and evaluation stamps remain explicit. |
 | [Oída](https://github.com/sonicfieldlabs/oida) | Explicit `oida/gateway/v0.5` and `oida/gateway/v0.6` projections; Oída 0.13.2 and 0.14.0 | Preserve the received contract and attributed claims. Refusals and absent events cannot become listening traces; unknown gateway contracts fail. |
 | [GERM](https://github.com/sonicfieldlabs/germ) | GERM 0.7.0 | Independent downstream generation owner; no engine or checkpoint is selected here. |
-| [ORAM](https://github.com/sonicfieldlabs/oram) | ORAM 0.4.1 | Exported audio can enter datasets and listening workflows; there is no direct runtime dependency. |
+| [ORAM](https://github.com/sonicfieldlabs/oram) | No version pinned | Exported audio can enter datasets and listening workflows; there is no direct runtime dependency. |
 
-These are GitHub releases of 14 and 21 October 2026; none is on PyPI. Naming
+These are GitHub releases of 14 and 21 October 2026; none is on PyPI. Each project's
+current release is on [listening.md's Stack page](https://listening.md/stack). Naming
 them does not upgrade an active owner or qualify a model. Earlier reports and corpus releases retain their original
 bytes and producer contracts.
 
