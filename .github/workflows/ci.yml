@@ -1,18 +1,29 @@
+# Portable PR checks run once; full platform qualification is deliberate.
 name: ci
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+    branches:
+    - main
+  workflow_dispatch:
+    inputs:
+      full:
+        description: Run complete platform and release qualification (prefer local execution)
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   schema-validation:
     name: Validate schemas + dataset
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
@@ -29,7 +40,7 @@ jobs:
 
   worker-unit-tests:
     name: Worker unit tests (contracts + drift guards)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
@@ -52,7 +63,7 @@ jobs:
 
   web-build:
     name: Web app type-check + build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
@@ -74,7 +85,7 @@ jobs:
 
   studio-verify:
     name: Studio lint + typecheck + tests + build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
       run:
