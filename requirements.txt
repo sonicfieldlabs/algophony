@@ -1,5 +1,5 @@
 jsonschema>=4.22
-referencing>=0.35
+referencing>=0.37.0
 python-dotenv>=1.2.4
 requests>=2.34.2
 numpy>=1.26
